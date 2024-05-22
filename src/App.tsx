@@ -32,6 +32,14 @@ import "@mantine/core/styles.css";
 // import { action as NavbarAction } from "./pages/Root";
 import { lazy, Suspense } from "react";
 import { Box, LoadingOverlay } from "@mantine/core";
+import Root from "./page/Root";
+import ErrorPage from "./page/404/ErrorPage";
+import LandingPage from "./page/landing-page/LandingPage";
+import LoginPage from "./page/authentication/LoginPage";
+import RegisterPage from "./page/authentication/RegisterPage";
+import ForgotPasswordPage from "./page/authentication/ForgotPasswordPage";
+import ResetPasswordPage from "./page/authentication/ResetPasswordPage";
+import HomePage from "./page/home/HomePage";
 // import LearnPage from "./pages/study-mode/learn/LearnPage";
 // import { createQuizAction } from "./pages/quiz/create_form/CreateQuizPage";
 // import ClassQuestionPage, {
@@ -90,199 +98,54 @@ export const loadingIndicator = (
 const router = createBrowserRouter([
   {
     path: "/",
-    loader: getAuthCredentials,
-    action: NavbarAction,
-    id: "root-loader",
     element: <Root />,
     errorElement: <ErrorPage />,
     children: [
       {
-        index: true,
-        element: <Homepage />,
-        loader: async () => {
-          if (isLoggedIn()) {
-            return redirect("/home");
-          }
-          return null;
-        },
-      },
-      {
-        path: "auth",
-        element: (
-          <Suspense fallback={loadingIndicator}>
-            <AuthPage />
-          </Suspense>
-        ),
-        action: authAction,
-        loader: preventAuth,
-      },
-      {
-        path: "forgotten",
-        element: (
-          <Suspense fallback={loadingIndicator}>
-            <ForgotPassword />
-          </Suspense>
-        ),
-        action: forgotPasswordAction,
-      },
-      {
-        path: "reset-password",
-        element: (
-          <Suspense fallback={loadingIndicator}>
-            <ResetPassword />
-          </Suspense>
-        ),
-        action: resetPasswordAction,
+        path: "",
+        element: <LandingPage />,
       },
       {
         path: "home",
-        element: (
-          <Suspense fallback={loadingIndicator}>
-            <UserDashboard />
-          </Suspense>
-        ),
-        loader: checkAuth,
+        element: <HomePage />,
       },
       {
-        path: "user/profile/:tab",
-        loader: getAuthCredentials,
-        id: "profile-loader",
+        path: "auth",
+        loader: async () => redirect("/auth/login"),
         children: [
           {
-            index: true,
+            path: "login",
             element: (
               <Suspense fallback={loadingIndicator}>
-                <ProfilePage />
+                <LoginPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "register",
+            element: (
+              <Suspense fallback={loadingIndicator}>
+                <RegisterPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "forgot-password",
+            element: (
+              <Suspense fallback={loadingIndicator}>
+                <ForgotPasswordPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "reset-password",
+            element: (
+              <Suspense fallback={loadingIndicator}>
+                <ResetPasswordPage />
               </Suspense>
             ),
           },
         ],
-      },
-      {
-        path: "class/:id/",
-        loader: classLoader,
-        children: [
-          {
-            path: ":tab",
-            action: classAction,
-            element: (
-              <Suspense fallback={loadingIndicator}>
-                <ClassPage />
-              </Suspense>
-            ),
-          },
-          {
-            path: "discussion/question/:questionId",
-            loader: classQuestionPageLoader,
-            action: classQuestionPageAction,
-            element: (
-              <Suspense fallback={loadingIndicator}>
-                <ClassQuestionPage />
-              </Suspense>
-            ),
-          },
-          {
-            path: "join",
-            element: (
-              <Suspense fallback={loadingIndicator}>
-                <ClassInvitation />
-              </Suspense>
-            ),
-          },
-        ],
-      },
-      {
-        path: "create-quiz",
-        loader: checkAuth,
-        children: [
-          {
-            index: true,
-            action: createQuizAction,
-            element: (
-              <Suspense fallback={loadingIndicator}>
-                <CreateQuizPage />
-              </Suspense>
-            ),
-          },
-        ],
-      },
-      {
-        path: "folder/:id",
-        children: [
-          {
-            index: true,
-            action: folderPageAction,
-            loader: folderPageLoader,
-            element: (
-              <Suspense fallback={loadingIndicator}>
-                <FolderPage />
-              </Suspense>
-            ),
-          },
-        ],
-      },
-      {
-        path: "quiz/set/:id",
-        loader: checkAuth,
-        children: [
-          {
-            index: true,
-            element: (
-              <Suspense fallback={loadingIndicator}>
-                <SetDetails />
-              </Suspense>
-            ),
-            id: "set-details",
-            loader: SetLoader,
-            action: SetAction,
-          },
-          {
-            path: "edit",
-            element: (
-              <Suspense fallback={loadingIndicator}>
-                <UpdateQuizSet />
-              </Suspense>
-            ),
-            loader: UpdateQuizSetLoader,
-            action: UpdateQuizSetAction,
-          },
-        ],
-      },
-      {
-        path: "settings",
-        action: settingsAction,
-        element: (
-          <Suspense fallback={loadingIndicator}>
-            <Settings />
-          </Suspense>
-        ),
-      },
-      { path: "logout", action: logout },
-    ],
-  },
-  {
-    path: ":id/study",
-    element: <StudyModeRoot />,
-    errorElement: <ErrorPage />,
-    loader: checkAuth,
-    children: [
-      {
-        path: "flashcard",
-        element: (
-          <Suspense fallback={loadingIndicator}>
-            <FlashcardMode />
-          </Suspense>
-        ),
-        loader: FlashcardLoader,
-      },
-      {
-        path: "learn",
-        element: (
-          <Suspense fallback={loadingIndicator}>
-            <LearnPage />
-          </Suspense>
-        ),
-        loader: FlashcardLoader,
       },
     ],
   },
