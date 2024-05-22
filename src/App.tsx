@@ -1,5 +1,6 @@
 import {
   createBrowserRouter,
+  Navigate,
   redirect,
   RouterProvider,
 } from "react-router-dom";
@@ -111,10 +112,15 @@ const router = createBrowserRouter([
       },
       {
         path: "auth",
-        loader: async () => redirect("/auth/login"),
         children: [
           {
+            index: true,
+            path: "",
+            loader: async () => redirect("/auth/login")
+          },
+          {
             path: "login",
+            
             element: (
               <Suspense fallback={loadingIndicator}>
                 <LoginPage />
