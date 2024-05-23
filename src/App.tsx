@@ -21,6 +21,7 @@ import ForgotPasswordPage from "./page/authentication/ForgotPasswordPage";
 import ResetPasswordPage from "./page/authentication/ResetPasswordPage";
 import HomePage from "./page/home/HomePage";
 import { ErrorPage } from "./page/404/ErrorPage";
+import UserProfilePage from "./page/user-profile/UserProfilePage";
 
 export const loadingIndicator = (
   <Box pos={"relative"} h={"100vh"} w={"100vw"}>
@@ -53,11 +54,11 @@ const router = createBrowserRouter([
           {
             index: true,
             path: "",
-            loader: async () => redirect("/auth/login")
+            loader: async () => redirect("/auth/login"),
           },
           {
             path: "login",
-            
+
             element: (
               <Suspense fallback={loadingIndicator}>
                 <LoginPage />
@@ -89,6 +90,14 @@ const router = createBrowserRouter([
             ),
           },
         ],
+      },
+      {
+        path: "user",
+        element: (
+          <Suspense fallback={loadingIndicator}>
+            <UserProfilePage />
+          </Suspense>
+        )
       },
     ],
   },
