@@ -21,6 +21,7 @@ import ForgotPasswordPage from "./page/authentication/ForgotPasswordPage";
 import ResetPasswordPage from "./page/authentication/ResetPasswordPage";
 import HomePage from "./page/home/HomePage";
 import { ErrorPage } from "./page/404/ErrorPage";
+import QuestionPage from "./page/question-page/QuestionPage";
 import UserProfilePage from "./page/user-profile/UserProfilePage";
 
 export const loadingIndicator = (
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: "home",
         element: <HomePage />,
+      },
+      {
+        path: "question-set",
+        element: <QuestionPage/>
       },
       {
         path: "auth",
