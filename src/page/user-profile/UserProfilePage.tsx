@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
+import { ProfileCard } from "../../component/user-profile/ProfileCard";
+import { Box } from "@mantine/core";
 
 export default function UserProfilePage() {
   const emptyUser = {
@@ -25,5 +27,8 @@ export default function UserProfilePage() {
     fetch();
   } ,[]);
   console.log("duoiu");
-  return <>{user.firstName}</>;
+  return <>
+  <ProfileCard user={user}/>
+  
+  </>;
 }
