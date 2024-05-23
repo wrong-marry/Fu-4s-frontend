@@ -29,6 +29,7 @@ import {
     IconChevronDown,
   } from '@tabler/icons-react';
   import classes from './HeaderMegaMenu.module.css';
+import { redirect } from 'react-router-dom';
   
   const mockdata = [
     {
@@ -149,8 +150,8 @@ import {
             </Group>
   
             <Group visibleFrom="sm">
-              <Button variant="default">Log in</Button>
-              <Button>Sign up</Button>
+              <Button onClick={()=>redirect("/auth")} variant="default">Log in</Button>
+              <Button onClick={()=>redirect("/auth/register")}>Register</Button>
             </Group>
   
             <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
