@@ -10,7 +10,9 @@ import {
 } from "@mantine/core";
 import EditIcon from "@mui/icons-material/Edit";
 import { ActionToggle } from "../color-scheme/ActionToggle";
+import { useNavigate } from "react-router-dom";
 export function ProfileCard(props: any) {
+  const navigate = useNavigate();
   return (
     <Paper
       className="mx-3 sm:mx-16 lg:mx-96"
@@ -37,6 +39,9 @@ export function ProfileCard(props: any) {
           <HoverCard width={280} shadow="md">
             <HoverCard.Target>
               <Button
+                onClick={() => {
+                  navigate("/update-profile");
+                }}
                 justify="space-between"
                 fullWidth
                 rightSection={<EditIcon />}
@@ -47,7 +52,7 @@ export function ProfileCard(props: any) {
               </Button>
             </HoverCard.Target>
             <HoverCard.Dropdown>
-              <Text size="sm">click me to edit your email -.-</Text>
+              <Text size="sm">Click me to edit your profile</Text>
             </HoverCard.Dropdown>
           </HoverCard>
         </Group>
@@ -60,6 +65,9 @@ export function ProfileCard(props: any) {
           <HoverCard width={280} shadow="md">
             <HoverCard.Target>
               <Button
+                onClick={() => {
+                  navigate("/update-profile");
+                }}
                 justify="space-between"
                 fullWidth
                 rightSection={<EditIcon />}
@@ -70,7 +78,7 @@ export function ProfileCard(props: any) {
               </Button>
             </HoverCard.Target>
             <HoverCard.Dropdown>
-              <Text size="sm">click me to edit your first name -.-</Text>
+              <Text size="sm">Click me to edit your profile</Text>
             </HoverCard.Dropdown>
           </HoverCard>
         </Group>
@@ -83,6 +91,9 @@ export function ProfileCard(props: any) {
           <HoverCard width={280} shadow="md">
             <HoverCard.Target>
               <Button
+                onClick={() => {
+                  navigate("/update-profile");
+                }}
                 justify="space-between"
                 fullWidth
                 rightSection={<EditIcon />}
@@ -93,12 +104,12 @@ export function ProfileCard(props: any) {
               </Button>
             </HoverCard.Target>
             <HoverCard.Dropdown>
-              <Text size="sm">click me to edit your last name -.-</Text>
+              <Text size="sm">Click me to edit your profile</Text>
             </HoverCard.Dropdown>
           </HoverCard>
         </Group>
       </div>
-      
+
       <div className="flex justify-center my-5">
         <Button
           variant="gradient"
@@ -107,7 +118,7 @@ export function ProfileCard(props: any) {
           Click me to change your password
         </Button>
       </div>
-      
+
       <ActionToggle />
     </Paper>
   );

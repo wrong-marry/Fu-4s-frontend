@@ -23,6 +23,7 @@ import HomePage from "./page/home/HomePage";
 import { ErrorPage } from "./page/404/ErrorPage";
 import QuestionPage from "./page/question-page/QuestionPage";
 import UserProfilePage from "./page/user-profile/UserProfilePage";
+import UpdateProfilePage from "./page/user-profile/UpdateProfilePage";
 
 export const loadingIndicator = (
   <Box pos={"relative"} h={"100vh"} w={"100vw"}>
@@ -104,6 +105,14 @@ const router = createBrowserRouter([
           </Suspense>
         )
       },
+      {
+        path: "update-profile",
+        element: (
+          <Suspense fallback={loadingIndicator}>
+            <UpdateProfilePage />
+          </Suspense>
+        )
+      }
     ],
   },
 ]);
