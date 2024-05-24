@@ -23,6 +23,9 @@ import HomePage from "./page/home/HomePage";
 import { ErrorPage } from "./page/404/ErrorPage";
 import QuestionPage from "./page/question-page/QuestionPage";
 import UserProfilePage from "./page/user-profile/UserProfilePage";
+import LearningMaterialDetailPage from "./page/learning-material-detail/LearningMaterialDetailPage";
+import UpdateProfilePage from "./page/user-profile/UpdateProfilePage";
+// b47ead004595e7b31c05ecfe636965321163c484
 
 export const loadingIndicator = (
   <Box pos={"relative"} h={"100vh"} w={"100vw"}>
@@ -50,9 +53,13 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: "question-set",
-        element: <QuestionPage/>
+        path: "subject-posting",
+        element: <QuestionPage />,
       },
+      // {
+      //   path: "learning-material",
+      //   element: <LearningMaterialDetailPage />,
+      // },
       {
         path: "auth",
         children: [
@@ -86,6 +93,7 @@ const router = createBrowserRouter([
               </Suspense>
             ),
           },
+
           {
             path: "reset-password",
             element: (
@@ -102,7 +110,15 @@ const router = createBrowserRouter([
           <Suspense fallback={loadingIndicator}>
             <UserProfilePage />
           </Suspense>
-        )
+        ),
+      },
+      {
+        path: "update-profile",
+        element: (
+          <Suspense fallback={loadingIndicator}>
+            <UpdateProfilePage />
+          </Suspense>
+        ),
       },
     ],
   },
