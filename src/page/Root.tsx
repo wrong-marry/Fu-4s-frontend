@@ -2,12 +2,12 @@ import { Outlet } from "react-router-dom";
 
 import { Footer } from "../component/layout/Footer/Footer";
 import { AppShell } from "@mantine/core";
-import { Header } from "../component/layout/Header/Header";
+import Navbar from "../component/navbar/Navbar";
 
 export default function Root() {
   return (
     <AppShell>
-      <Header />
+      <Navbar />
       <main className="mt-10">
         <Outlet />
       </main>
