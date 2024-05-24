@@ -15,7 +15,7 @@ import {
   import axios from "axios";
   import { useNavigate } from "react-router-dom";
   import { useForm } from "@mantine/form";
-import { emptyUser, fetchUser } from "../../util/UserFetchUtil";
+import { emptyUser, fetchUser } from "../../../util/UserFetchUtil";
   
   export function ChangePassWordForm() {
     const [user, setUser] = useState(emptyUser);
@@ -29,31 +29,29 @@ import { emptyUser, fetchUser } from "../../util/UserFetchUtil";
       },
   
       validate: {
-        email: (val) => (/^\S+@\S+$/.test(val) ? null : "Ivalid email"),
+        oldPassWord: (val) => (val.length < 6 ? 'Password should include at least 6 characters' : null),
+        newPassWord: (val) => (val.length < 6 ? 'Password should include at least 6 characters' : null),
+        confirmPassword: (val) => (val.length < 6 ? 'Password should include at least 6 characters' : null)
       },
     });
     useEffect(() => {
       const fetchData = async () => {
         const res = await fetchUser();
         setUser(res.data);
-        
-        form.setFieldValue("email", res.data.email);
-        form.setFieldValue("firstName", res.data.firstName);
-        form.setFieldValue("lastName", res.data.lastName);
       };
       fetchData();
     }, []);
   
     const handleSubmit = async () => {
       if (!form.isValid()) return;
-      const newData = { ...user, ...form.getValues() };
-      await axios
-        .put(
-          "http://localhost:8080/api/v1/user/edit-profile?username=" +
-            user.username,
-          newData
-        )
-        .catch((err) => console.log(err));
+      const newData = form.getValues();
+      // await axios
+      //   .put(
+      //     "http://localhost:8080/api/v1/user/edit-profile?username=" +
+      //       user.username,
+      //     newData
+      //   )
+      //   .catch((err) => console.log(err));
       navigate("/user");
     };
   
@@ -74,31 +72,31 @@ import { emptyUser, fetchUser } from "../../util/UserFetchUtil";
             required
             label="Old Password"
             placeholder="Your password"
-            value={form.values.password}
-            onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
-            error={form.errors.password && 'Password should include at least 6 characters'}
+            value={form.values.oldPassWord}
+            onChange={(event) => form.setFieldValue('oldPassWord', event.currentTarget.value)}
+            error={form.errors.oldPassWord && 'Password should include at least 6 characters'}
             radius="md"
           />
           <PasswordInput
             required
-            label="Password"
-            placeholder="Your password"
-            value={form.values.password}
-            onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
-            error={form.errors.password && 'Password should include at least 6 characters'}
+            label="New Password"
+            placeholder="New password"
+            value={form.values.newPassWord}
+            onChange={(event) => form.setFieldValue('newPassWord', event.currentTarget.value)}
+            error={form.errors.newPassWord && 'Password should include at least 6 characters'}
             radius="md"
           />
           <PasswordInput
             required
-            label="Password"
-            placeholder="Your password"
-            value={form.values.password}
-            onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
-            error={form.errors.password && 'Password should include at least 6 characters'}
+            label="Confirm New Password"
+            placeholder="Confirm your password"
+            value={form.values.confirmPassword}
+            onChange={(event) => form.setFieldValue('confirmPassword', event.currentTarget.value)}
+            error={form.errors.confirmPassword && 'Password should include at least 6 characters'}
             radius="md"
           />
             <Button type="submit" fullWidth mt="xl" onClick={handleSubmit}>
-              Update Profile
+              Update password
             </Button>
           </form>
         </Paper>
