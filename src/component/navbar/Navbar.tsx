@@ -12,6 +12,7 @@ import logo from "../../asset/logo.png";
 import {
   NavLink,
   useLoaderData,
+  useNavigate,
   useSearchParams,
   useSubmit,
 } from "react-router-dom";
@@ -107,19 +108,16 @@ const userBtn = (data: LoaderData, submit: any, handleLogout: () => void) => {
 };
 
 const guestBtn = (mode: string) => {
+  const navigate = useNavigate();
   return (
     <>
-      <NavLink to="/auth?mode=login">
-        <Button variant={"light"} color="indigo" radius="md" fz="sm">
+        <Button onClick={()=>navigate("/auth")} variant={"light"} color="indigo" radius="md" fz="sm">
           Login
         </Button>
-      </NavLink>
 
-      <NavLink to="/auth?mode=register">
-        <Button variant="filled" color="indigo" radius="md" fz="sm">
+        <Button onClick={()=>navigate("/auth/register")} variant="filled" color="indigo" radius="md" fz="sm">
           Signup
         </Button>
-      </NavLink>
     </>
   );
 };
