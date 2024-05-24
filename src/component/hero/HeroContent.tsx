@@ -1,5 +1,5 @@
 import { Title, Button, Text } from "@mantine/core";
-import homepageCover from "../../assets/homepage-cover.jpg";
+import homepageCover from "../../asset/homepage-cover.jpg";
 
 export default function HeroContent() {
   return (
