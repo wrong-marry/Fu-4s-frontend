@@ -56,10 +56,10 @@ const router = createBrowserRouter([
         path: "subject-posting",
         element: <QuestionPage />,
       },
-      {
-        path: "learning-material",
-        element: <LearningMaterialDetailPage />,
-      },
+      // {
+      //   path: "learning-material",
+      //   element: <LearningMaterialDetailPage />,
+      // },
       {
         path: "auth",
         children: [
