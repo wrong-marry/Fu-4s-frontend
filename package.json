@@ -29,6 +29,7 @@
     "@mantine/tiptap": "^7.4.2",
     "@mantinex/dev-icons": "^1.0.2",
     "@mantinex/mantine-logo": "^1.0.1",
+    "@mui/icons-material": "^5.15.18",
     "@mui/material": "^5.15.18",
     "@tabler/icons-react": "^2.46.0",
     "@tiptap/extension-link": "^2.1.16",
