@@ -27,6 +27,7 @@ import LearningMaterialDetailPage from "./page/learning-material-detail/Learning
 import UpdateProfilePage from "./page/user-profile/UpdateProfilePage";
 import { ChangePassWordForm } from "./component/user-profile/change-password/ChangePassWordForm";
 import { isLoggedIn, Logout } from "./util/loader/Auth";
+import { ForbiddenPage } from "./page/403/ForbiddenPage";
 // b47ead004595e7b31c05ecfe636965321163c484
 
 export const loadingIndicator = (
@@ -122,7 +123,7 @@ const router = createBrowserRouter([
           </Suspense>
         ),
         loader: () => {
-          if (!isLoggedIn()) return redirect("/");
+          if (!isLoggedIn()) return redirect("/forbidden");
           return null;
         }
       },
@@ -136,6 +137,15 @@ const router = createBrowserRouter([
       },
     ],
   },
+  
+  {
+    path: "/forbidden",
+    element: (
+      <Suspense fallback={loadingIndicator}>
+        <ForbiddenPage />
+      </Suspense>
+    ),
+  }
 ]);
 
 function App() {
