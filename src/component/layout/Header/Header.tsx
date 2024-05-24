@@ -29,7 +29,7 @@ import {
     IconChevronDown,
   } from '@tabler/icons-react';
   import classes from './HeaderMegaMenu.module.css';
-import { redirect } from 'react-router-dom';
+import { redirect, useNavigate } from 'react-router-dom';
   
   const mockdata = [
     {
@@ -68,7 +68,7 @@ import { redirect } from 'react-router-dom';
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
     const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
     const theme = useMantineTheme();
-  
+    const navigate = useNavigate();
     const links = mockdata.map((item) => (
       <UnstyledButton className={classes.subLink} key={item.title}>
         <Group wrap="nowrap" align="flex-start">
@@ -91,10 +91,10 @@ import { redirect } from 'react-router-dom';
       <Box pb={0}>
         <header className={classes.header}>
           <Group justify="space-between" h="100%">
-            <MantineLogo size={30} />
+            <MantineLogo onClick={()=>{navigate("")}} size={30} />
   
             <Group h="100%" gap={0} visibleFrom="sm">
-              <a href="#" className={classes.link}>
+              <a href="/home" className={classes.link}>
                 Home
               </a>
               <HoverCard width={600} position="bottom" radius="md" shadow="md" withinPortal>
@@ -150,8 +150,8 @@ import { redirect } from 'react-router-dom';
             </Group>
   
             <Group visibleFrom="sm">
-              <Button onClick={()=>redirect("/auth")} variant="default">Log in</Button>
-              <Button onClick={()=>redirect("/auth/register")}>Register</Button>
+              <Button onClick={()=>navigate("/auth")} variant="default">Log in</Button>
+              <Button onClick={()=>navigate("/auth/register")}>Register</Button>
             </Group>
   
             <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />

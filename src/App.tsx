@@ -25,6 +25,8 @@ import QuestionPage from "./page/question-page/QuestionPage";
 import UserProfilePage from "./page/user-profile/UserProfilePage";
 import LearningMaterialDetailPage from "./page/learning-material-detail/LearningMaterialDetailPage";
 import UpdateProfilePage from "./page/user-profile/UpdateProfilePage";
+import { ChangePassWordForm } from "./component/user-profile/change-password/ChangePassWordForm";
+import { isLoggedIn, Logout } from "./util/loader/Auth";
 // b47ead004595e7b31c05ecfe636965321163c484
 
 export const loadingIndicator = (
@@ -60,6 +62,14 @@ const router = createBrowserRouter([
       //   path: "learning-material",
       //   element: <LearningMaterialDetailPage />,
       // },
+      {
+        path: "change-password",
+        element: <ChangePassWordForm />,
+      },
+      {
+        path: "logout",
+        loader: Logout,
+      },
       {
         path: "auth",
         children: [
@@ -111,6 +121,10 @@ const router = createBrowserRouter([
             <UserProfilePage />
           </Suspense>
         ),
+        loader: () => {
+          if (!isLoggedIn()) return redirect("/");
+          return null;
+        }
       },
       {
         path: "update-profile",
