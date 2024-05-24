@@ -23,6 +23,7 @@ import HomePage from "./page/home/HomePage";
 import { ErrorPage } from "./page/404/ErrorPage";
 import QuestionPage from "./page/question-page/QuestionPage";
 import UserProfilePage from "./page/user-profile/UserProfilePage";
+import LearningMaterialDetailPage from "./page/learning-material-detail/LearningMaterialDetailPage";
 
 export const loadingIndicator = (
   <Box pos={"relative"} h={"100vh"} w={"100vw"}>
@@ -50,8 +51,12 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: "question-set",
-        element: <QuestionPage/>
+        path: "subject-posting",
+        element: <QuestionPage />,
+      },
+      {
+        path: "learning-material",
+        element: <LearningMaterialDetailPage />,
       },
       {
         path: "auth",
@@ -86,6 +91,7 @@ const router = createBrowserRouter([
               </Suspense>
             ),
           },
+
           {
             path: "reset-password",
             element: (
@@ -102,7 +108,7 @@ const router = createBrowserRouter([
           <Suspense fallback={loadingIndicator}>
             <UserProfilePage />
           </Suspense>
-        )
+        ),
       },
     ],
   },
