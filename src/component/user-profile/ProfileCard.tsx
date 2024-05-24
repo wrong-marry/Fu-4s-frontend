@@ -112,6 +112,7 @@ export function ProfileCard(props: any) {
 
       <div className="flex justify-center my-5">
         <Button
+        onClick={()=>navigate("/change-password")}
           variant="gradient"
           gradient={{ from: "green", to: "indigo", deg: 90 }}
         >

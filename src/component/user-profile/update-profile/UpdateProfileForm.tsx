@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { emptyUser, fetchUser } from "../../../util/UserFetchUtil";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useForm } from "@mantine/form";
+import { isEmail, useForm } from "@mantine/form";
 
 export function UpdateProfileForm() {
   const [user, setUser] = useState(emptyUser);
@@ -23,13 +23,13 @@ export function UpdateProfileForm() {
 
   const form = useForm({
     initialValues: {
-      email: "fds",
+      email: "",
       firstName: "",
-      lastName: "dsad",
+      lastName: "",
     },
 
     validate: {
-      email: (val) => (/^\S+@\S+$/.test(val) ? null : "Ivalid email"),
+      email: isEmail("Invalid email")
     },
   });
   useEffect(() => {
