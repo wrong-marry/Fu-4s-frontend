@@ -1,10 +1,11 @@
-import Object2 from "../../component/questionset/Subject.button";
-import Object3 from "../../component/questionset/Semester.button";
+import DashboardSection from "../../component/manageUser/show-customer";
+import TableUser from "../../component/manageUser/user-list";
+
 export default function ManageUser() {
 	return (
 		<>
-			<Object2 />
-			<Object3 />
+		<DashboardSection/>
+		<TableUser/>
 		</>
 	);
 }

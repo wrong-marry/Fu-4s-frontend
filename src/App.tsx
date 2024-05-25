@@ -25,6 +25,7 @@ import QuestionPage from "./page/question-page/QuestionPage";
 import UserProfilePage from "./page/user-profile/UserProfilePage";
 import LearningMaterialDetailPage from "./page/learning-material-detail/LearningMaterialDetailPage";
 import UpdateProfilePage from "./page/user-profile/UpdateProfilePage";
+import ManageUser from "./page/manageUser-page/ManageUserPage";
 // b47ead004595e7b31c05ecfe636965321163c484
 
 export const loadingIndicator = (
@@ -39,89 +40,93 @@ export const loadingIndicator = (
 );
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Root />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "",
-        element: <LandingPage />,
-      },
-      {
-        path: "home",
-        element: <HomePage />,
-      },
-      {
-        path: "subject-posting",
-        element: <QuestionPage />,
-      },
-      // {
-      //   path: "learning-material",
-      //   element: <LearningMaterialDetailPage />,
-      // },
-      {
-        path: "auth",
-        children: [
-          {
-            index: true,
-            path: "",
-            loader: async () => redirect("/auth/login"),
-          },
-          {
-            path: "login",
+	{
+		path: "/",
+		element: <Root />,
+		errorElement: <ErrorPage />,
+		children: [
+			{
+				path: "",
+				element: <LandingPage />,
+			},
+			{
+				path: "home",
+				element: <HomePage />,
+			},
+			{
+				path: "subject-posting",
+				element: <QuestionPage />,
+			},
+			{
+				path: "manage-user",
+				element: <ManageUser />,
+			},
+			// {
+			//   path: "learning-material",
+			//   element: <LearningMaterialDetailPage />,
+			// },
+			{
+				path: "auth",
+				children: [
+					{
+						index: true,
+						path: "",
+						loader: async () => redirect("/auth/login"),
+					},
+					{
+						path: "login",
 
-            element: (
-              <Suspense fallback={loadingIndicator}>
-                <LoginPage />
-              </Suspense>
-            ),
-          },
-          {
-            path: "register",
-            element: (
-              <Suspense fallback={loadingIndicator}>
-                <RegisterPage />
-              </Suspense>
-            ),
-          },
-          {
-            path: "forgot-password",
-            element: (
-              <Suspense fallback={loadingIndicator}>
-                <ForgotPasswordPage />
-              </Suspense>
-            ),
-          },
+						element: (
+							<Suspense fallback={loadingIndicator}>
+								<LoginPage />
+							</Suspense>
+						),
+					},
+					{
+						path: "register",
+						element: (
+							<Suspense fallback={loadingIndicator}>
+								<RegisterPage />
+							</Suspense>
+						),
+					},
+					{
+						path: "forgot-password",
+						element: (
+							<Suspense fallback={loadingIndicator}>
+								<ForgotPasswordPage />
+							</Suspense>
+						),
+					},
 
-          {
-            path: "reset-password",
-            element: (
-              <Suspense fallback={loadingIndicator}>
-                <ResetPasswordPage />
-              </Suspense>
-            ),
-          },
-        ],
-      },
-      {
-        path: "user",
-        element: (
-          <Suspense fallback={loadingIndicator}>
-            <UserProfilePage />
-          </Suspense>
-        ),
-      },
-      {
-        path: "update-profile",
-        element: (
-          <Suspense fallback={loadingIndicator}>
-            <UpdateProfilePage />
-          </Suspense>
-        ),
-      },
-    ],
-  },
+					{
+						path: "reset-password",
+						element: (
+							<Suspense fallback={loadingIndicator}>
+								<ResetPasswordPage />
+							</Suspense>
+						),
+					},
+				],
+			},
+			{
+				path: "user",
+				element: (
+					<Suspense fallback={loadingIndicator}>
+						<UserProfilePage />
+					</Suspense>
+				),
+			},
+			{
+				path: "update-profile",
+				element: (
+					<Suspense fallback={loadingIndicator}>
+						<UpdateProfilePage />
+					</Suspense>
+				),
+			},
+		],
+	},
 ]);
 
 function App() {
