@@ -82,6 +82,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "logout",
+				element:<Suspense fallback={loadingIndicator}></Suspense>,
 				loader: Logout,
 			},
 			{

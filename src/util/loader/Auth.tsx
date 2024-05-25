@@ -4,7 +4,7 @@ import {fetchUser} from "../UserFetchUtil.tsx";
 export function Logout() {
   localStorage.removeItem("username");
   localStorage.removeItem("token");
-  return redirect("/");
+  window.location.href="/";
 }
 export function isLoggedIn() {
   const username = getUsername();

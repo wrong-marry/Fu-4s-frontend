@@ -9,6 +9,7 @@ import {
   useComputedColorScheme,
 } from "@mantine/core";
 import logo from "../../asset/logo.png";
+import darkLogo from "../../asset/darkLogo.png";
 import {
   NavLink,
   useLoaderData,
@@ -18,7 +19,6 @@ import {
 } from "react-router-dom";
 import {
   IconPhoto,
-  IconMessageCircle,
   IconLibraryPlus,
   IconSquarePlus,
   IconSettings,
@@ -38,8 +38,9 @@ import { toast } from "react-toastify";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
 import FolderModal from "../modal/navbar/create/FolderModal.tsx";
 import ClassModal from "../modal/navbar/create/ClassModal.tsx";
+import {Logout} from "../../util/loader/Auth.tsx";
 
-const userBtn = (data: LoaderData, submit: any, handleLogout: () => void) => {
+const userBtn = (data: LoaderData, handleLogout: any) => {
   return (
     <>
       <Menu shadow="md" width={200}>
@@ -95,7 +96,6 @@ const userBtn = (data: LoaderData, submit: any, handleLogout: () => void) => {
               <IconLogout style={{ width: rem(14), height: rem(14) }} />
             }
             onClick={() => {
-              submit(null, { method: "post", action: "/logout" });
               handleLogout();
             }}
           >
@@ -135,7 +135,7 @@ function Navbar() {
   const [classOpened, { open: classOpen, close: classClose }] =
     useDisclosure(false);
 
-  const { assignUserCredentials, clearUserCredentials } = useContext(
+  const { assignUserCredentials} = useContext(
     UserCredentialsContext
   );
   const mode = useSearchParams()[0].get("mode");
@@ -154,7 +154,6 @@ function Navbar() {
   //     toast.error("Your account has been banned");
   //   }
   // }, [data]);
-  const submit = useSubmit();
   const { colorScheme, setColorScheme } = useMantineColorScheme({
     keepTransitions: true,
   });
@@ -165,19 +164,21 @@ function Navbar() {
   const btnState =
     data?.error || !data
       ? guestBtn(mode as string)
-      : userBtn(data, submit, clearUserCredentials);
+      : userBtn(data, Logout);
   const whichHomepage = data?.error || !data ? "/" : "/home";
 
   return (
     <>
       <header className="w-full h-16 flex items-center justify-between sticky top-0 z-20 shadow-sm bg-[--mantine-color-body]">
         <div className="flex items-center w-full">
+
+
           <NavLink to={whichHomepage} className="w-32 mx-5">
-            <img src={logo} alt="hehelogo" />
+            <img src={(computedColorScheme === "dark") ?darkLogo:logo} alt="Dark FU4S logo" />
           </NavLink>
 
           <div className="ml-5 flex items-center">
-            <NavLink to={whichHomepage} className="no-underline">
+            <NavLink to="/home" className="no-underline">
               {({ isActive }) => (
                 <Button
                   autoContrast

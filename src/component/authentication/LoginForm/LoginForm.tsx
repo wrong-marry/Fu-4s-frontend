@@ -48,7 +48,8 @@ export default function LoginForm(props: PaperProps) {
         .then((data) => {
           localStorage.setItem('username', data.username);
           localStorage.setItem('token', data.token);
-          navigate("/home")
+          window.location.replace("/home");
+          // navigate("/home");
         })
     }
   }
