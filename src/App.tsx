@@ -86,10 +86,6 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "auth",
-				// loader: async () => {
-				// 	if(isLoggedIn()) redirect("/home")
-				// 	//return;
-				// },
 				children: [
 					{
 						index: true,
@@ -98,6 +94,10 @@ const router = createBrowserRouter([
 					},
 					{
 						path: "login",
+						loader: async () => {
+							if(isLoggedIn()) return redirect("/home")
+							else return "";
+						},
 						element: (
 							<Suspense fallback={loadingIndicator}>
 								<LoginPage />
@@ -106,6 +106,10 @@ const router = createBrowserRouter([
 					},
 					{
 						path: "register",
+						loader: async () => {
+							if(isLoggedIn()) return redirect("/home")
+							else return "";
+						},
 						element: (
 							<Suspense fallback={loadingIndicator}>
 								<RegisterPage />
