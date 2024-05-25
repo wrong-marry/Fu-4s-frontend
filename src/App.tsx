@@ -1,16 +1,12 @@
 import {
-  createBrowserRouter,
-  Navigate,
-  redirect,
-  RouterProvider,
+	createBrowserRouter,
+	Navigate,
+	redirect,
+	RouterProvider,
 } from "react-router-dom";
-//import Root from "./pages/Root";
 import { ToastContainer } from "react-toastify";
-// cuu data
 import "react-toastify/dist/ReactToastify.css";
-
 import "@mantine/core/styles.css";
-
 import { lazy, Suspense } from "react";
 import { Box, LoadingOverlay } from "@mantine/core";
 import Root from "./page/Root";
@@ -26,17 +22,19 @@ import UserProfilePage from "./page/user-profile/UserProfilePage";
 import LearningMaterialDetailPage from "./page/learning-material-detail/LearningMaterialDetailPage";
 import UpdateProfilePage from "./page/user-profile/UpdateProfilePage";
 import ManageUser from "./page/manageUser-page/ManageUserPage";
-// b47ead004595e7b31c05ecfe636965321163c484
+import { ChangePassWordForm } from "./component/user-profile/change-password/ChangePassWordForm";
+import { isLoggedIn, Logout } from "./util/loader/Auth";
+import { ForbiddenPage } from "./page/403/ForbiddenPage";
 
 export const loadingIndicator = (
-  <Box pos={"relative"} h={"100vh"} w={"100vw"}>
-    <LoadingOverlay
-      visible
-      zIndex={0}
-      overlayProps={{ radius: "sm", blur: 0, backgroundOpacity: 0 }}
-      loaderProps={{ color: "orange", type: "oval" }}
-    />
-  </Box>
+	<Box pos={"relative"} h={"100vh"} w={"100vw"}>
+		<LoadingOverlay
+			visible
+			zIndex={0}
+			overlayProps={{ radius: "sm", blur: 0, backgroundOpacity: 0 }}
+			loaderProps={{ color: "orange", type: "oval" }}
+		/>
+	</Box>
 );
 
 const router = createBrowserRouter([
@@ -61,10 +59,14 @@ const router = createBrowserRouter([
 				path: "manage-user",
 				element: <ManageUser />,
 			},
-			// {
-			//   path: "learning-material",
-			//   element: <LearningMaterialDetailPage />,
-			// },
+			{
+				path: "change-password",
+				element: <ChangePassWordForm />,
+			},
+			{
+				path: "logout",
+				loader: Logout,
+			},
 			{
 				path: "auth",
 				children: [
@@ -75,7 +77,6 @@ const router = createBrowserRouter([
 					},
 					{
 						path: "login",
-
 						element: (
 							<Suspense fallback={loadingIndicator}>
 								<LoginPage />
@@ -98,7 +99,6 @@ const router = createBrowserRouter([
 							</Suspense>
 						),
 					},
-
 					{
 						path: "reset-password",
 						element: (
@@ -116,6 +116,10 @@ const router = createBrowserRouter([
 						<UserProfilePage />
 					</Suspense>
 				),
+				loader: () => {
+					if (!isLoggedIn()) return redirect("/forbidden");
+					return null;
+				},
 			},
 			{
 				path: "update-profile",
@@ -127,26 +131,33 @@ const router = createBrowserRouter([
 			},
 		],
 	},
+	{
+		path: "/forbidden",
+		element: (
+			<Suspense fallback={loadingIndicator}>
+				<ForbiddenPage />
+			</Suspense>
+		),
+	},
 ]);
 
 function App() {
-  return (
-    <>
-      <ToastContainer
-        position="bottom-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        draggable
-        pauseOnHover
-        theme="light"
-        stacked
-      />
-      <RouterProvider router={router} />
-    </>
-  );
+	return (
+		<>
+			<ToastContainer
+				position="bottom-right"
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				draggable
+				pauseOnHover
+				theme="light"
+			/>
+			<RouterProvider router={router} />
+		</>
+	);
 }
 
 export default App;
