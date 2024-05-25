@@ -14,9 +14,9 @@ export default function HomePage() {
                     <Title order={2}>Recent Posts</Title>
                     <RecentPost />
                     <Title order={2}>Completed Tests</Title>
-                    <CompletedTest />
+                    {/*<CompletedTest />*/}
                     <Title order={2}>Uploaded Posts</Title>
-                    <UploadedPost />
+                    {/*<UploadedPost />*/}
                 </Stack>
             </Container>
         </>

@@ -27,6 +27,7 @@ import { isLoggedIn, Logout } from "./util/loader/Auth";
 import { ForbiddenPage } from "./page/403/ForbiddenPage";
 import { getAuthCredentials} from "./util/loader/Auth";
 import StudyPage from "./page/study/StudyPage.tsx";
+import SearchPage from "./page/search/SearchPage.tsx";
 
 export const loadingIndicator = (
 	<Box pos={"relative"} h={"100vh"} w={"100vw"}>
@@ -54,6 +55,14 @@ const router = createBrowserRouter([
 			{
 				path: "home",
 				element: <HomePage />,
+			},
+			{
+				path: "search",
+				element: (
+					<Suspense fallback={loadingIndicator}>
+						<SearchPage />
+					</Suspense>
+				),
 			},
 			{
 				path: "study",

@@ -84,13 +84,13 @@ function RecentPost() {
                                             <Badge color="pink">Learning Material</Badge>
                                         )}
                                     </Stack>
-                                    <Group align="stretch" gap="xs" withBorder>
+                                    <Group align="stretch" gap="sm" style={{marginBottom:'10px'}}>
                                         <Avatar
                                             variant="filled"
                                             radius="xl"
                                             size="sm"
                                             style={{
-                                                height: '32px',
+                                                height: '110%',
                                                 borderRadius: '50%',
                                                 objectFit: 'cover',
                                                 width : '10%'
@@ -102,7 +102,7 @@ function RecentPost() {
                                                 color="blue"
                                                 style={{
                                                     display: 'inline-block',
-                                                    padding: '4px 8px',
+                                                    padding: '1px 8px',
                                                     borderRadius: '999px',
                                                     fontSize: '12px',
                                                     fontWeight: '500',
