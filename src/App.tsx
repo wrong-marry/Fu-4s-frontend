@@ -23,7 +23,7 @@ import LearningMaterialDetailPage from "./page/learning-material-detail/Learning
 import UpdateProfilePage from "./page/user-profile/UpdateProfilePage";
 import ManageUser from "./page/manageUser-page/ManageUserPage";
 import { ChangePassWordForm } from "./component/user-profile/change-password/ChangePassWordForm";
-import { isLoggedIn, Logout } from "./util/loader/Auth";
+import { isLoggedIn, logout } from "./util/loader/Auth";
 import { ForbiddenPage } from "./page/403/ForbiddenPage";
 import { getAuthCredentials} from "./util/loader/Auth";
 import StudyPage from "./page/study/StudyPage.tsx";
@@ -82,8 +82,8 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "logout",
-				element:<Suspense fallback={loadingIndicator}></Suspense>,
-				loader: Logout,
+                element:<Suspense fallback={loadingIndicator}></Suspense>,
+				loader: logout,
 			},
 			{
 				path: "auth",
@@ -95,6 +95,10 @@ const router = createBrowserRouter([
 					},
 					{
 						path: "login",
+                        loader: async () => {
+                            if(isLoggedIn()) return redirect("/home")
+                            else return "";
+                        },
 						element: (
 							<Suspense fallback={loadingIndicator}>
 								<LoginPage />
@@ -103,6 +107,10 @@ const router = createBrowserRouter([
 					},
 					{
 						path: "register",
+                        loader: async () => {
+                            if(isLoggedIn()) return redirect("/home")
+                            else return "";
+                        },
 						element: (
 							<Suspense fallback={loadingIndicator}>
 								<RegisterPage />

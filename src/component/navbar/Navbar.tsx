@@ -38,7 +38,7 @@ import { toast } from "react-toastify";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
 import FolderModal from "../modal/navbar/create/FolderModal.tsx";
 import ClassModal from "../modal/navbar/create/ClassModal.tsx";
-import {Logout} from "../../util/loader/Auth.tsx";
+import {logout} from "../../util/loader/Auth.tsx";
 
 const userBtn = (data: LoaderData, handleLogout: any) => {
   return (
@@ -96,7 +96,7 @@ const userBtn = (data: LoaderData, handleLogout: any) => {
               <IconLogout style={{ width: rem(14), height: rem(14) }} />
             }
             onClick={() => {
-              handleLogout();
+                handleLogout();
             }}
           >
             Logout
@@ -135,7 +135,7 @@ function Navbar() {
   const [classOpened, { open: classOpen, close: classClose }] =
     useDisclosure(false);
 
-  const { assignUserCredentials} = useContext(
+  const { assignUserCredentials, clearUserCredentials } = useContext(
     UserCredentialsContext
   );
   const mode = useSearchParams()[0].get("mode");
@@ -164,17 +164,15 @@ function Navbar() {
   const btnState =
     data?.error || !data
       ? guestBtn(mode as string)
-      : userBtn(data, Logout);
+      : userBtn(data, logout);
   const whichHomepage = data?.error || !data ? "/" : "/home";
 
   return (
     <>
       <header className="w-full h-16 flex items-center justify-between sticky top-0 z-20 shadow-sm bg-[--mantine-color-body]">
         <div className="flex items-center w-full">
-
-
           <NavLink to={whichHomepage} className="w-32 mx-5">
-            <img src={(computedColorScheme === "dark") ?darkLogo:logo} alt="Dark FU4S logo" />
+            <img src={(computedColorScheme === "dark") ? darkLogo : logo} alt="Dark FU4S logo"/>
           </NavLink>
 
           <div className="ml-5 flex items-center">

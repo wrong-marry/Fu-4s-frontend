@@ -9,7 +9,7 @@ export function Logout() {
 export function isLoggedIn() {
   const username = getUsername();
   const token = getToken();
-  if (!username || !token) {
+    if (username == null || token == null) {
     return false;
   }
   return true;
