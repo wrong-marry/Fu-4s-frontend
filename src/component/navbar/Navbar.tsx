@@ -38,6 +38,7 @@ import { toast } from "react-toastify";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
 import FolderModal from "../modal/navbar/create/FolderModal.tsx";
 import ClassModal from "../modal/navbar/create/ClassModal.tsx";
+import {logout} from "../../util/loader/Auth.tsx";
 
 const userBtn = (data: LoaderData, submit: any, handleLogout: () => void) => {
   return (
@@ -95,8 +96,8 @@ const userBtn = (data: LoaderData, submit: any, handleLogout: () => void) => {
               <IconLogout style={{ width: rem(14), height: rem(14) }} />
             }
             onClick={() => {
-              submit(null, { method: "post", action: "/logout" });
-              handleLogout();
+              //submit(null, { method: "post", action: "/logout" });
+              logout();
             }}
           >
             Logout

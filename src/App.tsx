@@ -23,7 +23,7 @@ import LearningMaterialDetailPage from "./page/learning-material-detail/Learning
 import UpdateProfilePage from "./page/user-profile/UpdateProfilePage";
 import ManageUser from "./page/manageUser-page/ManageUserPage";
 import { ChangePassWordForm } from "./component/user-profile/change-password/ChangePassWordForm";
-import { isLoggedIn, Logout } from "./util/loader/Auth";
+import { isLoggedIn, logout } from "./util/loader/Auth";
 import { ForbiddenPage } from "./page/403/ForbiddenPage";
 import { getAuthCredentials} from "./util/loader/Auth";
 import StudyPage from "./page/study/StudyPage.tsx";
@@ -82,10 +82,14 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "logout",
-				loader: Logout,
+				loader: logout,
 			},
 			{
 				path: "auth",
+				// loader: async () => {
+				// 	if(isLoggedIn()) redirect("/home")
+				// 	//return;
+				// },
 				children: [
 					{
 						index: true,

@@ -7,7 +7,7 @@ export default function Root() {
   return (
     <AppShell>
       <Navbar />
-      <main className="mt-10">
+      <main className="">
         <Outlet />
       </main>
       <Footer />

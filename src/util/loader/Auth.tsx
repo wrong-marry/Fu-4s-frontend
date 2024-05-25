@@ -1,15 +1,15 @@
 import { redirect } from "react-router-dom";
 import {fetchUser} from "../UserFetchUtil.tsx";
 
-export function Logout() {
+export async function logout() {
   localStorage.removeItem("username");
   localStorage.removeItem("token");
-  return redirect("/");
+  location.replace("/")
 }
 export function isLoggedIn() {
   const username = getUsername();
   const token = getToken();
-  if (!username || !token) {
+  if (username == null || token == null) {
     return false;
   }
   return true;
