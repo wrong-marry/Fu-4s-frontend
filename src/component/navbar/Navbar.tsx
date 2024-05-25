@@ -38,7 +38,7 @@ import { toast } from "react-toastify";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
 import FolderModal from "../modal/navbar/create/FolderModal.tsx";
 import ClassModal from "../modal/navbar/create/ClassModal.tsx";
-import {logout} from "../../util/loader/Auth.tsx";
+import {Logout} from "../../util/loader/Auth.tsx";
 
 const userBtn = (data: LoaderData, handleLogout: any) => {
   return (
@@ -164,7 +164,7 @@ function Navbar() {
   const btnState =
     data?.error || !data
       ? guestBtn(mode as string)
-      : userBtn(data, logout);
+      : userBtn(data, Logout);
   const whichHomepage = data?.error || !data ? "/" : "/home";
 
   return (

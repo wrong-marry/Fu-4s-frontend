@@ -77,7 +77,7 @@ function SearchPage() {
                                 >
                                     <Stack gap={2}>
                                         <Text fw={500}>{test.title}</Text>
-                                        <Text fw={200}>{test.postTime
+                                        <Text fw={150} fz={13}>{test.postTime
                                             .toString().substring(0,10)
                                         }
                                         </Text>
@@ -108,7 +108,7 @@ function SearchPage() {
             )}
 
 
-                <Text lh={100}>Mock test</Text>
+                <Text lh={2}>Mock test</Text>
             {resData?.tests.length === 0 ? (
                 <Text c={"dimmed"}>No mock tests found :(</Text>
             ) : (
@@ -141,7 +141,7 @@ function SearchPage() {
                                 >
                                     <Stack gap={2}>
                                         <Text fw={500}>{test.title}</Text>
-                                        <Text fw={200}>{test.postTime
+                                        <Text fw={150} fz={13}>{test.postTime
                                             .toString().substring(0,10)
                                         }
                                         </Text>

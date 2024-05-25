@@ -23,11 +23,12 @@ import LearningMaterialDetailPage from "./page/learning-material-detail/Learning
 import UpdateProfilePage from "./page/user-profile/UpdateProfilePage";
 import ManageUser from "./page/manageUser-page/ManageUserPage";
 import { ChangePassWordForm } from "./component/user-profile/change-password/ChangePassWordForm";
-import { isLoggedIn, logout } from "./util/loader/Auth";
+import { isLoggedIn, Logout } from "./util/loader/Auth";
 import { ForbiddenPage } from "./page/403/ForbiddenPage";
 import { getAuthCredentials} from "./util/loader/Auth";
 import StudyPage from "./page/study/StudyPage.tsx";
 import SearchPage from "./page/search/SearchPage.tsx";
+import PostPage from "./page/post/PostPage.tsx";
 
 export const loadingIndicator = (
 	<Box pos={"relative"} h={"100vh"} w={"100vw"}>
@@ -65,6 +66,12 @@ const router = createBrowserRouter([
 				),
 			},
 			{
+				path: "post/:id",
+				element:<Suspense fallback={loadingIndicator}>
+					<PostPage></PostPage>
+				</Suspense>,
+			},
+			{
 				path: "study",
 				element: <StudyPage />,
 			},
@@ -83,7 +90,7 @@ const router = createBrowserRouter([
 			{
 				path: "logout",
                 element:<Suspense fallback={loadingIndicator}></Suspense>,
-				loader: logout,
+				loader: Logout,
 			},
 			{
 				path: "auth",
