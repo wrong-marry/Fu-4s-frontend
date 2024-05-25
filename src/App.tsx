@@ -25,6 +25,7 @@ import ManageUser from "./page/manageUser-page/ManageUserPage";
 import { ChangePassWordForm } from "./component/user-profile/change-password/ChangePassWordForm";
 import { isLoggedIn, Logout } from "./util/loader/Auth";
 import { ForbiddenPage } from "./page/403/ForbiddenPage";
+import { getAuthCredentials} from "./util/loader/Auth";
 
 export const loadingIndicator = (
 	<Box pos={"relative"} h={"100vh"} w={"100vw"}>
@@ -40,11 +41,13 @@ export const loadingIndicator = (
 const router = createBrowserRouter([
 	{
 		path: "/",
+		loader: getAuthCredentials,
 		element: <Root />,
 		errorElement: <ErrorPage />,
 		children: [
 			{
 				path: "",
+				index:true,
 				element: <LandingPage />,
 			},
 			{
