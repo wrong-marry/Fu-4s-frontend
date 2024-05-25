@@ -26,6 +26,7 @@ import { ChangePassWordForm } from "./component/user-profile/change-password/Cha
 import { isLoggedIn, Logout } from "./util/loader/Auth";
 import { ForbiddenPage } from "./page/403/ForbiddenPage";
 import { getAuthCredentials} from "./util/loader/Auth";
+import StudyPage from "./page/study/StudyPage.tsx";
 
 export const loadingIndicator = (
 	<Box pos={"relative"} h={"100vh"} w={"100vw"}>
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
 			{
 				path: "home",
 				element: <HomePage />,
+			},
+			{
+				path: "study",
+				element: <StudyPage />,
 			},
 			{
 				path: "subject-posting",

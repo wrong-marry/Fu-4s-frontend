@@ -60,7 +60,7 @@ const userBtn = (data: LoaderData, submit: any, handleLogout: () => void) => {
 
         <Menu.Dropdown>
           <Menu.Label>Menu</Menu.Label>
-          <NavLink to={"/user/profile/sets"}>
+          <NavLink to={"/update-profile"}>
             <Menu.Item
               leftSection={
                 <IconUserCircle style={{ width: rem(14), height: rem(14) }} />
@@ -188,7 +188,7 @@ function Navbar() {
                 </Button>
               )}
             </NavLink>
-            <NavLink to="/user/profile/study" className="no-underline">
+            <NavLink to="/study" className="no-underline">
               {({ isActive }) => (
                 <Button
                   autoContrast
