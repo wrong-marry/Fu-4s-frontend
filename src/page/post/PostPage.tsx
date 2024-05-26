@@ -1,38 +1,72 @@
 import {Post} from "../search/SearchPage";
-import { Card, Image, Text, Group, RingProgress } from '@mantine/core';
+import {Card, Image, Text, Group, RingProgress, Badge} from '@mantine/core';
 import classes from './CardWithStats.module.css';
+import axios from "axios";
+import {useParams} from "react-router-dom";
+import {useEffect, useState} from "react";
 
-const stats = [
-    { title: 'Uploader', value: 'UserABC' },
-    { title: 'Posted on', value: '2024/5/25' },
-    { title: 'Subject', value: 'SWP391' },
-];
 
 export function CardWithStats() {
-    const items = stats.map((stat) => (
-        <div key={stat.title}>
-            <Text size="xs" color="dimmed">
-                {stat.title}
-            </Text>
-            <Text fw={500} size="sm">
-                {stat.value}
-            </Text>
-        </div>
-    ));
+    const id = useParams().id;
+    const [data, setData] = useState();
+    useEffect(() => {
+        async function FetchPost(id) {
+            const response = await axios.get(`http://localhost:8080/api/v1/post/get?id=${id}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                }
+            });
+            setData(response.data);
+            console.log(data);
+            return data;
+        }
+        if (!data) FetchPost(id);
+    }, []);
+    const footerItems = (
+        data?
+            <>
+                <div key={"Post"}>
+                    <Text size="xs" color="dimmed">
+                        Uploader
+                    </Text>
+                    <Text fw={500} size="sm">
+                        {data.username}
+                    </Text>
+                </div>
+                <div key={"Time"}>
+                <Text size="xs" color="dimmed">
+                    Post time
+                </Text>
+                <Text fw={500} size="sm">
+                    {data.postTime.toString().substring(0,10)}
+                </Text>
+                </div>
+                <div key={"Subject"}>
+                <Text size="xs" color="dimmed">
+                    Subject
+                </Text>
+                <Text fw={500} size="sm">
+                    {data.subjectCode}
+                </Text></div>
+            </> :
+            <div>
+            No data
+            </div>
+    );
 
     return (
         <Card withBorder padding="lg" className={classes.card}>
             <Card.Section>
                 <Image
                     src="https://cdn.shortpixel.ai/spai/w_600+q_lossy+ret_img+to_webp/thesocialmediamonthly.com/wp-content/uploads/2018/01/quiz.jpg"
-                    alt="Running challenge"
-                    height={100}
+                    alt="QuizPlash"
+                    height={30}
                 />
             </Card.Section>
 
             <Group justify="space-between" mt="xl">
                 <Text fz="sm" fw={700} className={classes.title}>
-                    Running challenge
+                    {data?.title}
                 </Text>
                 <Group gap={5}>
                     <Text fz="xs" c="dimmed">
@@ -40,18 +74,22 @@ export function CardWithStats() {
                     </Text>
                     <RingProgress size={18} thickness={2} sections={[{ value: 80, color: 'blue' }]} />
                 </Group>
+                {data?.isTest?
+                    <Badge color="indigo">Mock Test</Badge>
+                    :
+                    <Badge color="pink">Learning material</Badge>}
             </Group>
             <Text mt="sm" mb="md" c="dimmed" fz="xs">
                 56 km this month • 17% improvement compared to last month • 443 place in global scoreboard
             </Text>
-            <Card.Section className={classes.footer}>{items}</Card.Section>
+            <Card.Section className={classes.footer}>{footerItems}</Card.Section>
         </Card>
     );
 }
 export default function PostPage() {
     return <>
         <Card>
-        <CardWithStats/>
+            <CardWithStats/>
         </Card>
     </>
 }
