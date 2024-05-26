@@ -48,13 +48,13 @@ function RecentPost() {
     return (
         <>
             {recentPost.length === 0 ? (
-                <Text c={"dimmed"}>No completed tests available :(</Text>
+                <Text c={"dimmed"}>Recent posts found :(</Text>
             ) : (
                 <Carousel
-                    slideSize={"33.333333%"}
+                    slideSize={"25%"}
                     height={"150px"}
                     align={"start"}
-                    slideGap="lg"
+                    slideGap="md"
                     controlsOffset="xs"
                     controlSize={30}
                     dragFree
@@ -62,6 +62,8 @@ function RecentPost() {
                     {recentPost?.map((test, index) => (
                         <Carousel.Slide key={index}>
                             <Card
+                                miw={"300px"}
+                                maw={"300px"}
                                 shadow="sm"
                                 radius="md"
                                 padding={"lg"}
@@ -76,7 +78,7 @@ function RecentPost() {
                                     className="cursor-pointer justify-between h-full"
                                 >
                                     <Stack gap={2}>
-                                        <Text fw={360}>{test.title}</Text>
+                                        <Text fw={360} truncate="end">{test.title}</Text>
                                         <Text fw={200} fz={12}>{test.postTime.toString().substring(0, 10)}</Text>
                                         {test.test ? (
                                             <Badge color="indigo">Mock Test</Badge>

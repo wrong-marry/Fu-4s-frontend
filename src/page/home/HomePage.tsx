@@ -1,5 +1,5 @@
 import DocumentTitle from "../../component/document-title/DocumentTitle.tsx";
-import {Container, Stack, Title} from "@mantine/core";
+import {Card, Container, Stack, Title} from "@mantine/core";
 import RecentPost from "../../component/home/RecentPost.tsx";
 import CompletedTest from "../../component/home/CompletedTest.tsx";
 import UploadedPost from "../../component/home/UploadedPost.tsx";
@@ -12,6 +12,7 @@ export default function HomePage() {
     return (
         <>
             <Container className="container">
+                <Card>
                 <Stack gap="md">
                     <Title order={2}>Recent Posts</Title>
                     <RecentPost />
@@ -20,6 +21,7 @@ export default function HomePage() {
                     <Title order={2}>Uploaded Posts</Title>
                     {/*<UploadedPost />*/}
                 </Stack>
+                </Card>
             </Container>
         </>
     );
