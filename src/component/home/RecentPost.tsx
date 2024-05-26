@@ -22,7 +22,7 @@ function RecentPost() {
 
     useEffect(() => {
         axios
-            .get(`http://localhost:8080/api/v1/getRecentPost`)
+            .get(`http://localhost:8080/api/v1/post/recent`)
             .then((res) => {
                 const sortedList =
                     res && res.data
@@ -48,7 +48,7 @@ function RecentPost() {
     return (
         <>
             {recentPost.length === 0 ? (
-                <Text c={"dimmed"}>Recent posts found :(</Text>
+                <Text c={"dimmed"}>No recent posts found</Text>
             ) : (
                 <Carousel
                     slideSize={"25%"}

@@ -19,7 +19,7 @@ import HomePage from "./page/home/HomePage";
 import { ErrorPage } from "./page/404/ErrorPage";
 import QuestionPage from "./page/question-page/QuestionPage";
 import UserProfilePage from "./page/user-profile/UserProfilePage";
-import LearningMaterialDetailPage from "./page/learning-material-detail/LearningMaterialDetailPage";
+// import LearningMaterialDetailPage from "./page/learning-material-detail/LearningMaterialDetailPage";
 import UpdateProfilePage from "./page/user-profile/UpdateProfilePage";
 import ManageUser from "./page/manageUser-page/ManageUserPage";
 import { ChangePassWordForm } from "./component/user-profile/change-password/ChangePassWordForm";
@@ -90,7 +90,7 @@ const router = createBrowserRouter([
 			{
 				path: "logout",
                 element:<Suspense fallback={loadingIndicator}></Suspense>,
-				loader: Logout,
+				// loader: Logout,
 			},
 			{
 				path: "auth",

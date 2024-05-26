@@ -29,11 +29,11 @@ function FolderModal({
 
   const form = useForm({
     initialValues: {
-      folderTitle: "",
-      folderDescription: "",
+      fileName: "",
+      description: "",
     },
     validate: {
-      folderTitle: isNotEmpty("Folder title is required"),
+      fileName: isNotEmpty("File name is required"),
     },
   });
   return (
@@ -43,15 +43,15 @@ function FolderModal({
         onClose={close}
         centered
         size="xl"
-        title="Create a new folder"
+        title="Upload a file"
       >
         <fetcher.Form
           onSubmit={form.onSubmit(() => {
             fetcher.submit(
               {
-                folderTitle: form.values.folderTitle,
-                folderDescription: form.values.folderDescription,
-                action: "create-folder",
+                folderTitle: form.values.fileName,
+                folderDescription: form.values.description,
+                action: "upload-file",
               },
               { method: "post" }
             );
@@ -60,14 +60,14 @@ function FolderModal({
         >
           <Stack gap={"md"}>
             <TextInput
-              placeholder="Enter folder title"
+              placeholder="Enter file name"
               name="folderTitle"
-              {...form.getInputProps("folderTitle")}
+              {...form.getInputProps("fileName")}
             />
             <TextInput
               placeholder="Enter a description (optional)"
-              name="folderDescription"
-              {...form.getInputProps("folderDescription")}
+              name="description"
+              {...form.getInputProps("description")}
             />
             <Button
               className="self-end"
@@ -77,7 +77,7 @@ function FolderModal({
               loading={isSubmitting}
               disabled={isSubmitting}
             >
-              Create folder
+              Upload file
             </Button>
           </Stack>
         </fetcher.Form>
