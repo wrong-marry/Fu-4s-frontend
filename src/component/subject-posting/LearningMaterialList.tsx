@@ -61,7 +61,7 @@ function LearningMaterialList() {
   }
 
   const handleLearningMaterialClick = (id: string) => {
-    navigate(`/learningMaterial?id=${id}`);
+    navigate(`/learning-material/${id}`);
   };
 
   return (
