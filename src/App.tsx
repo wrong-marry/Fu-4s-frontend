@@ -31,6 +31,7 @@ import PostPage from "./page/post/PostPage.tsx";
 import LearningMaterialList from "./component/subject-posting/LearningMaterialList.tsx";
 import LearningMaterialDetail from "./component/learning-material/LearningMaterialDetail.tsx";
 import NotificationList from "./component/notification/NotificationList.tsx";
+import {UserPostPage} from "./page/user-post/UserPostPage.tsx";
 export const loadingIndicator = (
   <Box pos={"relative"} h={"100vh"} w={"100vw"}>
     <LoadingOverlay
@@ -163,15 +164,37 @@ const router = createBrowserRouter([
       },
       {
         path: "user",
-        element: (
-          <Suspense fallback={loadingIndicator}>
-            <UserProfilePage />
-          </Suspense>
-        ),
-        loader: () => {
-          if (!isLoggedIn()) return redirect("/forbidden");
-          return null;
-        },
+        children: [
+          {
+            index: true,
+            path: "",
+            loader: async () => redirect("/user/profile"),
+          },
+          {
+            path: "profile",
+            element: (
+                <Suspense fallback={loadingIndicator}>
+                  <UserProfilePage />
+                </Suspense>
+            ),
+            loader: () => {
+              if (!isLoggedIn()) return redirect("/forbidden");
+              return null;
+            },
+          },
+          {
+            path: "post",
+            element: (
+                <Suspense fallback={loadingIndicator}>
+                  <UserPostPage />
+                </Suspense>
+            ),
+            loader: () => {
+              if (!isLoggedIn()) return redirect("/forbidden");
+              return null;
+            },
+          }
+        ]
       },
       {
         path: "update-profile",
