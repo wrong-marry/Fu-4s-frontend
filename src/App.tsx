@@ -32,6 +32,9 @@ import LearningMaterialList from "./component/subject-posting/LearningMaterialLi
 import LearningMaterialDetail from "./component/learning-material/LearningMaterialDetail.tsx";
 import NotificationList from "./component/notification/NotificationList.tsx";
 import {UserPostPage} from "./page/user-post/UserPostPage.tsx";
+import {UserLearningMaterialPage} from "./page/user-post/UserLearningMaterialPage.tsx";
+import {UserMockTestTable} from "./component/user-post/UserMockTestTable.tsx";
+import {UserMockTestPage} from "./page/user-post/UserMockTestPage.tsx";
 export const loadingIndicator = (
   <Box pos={"relative"} h={"100vh"} w={"100vw"}>
     <LoadingOverlay
@@ -184,15 +187,44 @@ const router = createBrowserRouter([
           },
           {
             path: "post",
-            element: (
-                <Suspense fallback={loadingIndicator}>
-                  <UserPostPage />
-                </Suspense>
-            ),
-            loader: () => {
-              if (!isLoggedIn()) return redirect("/forbidden");
-              return null;
-            },
+            children: [
+              {
+                path: "",
+                element: (
+                    <Suspense fallback={loadingIndicator}>
+                      <UserPostPage />
+                    </Suspense>
+                ),
+                loader: () => {
+                  if (!isLoggedIn()) return redirect("/forbidden");
+                  return null;
+                }
+              },
+              {
+                path: "mock-test",
+                element: (
+                    <Suspense fallback={loadingIndicator}>
+                      <UserMockTestPage/>
+                    </Suspense>
+                ),
+                loader: () => {
+                  if (!isLoggedIn()) return redirect("/forbidden");
+                  return null;
+                }
+              },
+              {
+                path: "learning-material",
+                element: (
+                    <Suspense fallback={loadingIndicator}>
+                      <UserLearningMaterialPage/>
+                    </Suspense>
+                ),
+                loader: () => {
+                  if (!isLoggedIn()) return redirect("/forbidden");
+                  return null;
+                }
+              }
+            ]
           }
         ]
       },

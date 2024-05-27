@@ -6,10 +6,9 @@ interface Post {
     status: string;
     subjectCode: string;
     postTime: string;
-    test: boolean;
 }
 
-export function UserPostTable() {
+export function UserLearningMaterialTable() {
     const [posts, setPost] = useState<Post[]>([]);
 
     useEffect(() => {
@@ -17,7 +16,7 @@ export function UserPostTable() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/post/getAllByUsername?username=user1&pageNum=1&pageSize=10`
+                    `http://localhost:8080/api/v1/learningMaterial/getAllByUsername?username=user1&pageNum=1&pageSize=10`
                 );
                 const data = await response.json();
                 setPost(data)
@@ -54,14 +53,6 @@ export function UserPostTable() {
 
                 <td>{post.subjectCode}</td>
 
-                <td>
-                    {post.test ?
-                        'Mock Test'
-                    :
-                        'Learning Material'
-                    }
-                </td>
-
                 <td style={{textAlign: "center"}}>
                     <span className="inline-block py-1 px-2 text-white bg-gray-600 rounded-full">
                             Edit
@@ -81,7 +72,7 @@ export function UserPostTable() {
                         </div>
                         <div>
                             <a
-                                className="inline-block px-4 pb-2 text-sm font-medium text-indigo-500 border-b-2 border-indigo-500"
+                                className="inline-block px-4 pb-2 text-sm font-medium text-gray-500 border-b-2 border-transparent"
                                 href=""
                             >
                                 All
@@ -93,7 +84,7 @@ export function UserPostTable() {
                                 Mock Tests
                             </a>
                             <a
-                                className="inline-block px-4 pb-2 text-sm font-medium text-gray-500 border-b-2 border-transparent"
+                                className="inline-block px-4 pb-2 text-sm font-medium text-indigo-500 border-b-2 border-indigo-500"
                                 href="/user/post/learning-material"
                             >
                                 Learning Materials
@@ -130,11 +121,7 @@ export function UserPostTable() {
                                         <span>Subject</span>
                                     </a>
                                 </th>
-                                <th className="py-4 font-medium">
-                                    <a className="flex items-center" href="#">
-                                        <span>Type</span>
-                                    </a>
-                                </th>
+
                                 <th className="py-4 font-medium" style={{width: "5px"}}>
                                     <a className="flex items-center" href="#">
                                         <span>Options</span>
