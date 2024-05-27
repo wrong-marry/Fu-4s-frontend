@@ -165,7 +165,7 @@ function Navbar() {
     data?.error || !data
       ? guestBtn(mode as string)
       : userBtn(data, Logout);
-  const whichHomepage = data?.error || !data ? "/" : "/home";
+  const whichHomepage = "";
 
   return (
     <>
