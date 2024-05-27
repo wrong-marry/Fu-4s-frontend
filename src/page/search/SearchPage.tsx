@@ -106,7 +106,7 @@ export interface Post {
     title: string;
     subjectCode: string;
     username: string;
-    isTest: boolean;
+    test: boolean;
 }
 interface ResponseMaterialData {
     totalMaterial: number;
@@ -117,17 +117,6 @@ interface ResponseTestData {
     tests: Post[];
 }
 export const POST_PAGE_SIZE = 10;
-export async function fetchPostData(keyword: string, page:number) {
-    try {
-        const response = await axios.get(
-            `http://localhost:8080/api/v1/search?keyword=${keyword}&pageSize=`+POST_PAGE_SIZE+
-            `&page=`+page
-        );
-        return response.data;
-    } catch (error) {
-        throw new Error("Error fetching post data");
-    }
-}
 interface SearchRequest {
     username: string|null;
     title: string|null;
@@ -158,7 +147,6 @@ export async function advancedSearch(searchRequest: SearchRequest) {
     }
 }
 function SearchPage() {
-    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [resMaterialData, setResMaterialData] = useState<ResponseMaterialData>();
     const [resTestData, setResTestData] = useState<ResponseTestData>();
@@ -179,7 +167,7 @@ function SearchPage() {
     };
     const [searchRequest, setSearchRequest] = useState({
         username: null,
-        title: null,
+        title: searchParams.get("keyword"),
         subjectCode: null,
         postTime: null,
         isTest: null,
@@ -188,7 +176,6 @@ function SearchPage() {
         currentPage: 1,
     });
     useEffect(() => {
-        if (searchParams.get("keyword")) setSearchRequest({...searchRequest, title: searchParams.get("keyword")});
         advancedFetchData(searchRequest);
     }, [searchRequest]);
 
@@ -201,221 +188,181 @@ function SearchPage() {
             <Text ta={"center"} fw={650} fz={25}>Search result</Text>
             {searchDrawer()}
             <Text lh={3} ta={"center"}>______</Text>
-            <Text lh={2} fw={650} fz={25}>Learning material</Text>
-            {resMaterialData?.learningMaterials.length === 0 ? (
-                <Text c={"dimmed"}>No learning material found :(</Text>
-            ) : (
-                <Card display={"flex"}><Card.Section>
-                <Carousel
-                    slideSize={"33.333333%"}
-                    height={"180px"}
-                    align={"start"}
-                    slideGap="lg"
-                    controlsOffset="xs"
-                    controlSize={30}
-                    dragFree
-                    classNames={classes}
-                >
-                    {resMaterialData?.learningMaterials?.map((test, index) => (
-                        <Carousel.Slide key={index}>
-                            <Card
-                                shadow="sm"
-                                radius="md"
-                                padding={"lg"}
-                                withBorder
-                                component="a"
-                                className="h-full"
-                            >
-                                <Stack
-                                    onClick={() => {
-                                        navigate(`/post/${test.id}`);
-                                    }}
-                                    className="cursor-pointer justify-between h-full"
-                                >
-                                    <Stack gap={2}>
-                                        <Text fw={500} truncate="end">{test.title}</Text>
-                                        <Text fw={150} fz={13}>{test.postTime
-                                            .toString().substring(0,10)
-                                        }
-                                        </Text>
-                                        {
-                                            (test.isTest)?
-                                                <Badge color="indigo">
-                                                    Mock Test
-                                                </Badge> :
-                                                <Badge color="pink">
-                                                    Learning Material
-                                                </Badge>
-                                        }
-                                    </Stack>
-                                    <Group gap={"xs"}>
-                                        <Avatar variant="filled" radius="xl" size="sm" />
-                                        <Text size="sm">{test.username}</Text>
-                                        <Stack gap={2}>
-                                            <Badge color="blue">
-                                                {test.subjectCode}
-                                            </Badge>
-                                        </Stack>
-                                    </Group>
-                                </Stack>
-                            </Card>
-                        </Carousel.Slide>
-                    ))}
-                </Carousel>
-                </Card.Section>
-                    <Center>
-                        <Pagination
-                            mt={"lg"}
-                            value={currentMaterialPage}
-                            total={numberOfMaterialPages}
-                            getItemProps={(page) => ({
-                                onClick: () => {
-                                    setCurrentMaterialPage(page);
-                                    setSearchRequest({ ...searchRequest, currentPage: page, isTest: false });
-                                }
-                            })}
-                            getControlProps={(control) => {
-                                if (control === 'first') {
-                                    return { onClick: () => {
-                                            setCurrentTestPage(1);
-                                            setSearchRequest({ ...searchRequest, currentPage: 1, isTest: false });
-                                        } };
-                                }
 
-                                if (control === 'last') {
-                                    return { onClick: () => {
-                                            setCurrentMaterialPage(numberOfMaterialPages);
-                                            setSearchRequest({ ...searchRequest, currenPage: numberOfMaterialPages, isTest: false });
-                                        } };
-                                }
+            {
+                (resTestData==null)?
+                    <></> :
+                (resMaterialData==null)?
+                    <></> :
+                    <>
+                        <Text lh={2} fw={650} fz={25}>Learning material</Text>
+                        {(resMaterialData?.learningMaterials.length === 0) ?
+                            <Text c={"dimmed"}>No learning material found</Text>
+                            :
+                            MyPostList(resMaterialData.learningMaterials)}
+                    </>
+            }
+            <Center>
+                <Pagination
+                    mt={"lg"}
+                    value={currentMaterialPage}
+                    total={numberOfMaterialPages}
+                    getItemProps={(page) => ({
+                        onClick: () => {
+                            setCurrentMaterialPage(page);
+                            setSearchRequest({ ...searchRequest, currentPage: page, isTest: false });
+                        }
+                    })}
+                    getControlProps={(control) => {
+                        if (control === 'first') {
+                            return { onClick: () => {
+                                    setCurrentMaterialPage(1);
+                                    setSearchRequest({ ...searchRequest, currentPage: 1, isTest: false });
+                                } };
+                        }
 
-                                if (control === 'next') {
-                                    return { onClick: () => {
-                                            setCurrentMaterialPage(currentMaterialPage+1);
-                                            setSearchRequest({ ...searchRequest, currentPage: currentMaterialPage, isTest: false });
-                                        } };
-                                }
+                        if (control === 'last') {
+                            return { onClick: () => {
+                                    setCurrentMaterialPage(numberOfMaterialPages);
+                                    setSearchRequest({ ...searchRequest, currenPage: numberOfMaterialPages, isTest: false });
+                                } };
+                        }
 
-                                if (control === 'previous') {
-                                    return { onClick: () => {
-                                            setCurrentMaterialPage(currentMaterialPage-1);
-                                            setSearchRequest({ ...searchRequest, currentPage: currentMaterialPage, isTest: false });
-                                        } };
-                                }
+                        if (control === 'next') {
+                            return { onClick: () => {
+                                    setCurrentMaterialPage(currentMaterialPage+1);
+                                    setSearchRequest({ ...searchRequest, currentPage: currentMaterialPage, isTest: false });
+                                } };
+                        }
 
-                                return {};
-                            }}
-                        />
-                    </Center>
-                </Card>
-            )}
+                        if (control === 'previous') {
+                            return { onClick: () => {
+                                    setCurrentMaterialPage(currentMaterialPage-1);
+                                    setSearchRequest({ ...searchRequest, currentPage: currentMaterialPage, isTest: false });
+                                } };
+                        }
 
+                        return {};
+                    }}
+                />
+            </Center>
+            {
+                (resTestData==null)?
+                   <></> :
+                    <>
+                        <Text lh={2} fw={650} fz={25}>Mock test</Text>
+                        {(resTestData?.tests.length === 0) ?
+                        <Text c={"dimmed"}>No mock tests found</Text>
+                        :
+                        MyPostList(resTestData.tests)}
+                    </>
+            }
+            <Center>
+                <Pagination
+                    mt={"lg"}
+                    value={currentTestPage}
+                    total={numberOfTestPages}
+                    getItemProps={(page) => ({
+                        onClick: () => {
+                            setCurrentTestPage(page);
+                            setSearchRequest({ ...searchRequest, currentPage: page, isTest: true });
+                        }
+                    })}
+                    getControlProps={(control) => {
+                        if (control === 'first') {
+                            return { onClick: () => {
+                                    setCurrentTestPage(1);
+                                    setSearchRequest({ ...searchRequest, currentPage: 1, isTest: true });
+                                } };
+                        }
 
-                <Text lh={2} fw={650} fz={25}>Mock test</Text>
-            {resTestData?.tests.length === 0 ? (
-                <Text c={"dimmed"}>No mock tests found :(</Text>
-            ) : (
-                <Card><Card.Section>
-                <Carousel
-                    slideSize={"33.333333%"}
-                    height={"180px"}
-                    align={"start"}
-                    slideGap="lg"
-                    controlsOffset="xs"
-                    controlSize={30}
-                    dragFree
-                    classNames={classes}
-                >
-                    {resTestData?.tests?.map((test, index) => (
-                        <Carousel.Slide key={index}>
-                            <Card
-                                shadow="sm"
-                                radius="md"
-                                padding={"lg"}
-                                withBorder
-                                component="a"
-                                className="h-full"
-                            >
-                                <Stack
-                                    onClick={() => {
-                                        navigate(`/post/${test.id}`);
-                                    }}
-                                    className="cursor-pointer justify-between h-full"
-                                >
-                                    <Stack gap={2}>
-                                        <Text fw={500} truncate="end">{test.title}</Text>
-                                        <Text fw={150} fz={13}>{test.postTime
-                                            .toString().substring(0,10)
-                                        }
-                                        </Text>
-                                        {
-                                                <Badge color="indigo">
-                                                    Mock Test
-                                                </Badge>
-                                        }
-                                    </Stack>
-                                    <Group gap={"xs"}>
-                                        <Avatar variant="filled" radius="xl" size="sm" />
-                                        <Text size="sm">{test.username}</Text>
-                                        <Stack gap={2}>
-                                            <Badge color="blue">
-                                                {test.subjectCode}
-                                            </Badge>
-                                        </Stack>
-                                    </Group>
-                                </Stack>
-                            </Card>
-                        </Carousel.Slide>
-                    ))}
-                </Carousel></Card.Section>
-                    <Center>
-                        <Pagination
-                            mt={"lg"}
-                            value={currentTestPage}
-                            total={numberOfTestPages}
-                            getItemProps={(page) => ({
-                                onClick: () => {
-                                    setCurrentTestPage(page);
-                                    setSearchRequest({ ...searchRequest, currentPage: page, isTest: true });
-                                }
-                            })}
-                            getControlProps={(control) => {
-                                if (control === 'first') {
-                                    return { onClick: () => {
-                                            setCurrentTestPage(1);
-                                            setSearchRequest({ ...searchRequest, currentPage: 1, isTest: true });
-                                        } };
-                                }
+                        if (control === 'last') {
+                            return { onClick: () => {
+                                    setCurrentTestPage(numberOfTestPages);
+                                    setSearchRequest({ ...searchRequest, currenPage: numberOfTestPages, isTest: true });
+                                } };
+                        }
 
-                                if (control === 'last') {
-                                    return { onClick: () => {
-                                            setCurrentTestPage(numberOfTestPages);
-                                            setSearchRequest({ ...searchRequest, currentPage: numberOfTestPages, isTest: true });
-                                        } };
-                                }
+                        if (control === 'next') {
+                            return { onClick: () => {
+                                    setCurrentTestPage(currentTestPage+1);
+                                    setSearchRequest({ ...searchRequest, currentPage: currentTestPage, isTest: true });
+                                } };
+                        }
 
-                                if (control === 'next') {
-                                    return { onClick: () => {
-                                            setCurrentTestPage(currentTestPage+1);
-                                            setSearchRequest({ ...searchRequest, currentPage: currentTestPage, isTest: true });
-                                        } };
-                                }
+                        if (control === 'previous') {
+                            return { onClick: () => {
+                                    setCurrentTestPage(currentTestPage-1);
+                                    setSearchRequest({ ...searchRequest, currentPage: currentTestPage, isTest: false });
+                                } };
+                        }
 
-                                if (control === 'previous') {
-                                    return { onClick: () => {
-                                            setCurrentTestPage(currentTestPage-1);
-                                            setSearchRequest({ ...searchRequest, currentPage: currentTestPage, isTest: true });
-                                        } };
-                                }
-
-                                return {};
-                            }}
-                        />
-                    </Center>
-                </Card>
-            )}
+                        return {};
+                    }}
+                />
+            </Center>
         </Container>
     );
 }
-
+export function MyPostList(resData:Post[]) {
+    return <>
+        <Card>
+            <Carousel
+                slideSize={"33.333333%"}
+                height={"180px"}
+                align={"start"}
+                slideGap="lg"
+                controlsOffset="xs"
+                controlSize={30}
+                dragFree
+                classNames={classes}
+            >
+                {resData?.map((test, index) => (
+                    <Carousel.Slide key={index}>
+                        <Card
+                            shadow="sm"
+                            radius="md"
+                            padding={"lg"}
+                            withBorder
+                            component="a"
+                            className="h-full"
+                        >
+                            <Stack
+                                onClick={() => {
+                                }}
+                                className="cursor-pointer justify-between h-full"
+                            >
+                                <Stack gap={2}>
+                                    <Text fw={500} truncate="end">{test.title}</Text>
+                                    <Text fw={150} fz={13}>{test.postTime
+                                        .toString().substring(0,10)
+                                    }
+                                    </Text>
+                                    {
+                                        (test.test)?
+                                            <Badge color="indigo">
+                                                Mock Test
+                                            </Badge> :
+                                            <Badge color="pink">
+                                                Learning Material
+                                            </Badge>
+                                    }
+                                </Stack>
+                                <Group gap={"xs"}>
+                                    <Avatar variant="filled" radius="xl" size="sm" />
+                                    <Text size="sm">{test.username}</Text>
+                                    <Stack gap={2}>
+                                        <Badge color="blue">
+                                            {test.subjectCode}
+                                        </Badge>
+                                    </Stack>
+                                </Group>
+                            </Stack>
+                        </Card>
+                    </Carousel.Slide>
+                ))}
+            </Carousel>
+        </Card>
+        </>;
+}
 export default SearchPage;
