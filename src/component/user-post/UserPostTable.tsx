@@ -27,16 +27,18 @@ export function UserPostTable() {
         };
 
         fetchPost();
-    }, [])
+    })
 
     const rows =
         posts.map(post => (
-            <tr className="text-xs bg-gray-50">
+            <tr className="text-xs bg-gray-50" key={post.id}>
                 <td className="flex items-center py-5 px-6 font-medium">
                     <p>{post.id}</p>
                 </td>
 
-                <td className="font-medium">{post.title}</td>
+                <td className="font-medium">
+                    <a href={'/post/' + post.id}>{post.title}</a>
+                </td>
 
                 <td className="font-medium">{post.postTime}</td>
 

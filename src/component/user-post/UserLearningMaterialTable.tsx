@@ -30,12 +30,14 @@ export function UserLearningMaterialTable() {
 
     const rows =
         posts.map(post => (
-            <tr className="text-xs bg-gray-50">
+            <tr className="text-xs bg-gray-50" key={post.id}>
                 <td className="flex items-center py-5 px-6 font-medium">
                     <p>{post.id}</p>
                 </td>
 
-                <td className="font-medium">{post.title}</td>
+                <td className="font-medium">
+                    <a href={'/post/' + post.id}>{post.title}</a>
+                </td>
 
                 <td className="font-medium">{post.postTime}</td>
 
@@ -64,7 +66,7 @@ export function UserLearningMaterialTable() {
     return <>
         <section className="py-8">
             <div className="container px-4 mx-auto">
-                <div className="pt-6 bg-white shadow rounded">
+            <div className="pt-6 bg-white shadow rounded">
                     <div className="px-6 border-b">
                         <div className="flex flex-wrap items-center mb-6">
                             <h3 className="text-xl font-bold">Your uploaded posts</h3>
@@ -73,7 +75,7 @@ export function UserLearningMaterialTable() {
                         <div>
                             <a
                                 className="inline-block px-4 pb-2 text-sm font-medium text-gray-500 border-b-2 border-transparent"
-                                href=""
+                                href="/user/post"
                             >
                                 All
                             </a>
