@@ -147,10 +147,9 @@ export async function advancedSearch(searchRequest: SearchRequest) {
         let api = `http://localhost:8080/api/v1/search?pageSize=`+POST_PAGE_SIZE;
         if (searchRequest.username) api+=`&username=${searchRequest.username}`;
         if (searchRequest.title) api+=`&keyword=${searchRequest.title}`;
-        if (searchRequest.isTest) api+=`&isTest=${searchRequest.isTest}`;
+        if (searchRequest.isTest!=null) api+=`&isTest=${searchRequest.isTest}`;
         api+=`&order=${searchRequest.order}`;
 
-        console.log(searchRequest);
         api+=`&page=${searchRequest.currentPage}`;
         const response = await axios.get(api);
         return response.data;
@@ -165,15 +164,6 @@ function SearchPage() {
     const [resTestData, setResTestData] = useState<ResponseTestData>();
     const [currentMaterialPage, setCurrentMaterialPage] = useState<number>(1);
     const [currentTestPage, setCurrentTestPage] = useState<number>(1);
-    // const fetchData = async (page:number) => {
-    //     const data = await fetchPostData(searchParams.get("keyword")+"", page);
-    //     setResData  ({
-    //         totalMaterial: data?.data?.totalMaterial,
-    //         totalTest:data?.data?.totalTest,
-    //         learningMaterials: data?.data?.learningMaterials,
-    //         tests: data?.data?.tests,
-    //     });
-    // };
     const advancedFetchData = async (searchReq:SearchRequest) => {
         const data = await advancedSearch(searchReq);
         if (data?.data?.learningMaterials)
@@ -197,9 +187,8 @@ function SearchPage() {
         pageSize: POST_PAGE_SIZE,
         currentPage: 1,
     });
-    console.log(searchRequest);
     useEffect(() => {
-        // if (searchParams.get("keyword")) setSearchRequest({...searchRequest, title: searchParams.get("keyword")});
+        if (searchParams.get("keyword")) setSearchRequest({...searchRequest, title: searchParams.get("keyword")});
         advancedFetchData(searchRequest);
     }, [searchRequest]);
 
@@ -387,35 +376,35 @@ function SearchPage() {
                             getItemProps={(page) => ({
                                 onClick: () => {
                                     setCurrentTestPage(page);
-                                    setSearchRequest({ ...searchRequest, currentPage: page });
+                                    setSearchRequest({ ...searchRequest, currentPage: page, isTest: true });
                                 }
                             })}
                             getControlProps={(control) => {
                                 if (control === 'first') {
                                     return { onClick: () => {
                                             setCurrentTestPage(1);
-                                            setSearchRequest({ ...searchRequest, currentPage: 1 });
+                                            setSearchRequest({ ...searchRequest, currentPage: 1, isTest: true });
                                         } };
                                 }
 
                                 if (control === 'last') {
                                     return { onClick: () => {
-                                            setCurrentTestPage(numberOfMaterialPages);
-                                            setSearchRequest({ ...searchRequest, currentPage: numberOfTestPages });
+                                            setCurrentTestPage(numberOfTestPages);
+                                            setSearchRequest({ ...searchRequest, currentPage: numberOfTestPages, isTest: true });
                                         } };
                                 }
 
                                 if (control === 'next') {
                                     return { onClick: () => {
                                             setCurrentTestPage(currentTestPage+1);
-                                            setSearchRequest({ ...searchRequest, currentPage: currentTestPage });
+                                            setSearchRequest({ ...searchRequest, currentPage: currentTestPage, isTest: true });
                                         } };
                                 }
 
                                 if (control === 'previous') {
                                     return { onClick: () => {
                                             setCurrentTestPage(currentTestPage-1);
-                                            setSearchRequest({ ...searchRequest, currentPage: currentTestPage });
+                                            setSearchRequest({ ...searchRequest, currentPage: currentTestPage, isTest: true });
                                         } };
                                 }
 
