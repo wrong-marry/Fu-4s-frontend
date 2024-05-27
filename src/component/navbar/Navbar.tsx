@@ -61,7 +61,7 @@ const userBtn = (data: LoaderData, handleLogout: any) => {
 
         <Menu.Dropdown>
           <Menu.Label>Menu</Menu.Label>
-          <NavLink to={"/update-profile"}>
+          <NavLink to={"/user"}>
             <Menu.Item
               leftSection={
                 <IconUserCircle style={{ width: rem(14), height: rem(14) }} />

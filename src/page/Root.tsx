@@ -1,9 +1,9 @@
 import { Outlet, useNavigation } from "react-router-dom";
 import { AppShell } from "@mantine/core";
 import Navbar from "../component/navbar/Navbar";
-import { Footer } from "../component/layout/Footer/Footer";
 import {useEffect} from "react";
 import {nprogress} from "@mantine/nprogress";
+import { Footer } from "../component/layout/footer/Footer";
 
 export default function Root() {
     const navigation = useNavigation();
