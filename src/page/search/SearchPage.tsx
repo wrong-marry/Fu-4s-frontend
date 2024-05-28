@@ -1,23 +1,38 @@
-import {Params, redirect, useActionData, useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {
+    useSearchParams
+} from "react-router-dom";
 import axios from "axios";
-import {useEffect, useState} from "react";
-import {Grid, Skeleton, Container, Flex, TextInput, NativeSelect, Pagination, Center} from '@mantine/core';
-import { toast } from "react-toastify";
+import React, {useEffect, useState} from "react";
+import {Container, Flex, TextInput, NativeSelect, Pagination, Center} from '@mantine/core';
 import {Avatar, Badge, Card, Group, Stack, Text} from "@mantine/core";
 import {Carousel} from "@mantine/carousel";
 import classes from "../../component/home/Carousel.module.css";
 import '@mantine/dates/styles.css';
 import { Radio} from '@mantine/core';
-import {IconAdjustmentsAlt, IconSettings} from '@tabler/icons-react';
+import {IconAdjustmentsAlt} from '@tabler/icons-react';
 import { Select, rem } from '@mantine/core';
 
 import { useDisclosure } from '@mantine/hooks';
 import { Drawer, Button } from '@mantine/core';
 import {DateInput} from "@mantine/dates";
+import {useForm} from "@mantine/form";
 
-function searchDrawer() {
+function searchDrawer(searchRequest:SearchRequest, setSearchRequest:React.Dispatch<React.SetStateAction<any>>) {
     const [opened, { open, close }] = useDisclosure(false);
     const [value, setValue] = useState<Date | null>();
+    const form = useForm({
+        mode: 'uncontrolled',
+        initialValues: {
+            title:searchRequest?.title,
+            subjectCode:searchRequest?.subjectCode,
+            semester:'',
+            postTime:searchRequest?.postTime,
+            isTest:searchRequest?.isTest
+        },
+
+        validate: {
+        },
+    });
     return (
         <>
             <Drawer
@@ -25,63 +40,95 @@ function searchDrawer() {
                 opened={opened}
                 onClose={close}
                 title="Advanced search options"
-                overlayProps={{ backgroundOpacity: 0.5, blur: 2 }}
+                overlayProps={{backgroundOpacity: 0.5, blur: 2}}
             >
-                <TextInput
-                    label="Title"
-                    placeholder="Keyword for title"
-                    description="The title must contains this keyword"
-                />
+                <form onSubmit={form.onSubmit((values) => {
+                    setSearchRequest({ ...searchRequest,
+                        title:values.title,
+                        subjectCode:values.subjectCode,
+                        semester: values.semester,
+                        postTime: values.postTime,
+                        isTest: values.isTest
+                    });
+                    close();
+                })}>
+                    <TextInput
+                        label="Title"
+                        placeholder="Keyword for title"
+                        description="The title must contains this keyword"
+                        key={form.key('title')}
+                        {...form.getInputProps('title')}
+                    />
 
-                <NativeSelect
-                    mt="md"
-                    label="Subject"
-                    data={['Any subject','DBI202', 'SWP391', 'PRJ301', 'PRN202']}
-                    description="Pick a subject code"
-                />
+                    <NativeSelect
+                        mt="md"
+                        label="Subject"
+                        data={['Any subject', 'DBI202', 'SWP391', 'PRJ301', 'PRN202']}
+                        description="Pick a subject code"
+                        key={form.key('subjectCode')}
+                        {...form.getInputProps('subjectCode')}
+                    />
 
-                <TextInput
-                    mt={"md"}
-                    type={"number"}
-                    label="Semester"
-                    placeholder="Semester"
-                    description="Try entering the semester you are in"
-                />
+                    <TextInput
+                        mt={"md"}
+                        type={"number"}
+                        label="Semester"
+                        placeholder="Semester"
+                        description="Try entering the semester you are in"
+                        key={form.key('semester')}
+                        {...form.getInputProps('semester')}
+                    />
 
-                <DateInput
-                    mt="md"
-                    value={value}
-                    onChange={setValue}
-                    valueFormat="YYYY MMM DD"
-                    label="Date"
-                    description="Only find posts after"
-                    placeholder="Upload time"
-                />
+                    <DateInput
+                        mt="md"
+                        value={value}
+                        onChange={setValue}
+                        valueFormat="YYYY MMM DD"
+                        label="Date"
+                        description="Only find posts after"
+                        placeholder="Upload time"
+                        key={form.key('postTime')}
+                        {...form.getInputProps('postTime')}
+                    />
 
-                <Radio.Group
-                    mt="md"
-                    name="isTest"
-                    label="Post type"
-                    description="Choose the desired type of post"
-                >
-                    <Group mt="xs">
-                        <Radio label="All" value="null"/>
-                        <Radio value="true" label="Mock test" />
-                        <Radio value="false" label="Learning material" />
+                    <Radio.Group
+                        mt="md"
+                        name="isTest"
+                        label="Post type"
+                        description="Choose the desired type of post"
+                        key={form.key('isTest')}
+                        {...form.getInputProps('isTest')}
+                    >
+                        <Group mt="xs">
+                            <Radio label="All" value="null"/>
+                            <Radio value="true" label="Mock test"/>
+                            <Radio value="false" label="Learning material"/>
+                        </Group>
+                    </Radio.Group>
+
+                    <Group justify="flex-end" mt="md">
+                        <Button type="submit">Search</Button>
                     </Group>
-                </Radio.Group>
-                <Button mt={"xl"} ml={"30%"} onClick={()=>window.location.replace("/search")}>
-                    Search
-                </Button>
+                </form>
             </Drawer>
             <Flex justify={"space-around"} align={"center"}>
                 <Text>Showing 1000 results.</Text>
                 <Select
-                    leftSection={<IconAdjustmentsAlt style={{ width: rem(18), height: rem(18) }} stroke={1.5} />}
+                    onChange={(value) => setSearchRequest({...searchRequest, order: value + ""})}
+                    leftSection={<IconAdjustmentsAlt style={{width: rem(18), height: rem(18)}} stroke={1.5}/>}
                     placeholder="Sort by"
                     data={[
-                        { group: 'Recency', items: ['Newest first', 'Oldest first'] },
-                        { group: 'Alphabet', items: ['A-Z', 'Z-A'] },
+                        {
+                            group: 'Recency',
+                            items: [
+                                { label: 'Newest first', value: SearchOrder[SearchOrder.DATE_DESC]},
+                                { label: 'Oldest first', value: SearchOrder[SearchOrder.DATE_ASC]}
+                            ]
+                        },
+                        { group: 'Alphabet', items: [
+                                { label: 'A-Z', value: SearchOrder[SearchOrder.TITLE_ASC]},
+                                { label: 'Z-A', value: SearchOrder[SearchOrder.TITLE_DESC]}
+                            ] },
                     ]}
                 />
                 <Text ta={"center"}>
@@ -117,7 +164,7 @@ interface ResponseTestData {
     tests: Post[];
 }
 export const POST_PAGE_SIZE = 10;
-interface SearchRequest {
+export interface SearchRequest {
     username: string|null;
     title: string|null;
     subjectCode: string|null;
@@ -147,7 +194,7 @@ export async function advancedSearch(searchRequest: SearchRequest) {
     }
 }
 function SearchPage() {
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const [resMaterialData, setResMaterialData] = useState<ResponseMaterialData>();
     const [resTestData, setResTestData] = useState<ResponseTestData>();
     const [currentMaterialPage, setCurrentMaterialPage] = useState<number>(1);
@@ -186,9 +233,8 @@ function SearchPage() {
     return (
         <Container my="lg" size={"lg"}>
             <Text ta={"center"} fw={650} fz={25}>Search result</Text>
-            {searchDrawer()}
+            {searchDrawer(searchRequest, setSearchRequest)}
             <Text lh={3} ta={"center"}>______</Text>
-
             {
                 (resTestData==null)?
                     <></> :
