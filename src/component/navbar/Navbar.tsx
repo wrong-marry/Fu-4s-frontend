@@ -71,13 +71,13 @@ const userBtn = (data: LoaderData, handleLogout: any) => {
             </Menu.Item>
           </NavLink>
 
-          <NavLink to={"/settings"}>
+          <NavLink to={"/user/post"}>
             <Menu.Item
               leftSection={
                 <IconSettings style={{ width: rem(14), height: rem(14) }} />
               }
             >
-              Settings
+              Manage Posts
             </Menu.Item>
           </NavLink>
 

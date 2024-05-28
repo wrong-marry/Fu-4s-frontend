@@ -54,7 +54,7 @@ const PostPage: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  return <>{!post.test && <LearningMaterialDetail />}</>;
+  return <>{post.test ? 'mock-test' : <LearningMaterialDetail />}</>;
 };
 
 export default PostPage;
