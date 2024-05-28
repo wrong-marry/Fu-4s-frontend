@@ -11,10 +11,11 @@ interface Post {
 }
 
 export function UserMockTestTable() {
-    const [username, setUsername] = useState('user1');
+    const username = 'user1';
+    const pageSize = 2;
+
     const [activePage, setPage] = useState(1);
     const [numPage, setNumPage] = useState(1);
-    const [pageSize, setSize] = useState(2);
     const [posts, setPost] = useState<Post[]>([]);
 
     useEffect(() => {
@@ -81,7 +82,7 @@ export function UserMockTestTable() {
 
                 <td style={{textAlign: "center"}}>
                     <span className="inline-block py-1 px-2 text-white bg-gray-600 rounded-full">
-                            Edit
+                            <a href="">Edit</a>
                     </span>
                 </td>
             </tr>
