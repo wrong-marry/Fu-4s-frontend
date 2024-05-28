@@ -16,8 +16,11 @@ import { useDisclosure } from '@mantine/hooks';
 import { Drawer, Button } from '@mantine/core';
 import {DateInput} from "@mantine/dates";
 import {useForm} from "@mantine/form";
+import dayjs from 'dayjs';
 
-function searchDrawer(searchRequest:SearchRequest, setSearchRequest:React.Dispatch<React.SetStateAction<any>>) {
+const SearchDrawer = (props:any) => {
+    const searchRequest:SearchRequest=props.searchRequest;
+    const setSearchRequest:React.Dispatch<React.SetStateAction<any>> = props.setSearchRequest;
     const [opened, { open, close }] = useDisclosure(false);
     const [value, setValue] = useState<Date | null>();
     const form = useForm({
@@ -29,121 +32,127 @@ function searchDrawer(searchRequest:SearchRequest, setSearchRequest:React.Dispat
             postTime:searchRequest?.postTime,
             isTest:searchRequest?.isTest
         },
-
         validate: {
         },
     });
-    return (
-        <>
-            <Drawer
-                size={"xs"}
-                opened={opened}
-                onClose={close}
-                title="Advanced search options"
-                overlayProps={{backgroundOpacity: 0.5, blur: 2}}
-            >
-                <form onSubmit={form.onSubmit((values) => {
-                    setSearchRequest({ ...searchRequest,
-                        title:values.title,
-                        subjectCode:values.subjectCode,
-                        semester: values.semester,
-                        postTime: values.postTime,
-                        isTest: values.isTest
-                    });
-                    close();
-                })}>
-                    <TextInput
-                        label="Title"
-                        placeholder="Keyword for title"
-                        description="The title must contains this keyword"
-                        key={form.key('title')}
-                        {...form.getInputProps('title')}
-                    />
-
-                    <NativeSelect
-                        mt="md"
-                        label="Subject"
-                        data={['Any subject', 'DBI202', 'SWP391', 'PRJ301', 'PRN202']}
-                        description="Pick a subject code"
-                        key={form.key('subjectCode')}
-                        {...form.getInputProps('subjectCode')}
-                    />
-
-                    <TextInput
-                        mt={"md"}
-                        type={"number"}
-                        label="Semester"
-                        placeholder="Semester"
-                        description="Try entering the semester you are in"
-                        key={form.key('semester')}
-                        {...form.getInputProps('semester')}
-                    />
-
-                    <DateInput
-                        mt="md"
-                        value={value}
-                        onChange={setValue}
-                        valueFormat="YYYY MMM DD"
-                        label="Date"
-                        description="Only find posts after"
-                        placeholder="Upload time"
-                        key={form.key('postTime')}
-                        {...form.getInputProps('postTime')}
-                    />
-
-                    <Radio.Group
-                        mt="md"
-                        name="isTest"
-                        label="Post type"
-                        description="Choose the desired type of post"
-                        key={form.key('isTest')}
-                        {...form.getInputProps('isTest')}
-                    >
-                        <Group mt="xs">
-                            <Radio label="All" value="null"/>
-                            <Radio value="true" label="Mock test"/>
-                            <Radio value="false" label="Learning material"/>
-                        </Group>
-                    </Radio.Group>
-
-                    <Group justify="flex-end" mt="md">
-                        <Button type="submit">Search</Button>
-                    </Group>
-                </form>
-            </Drawer>
-            <Flex justify={"space-around"} align={"center"}>
-                <Text>Showing 1000 results.</Text>
-                <Select
-                    onChange={(value) => setSearchRequest({...searchRequest, order: value + ""})}
-                    leftSection={<IconAdjustmentsAlt style={{width: rem(18), height: rem(18)}} stroke={1.5}/>}
-                    placeholder="Sort by"
-                    data={[
-                        {
-                            group: 'Recency',
-                            items: [
-                                { label: 'Newest first', value: SearchOrder[SearchOrder.DATE_DESC]},
-                                { label: 'Oldest first', value: SearchOrder[SearchOrder.DATE_ASC]}
-                            ]
-                        },
-                        { group: 'Alphabet', items: [
-                                { label: 'A-Z', value: SearchOrder[SearchOrder.TITLE_ASC]},
-                                { label: 'Z-A', value: SearchOrder[SearchOrder.TITLE_DESC]}
-                            ] },
-                    ]}
+    return (<>
+        <Drawer
+            size={"xs"}
+            opened={opened}
+            onClose={close}
+            title="Advanced search options"
+            overlayProps={{backgroundOpacity: 0.5, blur: 2}}
+        >
+            <form onSubmit={form.onSubmit((values) => {
+                setSearchRequest({ ...searchRequest,
+                    title:values.title,
+                    subjectCode:values.subjectCode,
+                    semester: values.semester,
+                    postTime: values.postTime,
+                    isTest: values.isTest,
+                });
+                close();
+            })}>
+                <TextInput
+                    label="Title"
+                    placeholder="Keyword for title"
+                    description="The title must contains this keyword"
+                    key={form.key('title')}
+                    {...form.getInputProps('title')}
                 />
-                <Text ta={"center"}>
-                    <Text  opacity={0.6} fz={12} >
-                        Did not find the post?
-                    </Text>
-                    <div>
-                        <Button onClick={open} m={"auto"} opacity={2}>
-                            Advanced search
-                        </Button>
-                    </div>
+
+                <Select
+                    name={"subjectCode"}
+                    placeholder={"Choose a subject"}
+                    mt="md"
+                    label="Subject"
+                    data={
+                        [
+                            {value: 'SWP391' as string, label:'SWP391'},
+                            {value: 'MAD101' as string, label:'MAD101'},
+                            {value: 'PRJ301' as string, label:'PRJ301'},
+                            {value: 'DBI202' as string, label:'DBI202'},
+                        ]
+                    }
+                    description="Pick a subject code"
+                    key={form.key('subjectCode')}
+                    {...form.getInputProps('subjectCode')}
+                />
+
+                <TextInput
+                    mt={"md"}
+                    type={"number"}
+                    label="Semester"
+                    placeholder="Semester"
+                    description="Try entering the semester you are in"
+                    key={form.key('semester')}
+                    {...form.getInputProps('semester')}
+                />
+
+                <DateInput
+                    mt="md"
+                    value={value}
+                    onChange={setValue}
+                    valueFormat="DD/MM/YYYY HH:mm:ss"
+                    label="Date"
+                    description="Only find posts after"
+                    placeholder="Upload time"
+                    key={form.key('postTime')}
+                    {...form.getInputProps('postTime')}
+                />
+
+                <Radio.Group
+                    mt="md"
+                    name="isTest"
+                    label="Post type"
+                    description="Choose the desired type of post"
+                    key={form.key('isTest')}
+                    {...form.getInputProps('isTest')}
+                >
+                    <Group mt="xs">
+                        <Radio label="All" value="null"/>
+                        <Radio value="true" label="Mock test"/>
+                        <Radio value="false" label="Learning material"/>
+                    </Group>
+                </Radio.Group>
+
+                <Group justify="flex-end" mt="md">
+                    <Button type="submit">Search</Button>
+                </Group>
+            </form>
+        </Drawer>
+        <Flex justify={"space-around"} align={"center"}>
+            <Text>Showing 1000 results.</Text>
+            <Select
+                onChange={(value) => setSearchRequest({...searchRequest, order: value + "", isTest:null})}
+                leftSection={<IconAdjustmentsAlt style={{width: rem(18), height: rem(18)}} stroke={1.5}/>}
+                placeholder="Sort by"
+                data={[
+                    {
+                        group: 'Recency',
+                        items: [
+                            { label: 'Newest first', value: SearchOrder[SearchOrder.DATE_DESC]},
+                            { label: 'Oldest first', value: SearchOrder[SearchOrder.DATE_ASC]}
+                        ]
+                    },
+                    { group: 'Alphabet', items: [
+                            { label: 'A-Z', value: SearchOrder[SearchOrder.TITLE_ASC]},
+                            { label: 'Z-A', value: SearchOrder[SearchOrder.TITLE_DESC]}
+                        ] },
+                ]}
+            />
+            <Text ta={"center"}>
+                <Text  opacity={0.6} fz={12} >
+                    Did not find the post?
                 </Text>
-            </Flex>
-        </>
-    );
+                <div>
+                    <Button onClick={open} m={"auto"} opacity={2}>
+                        Advanced search
+                    </Button>
+                </div>
+            </Text>
+        </Flex>
+    </>)
 }
 
 export interface Post {
@@ -173,7 +182,7 @@ export interface SearchRequest {
     order: string;
     pageSize: number;
     currentPage: number;
-
+    semester: number|null;
 }
 enum SearchOrder {
     USERNAME_ASC, USERNAME_DESC, TITLE_ASC, TITLE_DESC, DATE_ASC, DATE_DESC
@@ -184,10 +193,14 @@ export async function advancedSearch(searchRequest: SearchRequest) {
         if (searchRequest.username) api+=`&username=${searchRequest.username}`;
         if (searchRequest.title) api+=`&keyword=${searchRequest.title}`;
         if (searchRequest.isTest!=null) api+=`&isTest=${searchRequest.isTest}`;
+        if (searchRequest.subjectCode) api+=`&subjectCode=${searchRequest.subjectCode}`;
+        if (searchRequest.semester) api+=`&semester=${searchRequest.semester}`;
+        if (searchRequest.postTime) api+=`&postTime=${dayjs(searchRequest.postTime).format('YYYY-MM-DDTHH:mm:ssZ[Z]')}`;
         api+=`&order=${searchRequest.order}`;
 
         api+=`&page=${searchRequest.currentPage}`;
         const response = await axios.get(api);
+        console.log(api);
         return response.data;
     } catch (error) {
         throw new Error("Error fetching post data");
@@ -233,7 +246,7 @@ function SearchPage() {
     return (
         <Container my="lg" size={"lg"}>
             <Text ta={"center"} fw={650} fz={25}>Search result</Text>
-            {searchDrawer(searchRequest, setSearchRequest)}
+            <SearchDrawer searchRequest={searchRequest} setSearchRequest={setSearchRequest} />
             <Text lh={3} ta={"center"}>______</Text>
             {
                 (resTestData==null)?
