@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import {Center, Pagination} from "@mantine/core";
 
 interface Post {
     id: string;
@@ -10,6 +11,10 @@ interface Post {
 }
 
 export function UserMockTestTable() {
+    const [username, setUsername] = useState('user1');
+    const [activePage, setPage] = useState(1);
+    const [numPage, setNumPage] = useState(1);
+    const [pageSize, setSize] = useState(2);
     const [posts, setPost] = useState<Post[]>([]);
 
     useEffect(() => {
@@ -17,7 +22,7 @@ export function UserMockTestTable() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/questionSet/getAllByUsername?username=user1&pageNum=1&pageSize=10`
+                    `http://localhost:8080/api/v1/questionSet/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
                 );
                 const data = await response.json();
                 setPost(data)
@@ -26,8 +31,22 @@ export function UserMockTestTable() {
             }
         };
 
+        const fetchNum = async () => {
+            // ${localStorage.getItem('username')}
+            try {
+                const response = await fetch(
+                    `http://localhost:8080/api/v1/questionSet/getNum?username=${username}`
+                );
+                const data = await response.json();
+                setNumPage((data + 1) / pageSize)
+            } catch (error) {
+                console.error("Error fetching post:", error);
+            }
+        };
+
+        fetchNum();
         fetchPost();
-    }, [])
+    }, [activePage])
 
     const rows =
         posts.map(post => (
@@ -160,6 +179,9 @@ export function UserMockTestTable() {
                         </table>
                     </div>
                 </div>
+                <Center mt={"lg"}>
+                    <Pagination value={activePage} onChange={setPage} total={numPage} />
+                </Center>
             </div>
         </section>
     </>
