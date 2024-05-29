@@ -38,7 +38,8 @@ import { toast } from "react-toastify";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
 import FolderModal from "../modal/navbar/create/FolderModal.tsx";
 import ClassModal from "../modal/navbar/create/ClassModal.tsx";
-import {Logout} from "../../util/loader/Auth.tsx";
+import { Logout } from "../../util/loader/Auth.tsx";
+import NotificationCard from "../notification/NotificationCard.tsx";
 
 const userBtn = (data: LoaderData, handleLogout: any) => {
   return (
@@ -58,7 +59,6 @@ const userBtn = (data: LoaderData, handleLogout: any) => {
             </Text>
           </Group>
         </Menu.Target>
-
         <Menu.Dropdown>
           <Menu.Label>Menu</Menu.Label>
           <NavLink to={"/user"}>
@@ -96,7 +96,7 @@ const userBtn = (data: LoaderData, handleLogout: any) => {
               <IconLogout style={{ width: rem(14), height: rem(14) }} />
             }
             onClick={() => {
-                handleLogout();
+              handleLogout();
             }}
           >
             Logout
@@ -111,13 +111,25 @@ const guestBtn = (mode: string) => {
   const navigate = useNavigate();
   return (
     <>
-        <Button onClick={()=>navigate("/auth")} variant={"light"} color="indigo" radius="md" fz="sm">
-          Login
-        </Button>
+      <Button
+        onClick={() => navigate("/auth")}
+        variant={"light"}
+        color="indigo"
+        radius="md"
+        fz="sm"
+      >
+        Login
+      </Button>
 
-        <Button onClick={()=>navigate("/auth/register")} variant="filled" color="indigo" radius="md" fz="sm">
-          Signup
-        </Button>
+      <Button
+        onClick={() => navigate("/auth/register")}
+        variant="filled"
+        color="indigo"
+        radius="md"
+        fz="sm"
+      >
+        Signup
+      </Button>
     </>
   );
 };
@@ -162,9 +174,7 @@ function Navbar() {
     setColorScheme(computedColorScheme === "dark" ? "light" : "dark");
   };
   const btnState =
-    data?.error || !data
-      ? guestBtn(mode as string)
-      : userBtn(data, Logout);
+    data?.error || !data ? guestBtn(mode as string) : userBtn(data, Logout);
   const whichHomepage = data?.error || !data ? "/" : "/home";
 
   return (
@@ -172,7 +182,10 @@ function Navbar() {
       <header className="w-full h-16 flex items-center justify-between sticky top-0 z-20 shadow-sm bg-[--mantine-color-body]">
         <div className="flex items-center w-full">
           <NavLink to={whichHomepage} className="w-32 mx-5">
-            <img src={(computedColorScheme === "dark") ? darkLogo : logo} alt="Dark FU4S logo"/>
+            <img
+              src={computedColorScheme === "dark" ? darkLogo : logo}
+              alt="Dark FU4S logo"
+            />
           </NavLink>
 
           <div className="ml-5 flex items-center">
@@ -232,16 +245,15 @@ function Navbar() {
                 <Menu.Item
                   onClick={open}
                   leftSection={
-                    <IconPhoto
-                      style={{ width: rem(14), height: rem(14) }}
-                    />
+                    <IconPhoto style={{ width: rem(14), height: rem(14) }} />
                   }
                 >
                   Learning material
                 </Menu.Item>
-
               </Menu.Dropdown>
             </Menu>
+
+            <NotificationCard />
             <Group>{btnState}</Group>
           </Group>
         </div>
