@@ -366,7 +366,7 @@ function SearchPage() {
                                         }
                                     </Stack>
                                     <Group gap={"xs"}>
-                                        <Avatar variant="filled" radius="xl" size="sm" />
+                                        <Avatar variant="filled" radius="xl" size="sm"/>
                                         <Text size="sm">{test.username}</Text>
                                         <Stack gap={2}>
                                             <Badge color="blue">
