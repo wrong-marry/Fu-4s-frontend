@@ -17,6 +17,7 @@ import {
 } from "@mantine/core";
 
 import { format } from "date-fns";
+import Comment from "../../component/comment/CommentTag";
 import { useParams } from "react-router-dom";
 import LearningMaterialDetail from "../../component/learning-material/LearningMaterialDetail";
 
@@ -54,7 +55,10 @@ const PostPage: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  return <>{!post.test && <LearningMaterialDetail />}</>;
+  return <>
+    {!post.test && <LearningMaterialDetail />}
+    <Comment username={"Test"} content={"hahaha test comment"} time={Date.now()}></Comment>
+  </>
 };
 
 export default PostPage;
