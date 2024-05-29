@@ -31,6 +31,7 @@ import PostPage from "./page/post/PostPage.tsx";
 import LearningMaterialList from "./component/subject-posting/LearningMaterialList.tsx";
 import LearningMaterialDetail from "./component/learning-material/LearningMaterialDetail.tsx";
 import NotificationList from "./component/notification/NotificationList.tsx";
+import SubjectList from "./component/manage-subject/SubjectList.tsx";
 export const loadingIndicator = (
   <Box pos={"relative"} h={"100vh"} w={"100vw"}>
     <LoadingOverlay
@@ -101,6 +102,10 @@ const router = createBrowserRouter([
       {
         path: "manage-user",
         element: <ManageUser />,
+      },
+      {
+        path: "manage-subject",
+        element: <SubjectList />,
       },
       {
         path: "change-password",
