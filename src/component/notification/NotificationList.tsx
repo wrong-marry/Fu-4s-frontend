@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
+import {
+  ScrollArea,
+  Paper,
+  Text,
+  LoadingOverlay,
+  Container,
+  Box,
+} from "@mantine/core";
 import { useNavigate, useParams } from "react-router-dom";
-import { TableCell, Typography } from "@mui/material";
 
 interface Notification {
   createdAt: string;
@@ -48,7 +49,7 @@ function NotificationList() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingOverlay visible />;
   }
 
   if (error) {
@@ -56,10 +57,10 @@ function NotificationList() {
   }
 
   return (
-    <Paper>
-      <TableContainer>
-        <Table>
-          <TableBody>
+    <Container>
+      <Box>
+        <Paper withBorder shadow="md" p="md">
+          <ScrollArea>
             {notifications
               .filter((notification) =>
                 ["APPROVED_POST", "DISAPPROVED_POST", "HIDE_COMMENT"].includes(
@@ -67,36 +68,46 @@ function NotificationList() {
                 )
               )
               .map((notification, index) => (
-                <TableRow
+                <Box
                   key={index}
-                  // onClick={() => handleNotificationClick(notification.link)}
                   style={{
                     cursor: "pointer",
+                    padding: "10px",
+                    marginBottom: "10px",
+                    borderRadius: "4px",
+                    transition: "background-color 0.3s ease",
                   }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#f0f0f0")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "transparent")
+                  }
+                  onClick={() => handleNotificationClick(notification.message)}
                 >
-                  <TableCell>
-                    <Typography variant="body1">
-                      {notification.message === "APPROVED_POST"
-                        ? "Bài viết của bạn đã được duyệt"
-                        : notification.message === "DISAPPROVED_POST"
-                        ? "Bài viết của bạn không được duyệt"
-                        : "Comment của bạn đã bị ẩn"}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        fontSize: "0.8rem",
-                      }}
-                    >
-                      {new Date(notification.time).toLocaleString()}
-                    </Typography>
-                  </TableCell>
-                </TableRow>
+                  <Text
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.textDecoration = "underline")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.textDecoration = "none")
+                    }
+                  >
+                    {notification.message === "APPROVED_POST"
+                      ? "Bài viết của bạn đã được duyệt"
+                      : notification.message === "DISAPPROVED_POST"
+                      ? "Bài viết của bạn không được duyệt"
+                      : "Comment của bạn đã bị ẩn"}
+                  </Text>
+                  <Text size="xs" color="dimmed">
+                    {new Date(notification.time).toLocaleString()}
+                  </Text>
+                </Box>
               ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
+          </ScrollArea>
+        </Paper>
+      </Box>
+    </Container>
   );
 }
 
