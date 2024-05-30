@@ -10,7 +10,7 @@ interface Post {
 }
 
 export function UserLearningMaterialTable() {
-    const username = 'user1';
+    const username = localStorage.getItem("username");
     const pageSize = 2;
 
     const [activePage, setPage] = useState(3);

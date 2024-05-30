@@ -11,7 +11,7 @@ interface Post {
 }
 
 export function UserPostTable() {
-    const username = 'user1';
+    const username = localStorage.getItem("username");
     const pageSize = 3;
 
     const [activePage, setPage] = useState(1);
