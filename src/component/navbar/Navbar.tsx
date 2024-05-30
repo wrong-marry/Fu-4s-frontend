@@ -122,7 +122,7 @@ const guestBtn = (mode: string) => {
   );
 };
 
-interface LoaderData {
+export interface LoaderData {
   error?: boolean;
   username?: string;
   firstName?: string;

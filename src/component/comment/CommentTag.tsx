@@ -14,7 +14,7 @@ export default function Comment(props) {
                         <Flex>
                             <Text fw={650} lh={"xs"} px={"md"}>{username}</Text>
                             <Space w={"md"}/>
-                            <Text fw={200} fz={"sm"}>{format(new Date(time), "dd/MM/yyyy HH:mm")}</Text>
+                            <Text px={"md"} fw={200} fz={"sm"}>{format(new Date(time), "dd/MM/yyyy HH:mm")}</Text>
                         </Flex>
                     </CardSection>
                     <CardSection inheritPadding py="md" pt={"xs"}>

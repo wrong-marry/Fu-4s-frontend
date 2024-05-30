@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useContext} from "react";
 import axios, { AxiosResponse } from "axios";
 import {
   Image,
@@ -16,11 +16,14 @@ import {
   Title, Space, Textarea, Button,
 } from "@mantine/core";
 
-import { format } from "date-fns";
 import Comment from "../../component/comment/CommentTag";
-import { useParams } from "react-router-dom";
+import {useLoaderData, useParams, useSearchParams} from "react-router-dom";
 import LearningMaterialDetail from "../../component/learning-material/LearningMaterialDetail";
 import {forEach} from "lodash";
+import {useForm} from "@mantine/form";
+import {LoaderData} from "../../component/navbar/Navbar.tsx";
+import {UserCredentialsContext} from "../../store/user-credentials-context.tsx";
+import {format} from "date-fns";
 
 interface Post {
   id: number;
@@ -35,13 +38,27 @@ interface Post {
 interface Comment {
   id: number;
   date: Date;
+  account: string;
   username: string;
   content: string;
   status: string;
 }
 
 const PostPage: React.FC = () => {
+
   const { id } = useParams<{ id: string }>();
+
+  const form = useForm({
+    mode: 'uncontrolled',
+    initialValues: {
+      'date': format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS+SS:SS"),
+      'username': localStorage.getItem("username"),
+      'content': '',
+    },
+    validate: {
+      content: (value: string) => (/^\S/.test(value) ? null : 'Invalid content'),
+    },
+  });
 
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[] | null>([]);
@@ -76,6 +93,7 @@ const PostPage: React.FC = () => {
     return <div>Loading...</div>;
   }
 
+
   return <>
     {!post.test && <LearningMaterialDetail />}
     <Space h={"md"}/>
@@ -86,10 +104,29 @@ const PostPage: React.FC = () => {
           c => {
             return <Comment key={c.id} username={c.username} content={c.content} time={c.date}></Comment>
           })}
-      <Textarea size={"md"} my={"md"} placeholder={"Your comment"} autosize
-                minRows={2}
-                maxRows={4}></Textarea>
-      <Button>Comment</Button>
+      <form onSubmit={form.onSubmit(async (values) => {
+        console.log(values);
+        try {
+          const response: AxiosResponse<string> = await axios.post(
+              `http://localhost:8080/api/v1/comments/upload/post-${id}`,
+              values,
+              {
+                headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
+              }
+          )
+          console.log(response);
+        } catch (error) {
+          console.error("Error posting comment:", error);
+        }
+      })}>
+        <Textarea size={"md"} my={"md"} placeholder={"Your comment"} autosize
+                  minRows={2}
+                  maxRows={4}
+                  key={form.key('content')}
+                  {...form.getInputProps('content')}
+        ></Textarea>
+        <Button type={"submit"}>Comment</Button>
+      </form>
     </Container>
   </>
 };
