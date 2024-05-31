@@ -51,7 +51,7 @@ const PostPage: React.FC = () => {
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
-      'date': format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS+SS:SS"),
+      'date': format(Date.now(), "yyyy-MM-dd'T'HH:mm:ss.SSS+SS:SS"),
       'username': localStorage.getItem("username"),
       'content': '',
     },
@@ -63,28 +63,27 @@ const PostPage: React.FC = () => {
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[] | null>([]);
 
-  useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const response: AxiosResponse<Post> = await axios.get(
+  const fetchPost = async () => {
+    try {
+      const response: AxiosResponse<Post> = await axios.get(
           `http://localhost:8080/api/v1/post/get?id=${id}`
-        );
-        setPost(response.data);
-      } catch (error) {
-        console.error("Error fetching post:", error);
-      }
-    };
-    const fetchComments = async () => {
-      try {
-        const response: AxiosResponse<Comment[]> = await axios.get(
-            `http://localhost:8080/api/v1/comments/post/${id}`
-        )
-        setComments(response.data);
-      } catch (error) {
-        console.error("Error fetching comment:", error);
-      }
+      );
+      setPost(response.data);
+    } catch (error) {
+      console.error("Error fetching post:", error);
     }
-
+  };
+  const fetchComments = async () => {
+    try {
+      const response: AxiosResponse<Comment[]> = await axios.get(
+          `http://localhost:8080/api/v1/comments/post/${id}`
+      )
+      setComments(response.data);
+    } catch (error) {
+      console.error("Error fetching comment:", error);
+    }
+  }
+  useEffect(() => {
     fetchPost();
     fetchComments()
   }, [id]);
@@ -102,7 +101,8 @@ const PostPage: React.FC = () => {
       {(comments == null || comments?.length == 0) ? <Text>No comments</Text> : <></>}
       {forEach(comments)?.map(
           c => {
-            return <Comment key={c.id} username={c.username} content={c.content} time={c.date}></Comment>
+            return <Comment key={c.id} id={c.id} username={c.username} content={c.content} time={c.date}
+                            isMine={c.account == localStorage.getItem("username")}></Comment>
           })}
       <form onSubmit={form.onSubmit(async (values) => {
         console.log(values);
@@ -114,7 +114,7 @@ const PostPage: React.FC = () => {
                 headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
               }
           )
-          console.log(response);
+          if (response.status == 200) await fetchComments();
         } catch (error) {
           console.error("Error posting comment:", error);
         }
