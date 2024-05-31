@@ -16,17 +16,19 @@ interface Notification {
 }
 
 function NotificationList() {
+  const username = "user1";
+
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { username } = useParams<{ username: string }>();
+  // const { username } = useParams<{ username: string }>();
 
   useEffect(() => {
     async function fetchData() {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/v1/notification/getAll`
+          `http://localhost:8080/api/v1/notification/getAllByUsername?username=${username}`
         );
 
         if (!response.ok) {
