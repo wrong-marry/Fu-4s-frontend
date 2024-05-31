@@ -19,6 +19,8 @@ import {
 import { format } from "date-fns";
 import { useParams } from "react-router-dom";
 import LearningMaterialDetail from "../../component/learning-material/LearningMaterialDetail";
+import QuestionPage from "../question-page/QuestionPage";
+import MockTestDetailPage from "../mock-test-detail-page/MockTestDetailPage";
 
 interface Post {
   id: number;
@@ -54,7 +56,7 @@ const PostPage: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  return <>{!post.test && <LearningMaterialDetail />}</>;
+  return <>{post.test ? <MockTestDetailPage/> : <LearningMaterialDetail />}</>;
 };
 
 export default PostPage;
