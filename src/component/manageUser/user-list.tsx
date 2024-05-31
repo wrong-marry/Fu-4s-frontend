@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import Fab from "@mui/material/Fab";
-import EditIcon from "@mui/icons-material/Edit";
 import SearchIcon from "@mui/icons-material/Search";
 import { ActionIcon, rem } from "@mantine/core";
 import { IconPencil } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import { Center, Pagination } from "@mantine/core";
 
 interface User {
 	username: string;
@@ -15,18 +14,20 @@ interface User {
 
 
 function TableUser() {
+	const pageSize = 5;
+	const [activePage, setPage] = useState(1);
+	const [numPage, setNumPage] = useState(1);
 	const [users, SetUsers] = useState<User[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 	const navigate = useNavigate();
 
 	useEffect(() => {
-	
 		async function fetchData() {
 			try {
 				const token = localStorage.getItem("token");
 				const response = await fetch(
-					"http://localhost:8080/api/v1/admin/getAllUser",
+					`http://localhost:8080/api/v1/admin/getAllUser?pageNum=${activePage}&pageSize=${pageSize}`,
 					{
 						headers: {
 							Authorization: `Bearer ${token}`,
@@ -47,8 +48,21 @@ function TableUser() {
 				setLoading(false);
 			}
 		}
+		        const fetchNum = async () => {
+							// ${localStorage.getItem('username')}
+							try {
+								const response = await fetch(
+									`http://localhost:8080/api/v1/admin/getNum`
+								);
+								const data = await response.json();
+								setNumPage((data + 1) / pageSize);
+							} catch (error) {
+								console.error("Error fetching post:", error);
+							}
+						};
+		fetchNum();			
 		fetchData();
-	}, []);
+	}, [activePage]);
 
 
 	if (loading) {
@@ -223,7 +237,7 @@ function TableUser() {
 											{user.username}
 										</td>
 										<td className="font-medium">{user.email}</td>
-										<td ></td>
+										<td></td>
 										<td>
 											<span
 												className={`inline-block py-1 px-2 text-white rounded-full ${
@@ -255,6 +269,9 @@ function TableUser() {
 						</table>
 					</div>
 				</div>
+				<Center mt={"lg"}>
+					<Pagination value={activePage} onChange={setPage} total={numPage} />
+				</Center>
 			</div>
 		</section>
 	);
