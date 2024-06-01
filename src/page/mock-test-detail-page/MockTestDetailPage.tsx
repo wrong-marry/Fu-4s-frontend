@@ -23,6 +23,8 @@ import { IconArrowUp } from "@tabler/icons-react";
 import { format } from "date-fns";
 import QuizIcon from "@mui/icons-material/Quiz";
 import { isLoggedIn } from "../../util/loader/Auth";
+import LearningMaterialDetail from "../../component/learning-material/LearningMaterialDetail";
+import CustomizeTestModal from "../../component/test-modals/CustomizeTestModal";
 
 export default function MockTestDetailPage(post: any) {
   const [testFormOpened, setTestFormOpened] = useState(false);
@@ -55,12 +57,12 @@ export default function MockTestDetailPage(post: any) {
               <Modal
                 opened={testFormOpened}
                 onClose={() => setTestFormOpened(false)}
-              ></Modal>
+                title={isLoggedIn()?"Customize your test":"BRUH NOT LOGGED IN BRUHH!"}
+              >{isLoggedIn()?<CustomizeTestModal/>:<Text>BRUH NOT LOGGED IN BRUHH!</Text>}</Modal>
               <Button
                 radius="lg"
                 onClick={() => {
-                  if (isLoggedIn()) setTestFormOpened(true);
-                  else window.alert("Please log in to take a test!");
+                  setTestFormOpened(true);
                 }}
               >
                 {" "}
