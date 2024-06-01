@@ -114,7 +114,10 @@ const PostPage: React.FC = () => {
                 headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
               }
           )
-          if (response.status == 200) await fetchComments();
+          if (response.status == 200) {
+            await fetchComments();
+            form.reset();
+          }
         } catch (error) {
           console.error("Error posting comment:", error);
         }

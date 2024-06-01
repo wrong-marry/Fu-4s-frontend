@@ -1,9 +1,11 @@
 import {
+    NavigateFunction,
+    useNavigate,
     useSearchParams
 } from "react-router-dom";
 import axios from "axios";
 import React, {useEffect, useState} from "react";
-import {Container, Flex, TextInput, NativeSelect, Pagination, Center} from '@mantine/core';
+import {Container, Flex, TextInput, Pagination, Center} from '@mantine/core';
 import {Avatar, Badge, Card, Group, Stack, Text} from "@mantine/core";
 import {Carousel} from "@mantine/carousel";
 import classes from "../../component/home/Carousel.module.css";
@@ -18,11 +20,11 @@ import {DateInput} from "@mantine/dates";
 import {useForm} from "@mantine/form";
 import dayjs from 'dayjs';
 
-const SearchDrawer = (props:any) => {
+const SearchDrawer = (props: any) => {
     const searchRequest:SearchRequest=props.searchRequest;
     const setSearchRequest:React.Dispatch<React.SetStateAction<any>> = props.setSearchRequest;
     const [opened, { open, close }] = useDisclosure(false);
-    const [value, setValue] = useState<Date | null>();
+    const [value] = useState<Date | null>();
     const form = useForm({
         mode: 'uncontrolled',
         initialValues: {
@@ -92,7 +94,6 @@ const SearchDrawer = (props:any) => {
                 <DateInput
                     mt="md"
                     value={value}
-                    onChange={setValue}
                     valueFormat="DD/MM/YYYY HH:mm:ss"
                     label="Date"
                     description="Only find posts after"
@@ -207,6 +208,7 @@ export async function advancedSearch(searchRequest: SearchRequest) {
     }
 }
 function SearchPage() {
+    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [resMaterialData, setResMaterialData] = useState<ResponseMaterialData>();
     const [resTestData, setResTestData] = useState<ResponseTestData>();
@@ -234,7 +236,8 @@ function SearchPage() {
         order: SearchOrder[SearchOrder.DATE_DESC],
         pageSize: POST_PAGE_SIZE,
         currentPage: 1,
-    });
+        semester: null
+    } as SearchRequest);
     useEffect(() => {
         advancedFetchData(searchRequest);
     }, [searchRequest]);
@@ -258,7 +261,7 @@ function SearchPage() {
                         {(resMaterialData?.learningMaterials.length === 0) ?
                             <Text c={"dimmed"}>No learning material found</Text>
                             :
-                            MyPostList(resMaterialData.learningMaterials)}
+                            MyPostList(resMaterialData.learningMaterials, navigate)}
                     </>
             }
             <Center>
@@ -269,28 +272,36 @@ function SearchPage() {
                     getItemProps={(page) => ({
                         onClick: () => {
                             setCurrentMaterialPage(page);
-                            setSearchRequest({ ...searchRequest, currentPage: page, isTest: false });
+                            setSearchRequest({...searchRequest, currentPage: page, isTest: false});
                         }
                     })}
                     getControlProps={(control) => {
                         if (control === 'first') {
                             return { onClick: () => {
                                     setCurrentMaterialPage(1);
-                                    setSearchRequest({ ...searchRequest, currentPage: 1, isTest: false });
+                                    setSearchRequest({...searchRequest, currentPage: 1, isTest: false});
                                 } };
                         }
 
                         if (control === 'last') {
                             return { onClick: () => {
                                     setCurrentMaterialPage(numberOfMaterialPages);
-                                    setSearchRequest({ ...searchRequest, currenPage: numberOfMaterialPages, isTest: false });
+                                    setSearchRequest({
+                                        ...searchRequest,
+                                        currentPage: numberOfMaterialPages,
+                                        isTest: false
+                                    });
                                 } };
                         }
 
                         if (control === 'next') {
                             return { onClick: () => {
                                     setCurrentMaterialPage(currentMaterialPage+1);
-                                    setSearchRequest({ ...searchRequest, currentPage: currentMaterialPage, isTest: false });
+                                    setSearchRequest({
+                                        ...searchRequest,
+                                        currentPage: currentMaterialPage,
+                                        isTest: false
+                                    });
                                 } };
                         }
 
@@ -313,7 +324,7 @@ function SearchPage() {
                         {(resTestData?.tests.length === 0) ?
                         <Text c={"dimmed"}>No mock tests found</Text>
                         :
-                        MyPostList(resTestData.tests)}
+                            MyPostList(resTestData.tests, navigate)}
                     </>
             }
             <Center>
@@ -338,7 +349,7 @@ function SearchPage() {
                         if (control === 'last') {
                             return { onClick: () => {
                                     setCurrentTestPage(numberOfTestPages);
-                                    setSearchRequest({ ...searchRequest, currenPage: numberOfTestPages, isTest: true });
+                                    setSearchRequest({...searchRequest, currentPage: numberOfTestPages, isTest: true});
                                 } };
                         }
 
@@ -363,7 +374,8 @@ function SearchPage() {
         </Container>
     );
 }
-export function MyPostList(resData:Post[]) {
+
+const MyPostList = (resData: Post[], navigate: NavigateFunction) => {
     return <>
         <Card>
             <Carousel
@@ -387,8 +399,7 @@ export function MyPostList(resData:Post[]) {
                             className="h-full"
                         >
                             <Stack
-                                onClick={() => {
-                                }}
+                                onClick={() => navigate(`/post/${test.id}`)}
                                 className="cursor-pointer justify-between h-full"
                             >
                                 <Stack gap={2}>
