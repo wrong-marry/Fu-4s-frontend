@@ -1,4 +1,3 @@
-import { redirect } from "react-router-dom";
 import {fetchUser} from "../UserFetchUtil.tsx";
 
 export function Logout() {
@@ -9,10 +8,7 @@ export function Logout() {
 export function isLoggedIn() {
   const username = getUsername();
   const token = getToken();
-    if (username == null || token == null) {
-    return false;
-  }
-  return true;
+  return !(username == null || token == null);
 }
 export function getUsername() {
   return localStorage.getItem("username");
@@ -29,5 +25,5 @@ export async function getAuthCredentials() {
   if (!authToken || !username) {
     return null;
   }
-  return (await fetchUser()).data;
+  return (await fetchUser())?.data;
 }

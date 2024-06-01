@@ -20,9 +20,12 @@ import {DateInput} from "@mantine/dates";
 import {useForm} from "@mantine/form";
 import dayjs from 'dayjs';
 
-const SearchDrawer = (props: any) => {
-    const searchRequest:SearchRequest=props.searchRequest;
-    const setSearchRequest:React.Dispatch<React.SetStateAction<any>> = props.setSearchRequest;
+const SearchDrawer = (props: {
+    searchRequest: SearchRequest,
+    setSearchRequest: React.Dispatch<React.SetStateAction<SearchRequest>>
+}) => {
+    const searchRequest = props.searchRequest;
+    const setSearchRequest = props.setSearchRequest;
     const [opened, { open, close }] = useDisclosure(false);
     const [value] = useState<Date | null>();
     const form = useForm({
@@ -30,7 +33,7 @@ const SearchDrawer = (props: any) => {
         initialValues: {
             title:searchRequest?.title,
             subjectCode:searchRequest?.subjectCode,
-            semester:'',
+            semester: null,
             postTime:searchRequest?.postTime,
             isTest:searchRequest?.isTest
         },
