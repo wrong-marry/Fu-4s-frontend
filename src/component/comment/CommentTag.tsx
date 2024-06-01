@@ -1,10 +1,9 @@
 import {
     Anchor,
     Avatar,
-    Box, Button,
+    Button,
     Card,
     CardSection,
-    Center,
     Container,
     Flex,
     Group,
@@ -13,15 +12,17 @@ import {
     Text,
     Textarea
 } from "@mantine/core"
+
+import {CommentData} from "../../page/post/PostPage";
 import {format} from "date-fns";
-import axios, {AxiosResponse, HttpStatusCode} from "axios";
+import axios, {AxiosResponse} from "axios";
 import React, {useState} from "react";
 import {useForm} from "@mantine/form";
 
-export default function Comment(props) {
+export default function Comment(props: CommentData) {
     const username = props.username;
     const [content, setContent] = useState(props.content);
-    const time = props.time;
+    const time = props.date;
     const isMine: boolean = props.isMine;
     const id = props.id;
 
@@ -47,7 +48,7 @@ export default function Comment(props) {
                         <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={() => deleteComment(id)}>Delete</Anchor>
                     </> : <Anchor fz={"sm"} mx={"sm"}>Reply</Anchor>}
             </Group>
-        </Stack>
+        </Stack> as React.ReactElement
     );
 
     const deleteComment = async (id: number) => {
@@ -56,7 +57,7 @@ export default function Comment(props) {
                 "http://localhost:8080/api/v1/comments/" + id,
                 {
                     headers: {
-                        Authorization: "Bearer " + localStorage.getItem("token")
+                        "Authorization": "Bearer " + localStorage.getItem("token")
                     }
                 });
             if (response.status == 200) {

@@ -1,28 +1,16 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect} from "react";
 import axios, { AxiosResponse } from "axios";
 import {
-  Image,
   Text,
-  Group,
-  RingProgress,
-  Badge,
-  Box,
-  Card,
-  CardSection,
-  Divider,
-  Flex,
-  Center,
   Container,
   Title, Space, Textarea, Button,
 } from "@mantine/core";
 
 import Comment from "../../component/comment/CommentTag";
-import {useLoaderData, useParams, useSearchParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import LearningMaterialDetail from "../../component/learning-material/LearningMaterialDetail";
 import {forEach} from "lodash";
 import {useForm} from "@mantine/form";
-import {LoaderData} from "../../component/navbar/Navbar.tsx";
-import {UserCredentialsContext} from "../../store/user-credentials-context.tsx";
 import {format} from "date-fns";
 
 interface Post {
@@ -35,13 +23,14 @@ interface Post {
   test: boolean;
 }
 
-interface Comment {
+export interface CommentData {
   id: number;
   date: Date;
   account: string;
   username: string;
   content: string;
   status: string;
+  isMine: boolean;
 }
 
 const PostPage: React.FC = () => {
@@ -61,7 +50,7 @@ const PostPage: React.FC = () => {
   });
 
   const [post, setPost] = useState<Post | null>(null);
-  const [comments, setComments] = useState<Comment[] | null>([]);
+  const [comments, setComments] = useState<CommentData[] | null>([]);
 
   const fetchPost = async () => {
     try {
@@ -75,7 +64,7 @@ const PostPage: React.FC = () => {
   };
   const fetchComments = async () => {
     try {
-      const response: AxiosResponse<Comment[]> = await axios.get(
+      const response: AxiosResponse<CommentData[]> = await axios.get(
           `http://localhost:8080/api/v1/comments/post/${id}`
       )
       setComments(response.data);
@@ -101,8 +90,10 @@ const PostPage: React.FC = () => {
       {(comments == null || comments?.length == 0) ? <Text>No comments</Text> : <></>}
       {forEach(comments)?.map(
           c => {
-            return <Comment key={c.id} id={c.id} username={c.username} content={c.content} time={c.date}
-                            isMine={c.account == localStorage.getItem("username")}></Comment>
+            return <Comment key={c.id} id={c.id} username={c.username} content={c.content} date={c.date}
+                            isMine={c.account == localStorage.getItem("username")}
+                            account={c.account} status={c.status}
+            />
           })}
       <form onSubmit={form.onSubmit(async (values) => {
         console.log(values);
@@ -111,7 +102,7 @@ const PostPage: React.FC = () => {
               `http://localhost:8080/api/v1/comments/upload/post-${id}`,
               values,
               {
-                headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
+                headers: {Authorization: "Bearer " + localStorage.getItem("token")}
               }
           )
           if (response.status == 200) {

@@ -10,10 +10,10 @@ import {
 import { useForm } from "@mantine/form";
 import { IconUser, IconUserStar } from "@tabler/icons-react";
 import axios from "axios";
-import { useState } from "react";
+import React, {useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import { TextInputProps, ActionIcon, useMantineTheme, rem } from '@mantine/core';
-import { IconSearch, IconArrowRight } from '@tabler/icons-react';
+import {ActionIcon, rem} from '@mantine/core';
+import {IconArrowRight} from '@tabler/icons-react';
 
 interface MaterialResponseData {
   id: number;
@@ -46,7 +46,9 @@ const fetchSearchResultData = async (keywords: string) => {
     const res = await axios.get(`http://localhost:8080/api/v1/search?keyword=${keywords}&pageSize=`+SEARCH_LOAD_SIZE);
 
     return res.data;
-  } catch (error) {}
+  } catch (error) {
+    console.error(error)
+  }
 };
 
 const GeneralSearchBar = () => {
@@ -96,7 +98,7 @@ const GeneralSearchBar = () => {
           >{`Uploader: ${item.username}`}</Badge>
         </Group>
       </Link>
-    </Combobox.Option>
+    </Combobox.Option> as React.ReactElement
   ));
 
   const testsData = resData?.tests?.map((item) => (
