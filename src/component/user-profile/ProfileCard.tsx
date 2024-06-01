@@ -15,7 +15,7 @@ export function ProfileCard(props: any) {
   const navigate = useNavigate();
   return (
     <Paper
-      className="mx-3 sm:mx-16 lg:mx-96"
+      className="mx-3 mt-7 sm:mx-16 lg:mx-96"
       radius="md"
       withBorder
       p="lg"
