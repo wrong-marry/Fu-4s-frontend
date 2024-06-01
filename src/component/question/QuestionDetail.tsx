@@ -29,7 +29,7 @@ export default function QuestionDetail(question: Question) {
   const [showAnswer, setShowAnswer] = useState(false);
   const cards = question.answers.map((answer: Answer) => (
     <Radio.Card
-
+      disabled
       className={classes.root}
       radius="md"
       value={answer.content}

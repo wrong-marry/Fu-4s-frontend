@@ -8,9 +8,11 @@ import {
   Affix,
   Badge,
   Button,
+  Card,
   Flex,
   Grid,
   Group,
+  Modal,
   Text,
   Title,
   Transition,
@@ -19,8 +21,11 @@ import {
 import { useWindowScroll } from "@mantine/hooks";
 import { IconArrowUp } from "@tabler/icons-react";
 import { format } from "date-fns";
+import QuizIcon from "@mui/icons-material/Quiz";
+import { isLoggedIn } from "../../util/loader/Auth";
 
 export default function MockTestDetailPage(post: any) {
+  const [testFormOpened, setTestFormOpened] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [scroll, scrollTo] = useWindowScroll();
   useEffect(() => {
@@ -31,7 +36,7 @@ export default function MockTestDetailPage(post: any) {
     fetchData();
   }, []);
   const questionsDisplay = questions.map((question: Question) => (
-    <QuestionDetail {...question} />
+    <QuestionDetail key={question.id} {...question} />
   ));
   return (
     <>
@@ -45,14 +50,35 @@ export default function MockTestDetailPage(post: any) {
           <Title order={2} className="text-3xl font-md" ta="center" my={30}>
             {post.title}
           </Title>
-          <Group justify="space-between">
-            <Text fw={700} size="lg">
-              {post.username}
-            </Text>
-            <Text c="dimmed" p={"md"}>
-              {format(new Date(post.postTime), "dd/MM/yyyy HH:mm")}
-            </Text>
-          </Group>
+          <Grid>
+            <Grid.Col span={4}>
+              <Modal
+                opened={testFormOpened}
+                onClose={() => setTestFormOpened(false)}
+              ></Modal>
+              <Button
+                radius="lg"
+                onClick={() => {
+                  if (isLoggedIn()) setTestFormOpened(true);
+                  else window.alert("Please log in to take a test!");
+                }}
+              >
+                {" "}
+                <QuizIcon className="mr-2" /> Take test
+              </Button>
+            </Grid.Col>
+            <Grid.Col span={7}>
+              <Group justify="end" align="center">
+                <Badge color="pink" size="lg">
+                  Created by {post.username}
+                </Badge>
+                <Badge color="purple" size="lg">
+                  {format(new Date(post.postTime), "dd/MM/yyyy HH:mm")}
+                </Badge>
+              </Group>
+            </Grid.Col>
+          </Grid>
+
           <>{questionsDisplay}</>
         </Grid.Col>
       </Grid>
