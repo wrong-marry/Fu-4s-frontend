@@ -1,23 +1,83 @@
-import React from 'react';
+import  { useEffect, useState } from 'react';
+
 
 
 const DashboardSection: React.FC = () => {
+	  const [numOfUser, setNumOfUser] = useState(0);
+		const [numOfAccount, setNumOfAccount] = useState(0);
+		const [numOfStaff, setNumOfStaff] = useState(0);
+		const [numOfAdmin, setNumOfAdmin] = useState(0);
+	 useEffect(() => {
+        const fetchNumOfUser = async () => {
+            // ${localStorage.getItem('username')}
+            try {
+                const response = await fetch(
+									`http://localhost:8080/api/v1/admin/getNumUser`
+								);
+                const data = await response.json();
+                setNumOfAccount(data)
+            } catch (error) {
+                console.error("Error fetching post:", error);
+            }
+        };
+				const fetchNumOfAdminRole = async () => {
+					// ${localStorage.getItem('username')}
+					try {
+						const response = await fetch(
+							`http://localhost:8080/api/v1/admin/getNumEachRole?userrole=ADMIN`
+						);
+						const data = await response.json();
+						setNumOfAdmin(data);
+					} catch (error) {
+						console.error("Error fetching post:", error);
+					}
+				};
+					const fetchNumOfStaffRole = async () => {
+						// ${localStorage.getItem('username')}
+						try {
+							const response = await fetch(
+								`http://localhost:8080/api/v1/admin/getNumEachRole?userrole=STAFF`
+							);
+							const data = await response.json();
+							setNumOfStaff(data);
+						} catch (error) {
+							console.error("Error fetching post:", error);
+						}
+					};
+						const fetchNumOfUserRole = async () => {
+							// ${localStorage.getItem('username')}
+							try {
+								const response = await fetch(
+									`http://localhost:8080/api/v1/admin/getNumEachRole?userrole=USER`
+								);
+								const data = await response.json();
+								setNumOfUser(data);
+							} catch (error) {
+								console.error("Error fetching post:", error);
+							}
+						};
+						fetchNumOfAdminRole(); 
+						fetchNumOfStaffRole();
+						fetchNumOfUserRole(); 
+				fetchNumOfUser();
+			},[]) 
+
   return (
 		<>
-			<div className="w-auto p-2">
-				<h1 className="text-gray-800 font-semibold text-3xl">
-					Quantity statistics!
-				</h1>
-			</div>
 			<section className="bg-coolGray-50 py-4">
 				<div className="container px-4 mx-auto">
+					<div className="bg-coolGray-50 py-4">
+						<h3 className="text-xl font-bold w-full w-auto p-5">
+							QUANTITY STATISTICS
+						</h3>
+					</div>
 					<div className="flex flex-wrap -m-3">
 						<div className="w-full md:w-1/2 xl:w-1/4 p-3">
 							<div className="p-6 pb-10 bg-white border border-coolGray-100 rounded-md shadow-dashboard">
 								<div className="flex flex-wrap items-end justify-between -m-2 mb-7">
 									<div className="w-auto p-2">
 										<h3 className="text-sm text-coolGray-500 font-medium">
-											Number of General customers
+											Number of Users
 										</h3>
 									</div>
 									<div className="w-auto p-2">
@@ -38,7 +98,7 @@ const DashboardSection: React.FC = () => {
 									</div>
 								</div>
 								<h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
-									21
+									{numOfUser}
 								</h2>
 								<p className="text-center max-w-max mx-auto px-2 py-1 text-green-500 font-medium text-xs bg-green-100 rounded-full">
 									web users
@@ -71,7 +131,7 @@ const DashboardSection: React.FC = () => {
 									</div>
 								</div>
 								<h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
-									17
+									{numOfStaff}
 								</h2>
 								<p className="text-center max-w-max mx-auto px-2 py-1 text-red-500 font-medium text-xs bg-red-100 rounded-full">
 									staffs
@@ -104,7 +164,7 @@ const DashboardSection: React.FC = () => {
 									</div>
 								</div>
 								<h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
-									21
+									{numOfAdmin}
 								</h2>
 								<p className="text-center max-w-max mx-auto px-2 py-1 text-yellow-500 font-medium text-xs bg-yellow-100 rounded-full">
 									admins
@@ -116,7 +176,7 @@ const DashboardSection: React.FC = () => {
 								<div className="flex flex-wrap items-end justify-between -m-2 mb-7">
 									<div className="w-auto p-2">
 										<h3 className="text-sm text-coolGray-500 font-medium">
-											Number of Guests
+											ALL
 										</h3>
 									</div>
 									<div className="w-auto p-2">
@@ -137,10 +197,10 @@ const DashboardSection: React.FC = () => {
 									</div>
 								</div>
 								<h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
-									38
+									{numOfAccount}
 								</h2>
 								<p className="text-center max-w-max mx-auto px-2 py-1 text-green-500 font-medium text-xs bg-green-100 rounded-full">
-									guests
+									all users
 								</p>
 							</div>
 						</div>
