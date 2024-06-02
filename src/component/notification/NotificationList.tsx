@@ -8,6 +8,7 @@ import {
   Box,
 } from "@mantine/core";
 import { useNavigate, useParams } from "react-router-dom";
+import { Center, Pagination } from "@mantine/core";
 
 interface Notification {
   createdAt: string;
@@ -16,35 +17,48 @@ interface Notification {
 }
 
 function NotificationList() {
-  const username = "user1";
-
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  // const { username } = useParams<{ username: string }>();
+  const username = "user1";
+  const pageSize = 3;
+
+  const [activePage, setPage] = useState(1);
+  const [numPage, setNumPage] = useState(1);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    async function fetchData() {
+    const fetchNoti = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/v1/notification/getAllByUsername?username=${username}`
+          `http://localhost:8080/api/v1/notification/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
         );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data: Notification[] = await response.json();
+        const data = await response.json();
         setNotifications(data);
         setLoading(false);
-      } catch (error: any) {
-        setError(error.message);
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+        setError("Error fetching notifications");
         setLoading(false);
       }
-    }
-    fetchData();
-  }, [username]);
+    };
+
+    const fetchNum = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/v1/notification/getNum?username=${username}`
+        );
+        const data = await response.json();
+        setNumPage(Math.ceil(data / pageSize));
+      } catch (error) {
+        console.error("Error fetching notification count:", error);
+        setError("Error fetching notification count");
+      }
+    };
+
+    fetchNum();
+    fetchNoti();
+  }, [activePage]);
 
   const handleNotificationClick = (link: string) => {
     navigate(link);
@@ -61,7 +75,7 @@ function NotificationList() {
   return (
     <Container>
       <Box>
-        <Paper withBorder shadow="md" p="md">
+        <Paper withBorder>
           <ScrollArea>
             {notifications
               .filter((notification) =>
@@ -109,6 +123,9 @@ function NotificationList() {
           </ScrollArea>
         </Paper>
       </Box>
+      <Center mt={"lg"}>
+        <Pagination value={activePage} onChange={setPage} total={numPage} />
+      </Center>
     </Container>
   );
 }
