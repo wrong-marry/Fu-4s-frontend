@@ -6,14 +6,23 @@ import {
   LoadingOverlay,
   Container,
   Box,
+  Title,
+  Space,
+  Button,
+  Modal,
+  Group,
+  Menu,
+  ActionIcon,
 } from "@mantine/core";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Center, Pagination } from "@mantine/core";
-
+import { IconDots } from "@tabler/icons-react";
 interface Notification {
-  createdAt: string;
+  id: string;
   time: string;
   message: string;
+  seen: boolean;
+  link: string;
 }
 
 function NotificationList() {
@@ -60,8 +69,72 @@ function NotificationList() {
     fetchNoti();
   }, [activePage]);
 
-  const handleNotificationClick = (link: string) => {
-    navigate(link);
+  const markAsRead = async (id: string) => {
+    try {
+      await fetch(`http://localhost:8080/api/v1/notification/markAsRead`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((noti) =>
+          noti.id === id ? { ...noti, seen: true } : noti
+        )
+      );
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
+  };
+
+  const markAsUnread = async (id: string) => {
+    try {
+      await fetch(`http://localhost:8080/api/v1/notification/markAsUnread`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((noti) =>
+          noti.id === id ? { ...noti, seen: false } : noti
+        )
+      );
+    } catch (error) {
+      console.error("Error marking notification as unread:", error);
+    }
+  };
+
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+
+  const handleMarkAllAsRead = async () => {
+    setConfirmModalOpen(false); // Close the modal first
+    try {
+      await fetch(`http://localhost:8080/api/v1/notification/markAllAsRead`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username }),
+      });
+
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((noti) => ({ ...noti, seen: true }))
+      );
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+    }
+  };
+
+  const handleNotificationClick = (notification: Notification) => {
+    if (!notification.seen) {
+      markAsRead(notification.id);
+    }
+    navigate(notification.link);
   };
 
   if (loading) {
@@ -74,6 +147,24 @@ function NotificationList() {
 
   return (
     <Container>
+      <Space h="md" />
+      <Group justify="space-between" mb="md">
+        <Title order={1}>Notifications</Title>
+        <Button onClick={() => setConfirmModalOpen(true)}>
+          Mark all as read
+        </Button>
+        <Modal
+          opened={confirmModalOpen}
+          onClose={() => setConfirmModalOpen(false)}
+          title="Confirm Action"
+        >
+          <Text>Are you sure you want to mark all notifications as read?</Text>
+          <Group justify="flex-end" gap="sm" mt="md">
+            <Button onClick={() => setConfirmModalOpen(false)}>Cancel</Button>
+            <Button onClick={handleMarkAllAsRead}>OK</Button>
+          </Group>
+        </Modal>
+      </Group>
       <Box>
         <Paper withBorder>
           <ScrollArea>
@@ -87,6 +178,9 @@ function NotificationList() {
                 <Box
                   key={index}
                   style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                     cursor: "pointer",
                     padding: "10px",
                     marginBottom: "10px",
@@ -99,25 +193,39 @@ function NotificationList() {
                   onMouseLeave={(e) =>
                     (e.currentTarget.style.backgroundColor = "transparent")
                   }
-                  onClick={() => handleNotificationClick(notification.message)}
                 >
-                  <Text
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.textDecoration = "underline")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.textDecoration = "none")
-                    }
-                  >
-                    {notification.message === "APPROVED_POST"
-                      ? "Bài viết của bạn đã được duyệt"
-                      : notification.message === "DISAPPROVED_POST"
-                      ? "Bài viết của bạn không được duyệt"
-                      : "Comment của bạn đã bị ẩn"}
-                  </Text>
-                  <Text size="xs" color="dimmed">
-                    {new Date(notification.time).toLocaleString()}
-                  </Text>
+                  <Box onClick={() => handleNotificationClick(notification)}>
+                    <Text
+                      w={notification.seen ? "normal" : "bold"} // Conditionally render text weight
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.textDecoration = "underline")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.textDecoration = "none")
+                      }
+                    >
+                      {notification.message === "APPROVED_POST"
+                        ? "Bài viết của bạn đã được duyệt"
+                        : notification.message === "DISAPPROVED_POST"
+                        ? "Bài viết của bạn không được duyệt"
+                        : "Comment của bạn đã bị ẩn"}
+                    </Text>
+                    <Text size="xs" color="dimmed">
+                      {new Date(notification.time).toLocaleString()}
+                    </Text>
+                  </Box>
+                  <Menu position="left" withArrow trigger="hover">
+                    <Menu.Target>
+                      <ActionIcon color="gray" variant="light">
+                        <IconDots size={16} />
+                      </ActionIcon>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                      <Menu.Item onClick={() => markAsUnread(notification.id)}>
+                        Mark as unread
+                      </Menu.Item>
+                    </Menu.Dropdown>
+                  </Menu>
                 </Box>
               ))}
           </ScrollArea>
