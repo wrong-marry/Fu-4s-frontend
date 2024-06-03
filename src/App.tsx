@@ -34,6 +34,8 @@ import {UserPostPage} from "./page/user-post/UserPostPage.tsx";
 import {UserLearningMaterialPage} from "./page/user-post/UserLearningMaterialPage.tsx";
 import {UserMockTestPage} from "./page/user-post/UserMockTestPage.tsx";
 import CreateMockTestPage from "./page/user-post/CreateMockTestPage.tsx";
+import EditMockTestPage from "./page/user-post/EditMockTestPage.tsx";
+import {isValidUser} from "./util/ValidUser.tsx";
 export const loadingIndicator = (
   <Box pos={"relative"} h={"100vh"} w={"100vw"}>
     <LoadingOverlay
@@ -224,7 +226,7 @@ const router = createBrowserRouter([
                 }
               }
             ]
-          }
+          },
         ]
       },
       {
@@ -243,7 +245,20 @@ const router = createBrowserRouter([
             </Suspense>
         ),
       },
+      {
+        path: "/edit-mock-test/:id",
+        loader: () => {
+          if (!isLoggedIn()) return redirect("/forbidden");
+          return null;
+        },
+        element: (
+            <Suspense fallback={loadingIndicator}>
+              <EditMockTestPage/>
+            </Suspense>
+        ),
+      }
     ],
+
   },
   {
     path: "/forbidden",
