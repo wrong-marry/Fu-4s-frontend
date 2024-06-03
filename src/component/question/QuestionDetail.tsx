@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import classes from "./Demo.module.css";
 import { color } from "@mui/system";
-import { green } from "@mui/material/colors";
+import { blue, green } from "@mui/material/colors";
 
 export interface Question {
   id: number;
@@ -27,23 +27,43 @@ interface Answer {
 export default function QuestionDetail(question: Question) {
   const [value, setValue] = useState<string | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
-  const cards = question.answers.map((answer: Answer) => (
-    <Radio.Card
-      disabled
-      className={classes.root}
-      radius="md"
-      value={answer.content}
-      key={answer.id}
-      checked={showAnswer && answer.correct}
-    >
-      <Group wrap="nowrap" align="flex-start">
-        <Radio.Indicator color="green" />
-        <div>
-          <Text className={classes.label}>{answer.content}</Text>
-        </div>
-      </Group>
-    </Radio.Card>
-  ));
+
+  const handleRadioChange = (selectedValue: string) => {
+    setValue(selectedValue);
+  };
+
+  const cards = question.answers.map((answer: Answer) => {
+    const answerState = (isCard:boolean) => {
+      if(!showAnswer)
+        return isCard?classes.checkedAnswer:"blue"
+      else if(answer.correct)
+        return isCard?classes.correct:"green"
+      else
+        return isCard?classes.wrong:"red"
+    } 
+    return (
+      <Radio.Card
+        className={
+          answerState(true)
+        }
+        radius="md"
+        value={answer.content}
+        key={answer.id}
+        checked={value === answer.content || (showAnswer && answer.correct)}
+        onChangeCapture={() => handleRadioChange(answer.content)}
+      >
+        <Group wrap="nowrap" align="flex-start">
+          <Radio.Indicator
+            color={answerState(false)}
+          />
+          <div>
+            <Text className={classes.label}>{answer.content}</Text>
+            
+          </div>
+        </Group>
+      </Radio.Card>
+    );
+  });
 
   return (
     <Card m={15} shadow="md" padding="lg" radius="lg" withBorder>
