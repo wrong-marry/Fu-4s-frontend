@@ -91,7 +91,7 @@ export function UserPostTable() {
 
                 <td style={{textAlign: "center"}}>
                     <span className="inline-block py-1 px-2 text-white bg-gray-600 rounded-full">
-                            <a href="">Edit</a>
+                            <a href={"/edit-mock-test/" + post.id}>Edit</a>
                     </span>
                 </td>
             </tr>
