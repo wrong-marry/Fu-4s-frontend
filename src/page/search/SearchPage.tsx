@@ -22,7 +22,9 @@ import dayjs from 'dayjs';
 
 const SearchDrawer = (props: {
     searchRequest: SearchRequest,
-    setSearchRequest: React.Dispatch<React.SetStateAction<SearchRequest>>
+    setSearchRequest: React.Dispatch<React.SetStateAction<SearchRequest>>,
+    total: number,
+    displayed: number
 }) => {
     const searchRequest = props.searchRequest;
     const setSearchRequest = props.setSearchRequest;
@@ -126,7 +128,7 @@ const SearchDrawer = (props: {
             </form>
         </Drawer>
         <Flex justify={"space-around"} align={"center"}>
-            <Text>Showing 1000 results.</Text>
+            <Text>Showing {props.displayed} out of {props.total} results.</Text>
             <Select
                 onChange={(value) => setSearchRequest({...searchRequest, order: value + "", isTest:null})}
                 leftSection={<IconAdjustmentsAlt style={{width: rem(18), height: rem(18)}} stroke={1.5}/>}
@@ -211,6 +213,8 @@ export async function advancedSearch(searchRequest: SearchRequest) {
     }
 }
 function SearchPage() {
+    const [displayedNumber, setDisplayedNumber] = useState(0);
+    const [totalItem, setTotalItem] = useState(0);
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [resMaterialData, setResMaterialData] = useState<ResponseMaterialData>();
@@ -219,16 +223,24 @@ function SearchPage() {
     const [currentTestPage, setCurrentTestPage] = useState<number>(1);
     const advancedFetchData = async (searchReq:SearchRequest) => {
         const data = await advancedSearch(searchReq);
-        if (data?.data?.learningMaterials)
-        setResMaterialData  ({
-            totalMaterial: data?.data?.totalMaterial,
-            learningMaterials: data?.data?.learningMaterials,
-        });
-        if (data?.data?.tests)
-        setResTestData  ({
-            totalTest:data?.data?.totalTest,
-            tests: data?.data?.tests,
-        });
+        setTotalItem(0);
+        setDisplayedNumber(0);
+        if (data?.data?.learningMaterials) {
+            setResMaterialData({
+                totalMaterial: data?.data?.totalMaterial,
+                learningMaterials: data?.data?.learningMaterials,
+            });
+            setDisplayedNumber(prev => prev + data?.data?.learningMaterials.length);
+            setTotalItem(totalItem => totalItem + data?.data?.totalMaterial);
+        }
+        if (data?.data?.tests) {
+            setResTestData({
+                totalTest: data?.data?.totalTest,
+                tests: data?.data?.tests,
+            });
+            setDisplayedNumber(prev => prev + data?.data?.tests.length);
+            setTotalItem(totalItem => totalItem + data?.data?.totalTest);
+        }
     };
     const [searchRequest, setSearchRequest] = useState({
         username: null,
@@ -252,7 +264,8 @@ function SearchPage() {
     return (
         <Container my="lg" size={"lg"}>
             <Text ta={"center"} fw={650} fz={25}>Search result</Text>
-            <SearchDrawer searchRequest={searchRequest} setSearchRequest={setSearchRequest} />
+            <SearchDrawer searchRequest={searchRequest} setSearchRequest={setSearchRequest} total={totalItem}
+                          displayed={displayedNumber}/>
             <Text lh={3} ta={"center"}>______</Text>
             {
                 (resTestData==null)?
