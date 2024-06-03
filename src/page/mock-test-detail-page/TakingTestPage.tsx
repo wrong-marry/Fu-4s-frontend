@@ -25,6 +25,8 @@ import QuizIcon from "@mui/icons-material/Quiz";
 import { isLoggedIn } from "../../util/loader/Auth";
 import LearningMaterialDetail from "../../component/learning-material/LearningMaterialDetail";
 import CustomizeTestModal from "../../component/test-modals/CustomizeTestModal";
+import axios, { AxiosResponse } from "axios";
+import { Post } from "../post/PostPage";
 
 export default function TakingTestPage() {
   const [searchParam, setSearchParam] = useSearchParams();
@@ -34,18 +36,36 @@ export default function TakingTestPage() {
   const navigate = useNavigate();
   const [questions, setQuestions] = useState([]);
   const [scroll, scrollTo] = useWindowScroll();
+  const [post, setPost] = useState<Post | null>(null);
+
   useEffect(() => {
     const fetchData = async () => {
-        if(id!=null&&numberOfQuestion!=null){
-        const res = await fetchRandomQuestion(id,Number(numberOfQuestion));
-        setQuestions(res.data);}
-      navigate("/forbidden");
+      if (id != null && numberOfQuestion != null) {
+        const res = await fetchRandomQuestion(id, Number(numberOfQuestion));
+        setQuestions(res.data);
+      } else navigate("/forbidden");
     };
+    const fetchPost = async () => {
+      try {
+        const response: AxiosResponse<Post> = await axios.get(
+          `http://localhost:8080/api/v1/post/get?id=${id}`
+        );
+        setPost(response.data);
+      } catch (error) {
+        console.error("Error fetching post:", error);
+      }
+    };
+    fetchPost();
     fetchData();
   }, []);
   const questionsDisplay = questions.map((question: Question) => (
     <QuestionDetail key={question.id} {...question} />
   ));
+  const date = () => {
+    if (post != null)
+      return format(new Date(post.postTime), "dd/MM/yyyy HH:mm");
+    else return "";
+  };
   return (
     <>
       <Grid display={Flex} justify="center">
@@ -56,7 +76,7 @@ export default function TakingTestPage() {
             </Badge>
           </Group>
           <Title order={2} className="text-3xl font-md" ta="center" my={30}>
-            {post.title}
+            {post?.title}
           </Title>
           <Grid>
             <Grid.Col span={4}>
@@ -67,10 +87,10 @@ export default function TakingTestPage() {
             <Grid.Col span={7}>
               <Group justify="end" align="center">
                 <Badge color="pink" size="lg">
-                  Created by {post.username}
+                  Created by {post?.username}
                 </Badge>
                 <Badge color="purple" size="lg">
-                  {format(new Date(post.postTime), "dd/MM/yyyy HH:mm")}
+                  {date()}
                 </Badge>
               </Group>
             </Grid.Col>

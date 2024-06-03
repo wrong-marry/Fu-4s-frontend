@@ -22,7 +22,7 @@ import LearningMaterialDetail from "../../component/learning-material/LearningMa
 import QuestionPage from "../question-page/QuestionPage";
 import MockTestDetailPage from "../mock-test-detail-page/MockTestDetailPage";
 
-interface Post {
+export interface Post {
   id: number;
   postTime: string;
   title: string;
