@@ -27,48 +27,75 @@ function TableUser() {
 	 const [currentTab, setCurrentTab] = useState("ALL");
 
 	const [opened, { open, close }] = useDisclosure(false);
-	useEffect(() => {
-		async function fetchData() {
-			try {
-				const token = localStorage.getItem("token");
-				const response = await fetch(
-					`http://localhost:8080/api/v1/admin/getAllUser?pageNum=${activePage}&pageSize=${pageSize}`,
-					{
-						headers: {
-							Authorization: `Bearer ${token}`,
-						},
-					}
-				);
 
-				if (!response.ok) {
-					throw new Error(`HTTP error! status: ${response.status}`);
-				}
+	 
 
-				const data: User[] = await response.json();
-				console.log(data);
-				SetUsers(data);
-				setLoading(false);
-			} catch (error: any) {
-				setError(error.message);
-				setLoading(false);
+ useEffect(() => {
+	
+	const fetchNum = async () => {
+		try {
+			const baseURL = "http://localhost:8080/api/v1/admin";
+			let url = "";
+
+			if (currentTab === "ALL") {
+				url = `${baseURL}/getNumUser`;
+			} else if (currentTab === "Staffs") {
+				url = `${baseURL}/getNumEachRole?userrole=STAFF`;
+			} else if (currentTab === "Admins") {
+				url = `${baseURL}/getNumEachRole?userrole=ADMIN`;
+			} else if (currentTab === "General Users") {
+				url = `${baseURL}/getNumEachRole?userrole=USER`;
 			}
+			const response = await fetch(url);
+			const data = await response.json();
+			setNumPage(Math.ceil((data + 1) / pageSize));
+		} catch (error) {
+			console.error("Error fetching post:", error);
 		}
-		        const fetchNum = async () => {
-							// ${localStorage.getItem('username')}
-							try {
-								const response = await fetch(
-									`http://localhost:8080/api/v1/admin/getNumUser`
-								);
-								const data = await response.json();
-								setNumPage((data + 1) / pageSize);
-							} catch (error) {
-								console.error("Error fetching post:", error);
-							}
-						};
-		fetchNum();			
-		fetchData();
-	}, [activePage]);
+	};
 
+	
+	const fetchData = async (url: string) => {
+		try {
+			const token = localStorage.getItem("token");
+			const response = await fetch(url, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+
+			const data: User[] = await response.json();
+			SetUsers(data);
+			setLoading(false);
+		} catch (error: any) {
+			setError(error.message);
+			setLoading(false);
+		}
+	};
+
+		const baseURL = "http://localhost:8080/api/v1/admin";
+		 let url = "" ;
+
+			if (currentTab === "ALL") {
+				url = `${baseURL}/getAllUser?pageNum=${activePage}&pageSize=${pageSize}`;
+			} else if (currentTab === "Staffs") {
+				url = `${baseURL}/getAllByUserRole?userrole=STAFF&pageNum=${activePage}&pageSize=${pageSize}`;
+			} else if (currentTab === "Admins") {
+				url = `${baseURL}/getAllByUserRole?userrole=ADMIN&pageNum=${activePage}&pageSize=${pageSize}`;
+			} else if (currentTab === "General Users") {
+				url = `${baseURL}/getAllByUserRole?userrole=USER&pageNum=${activePage}&pageSize=${pageSize}`;
+			}
+		fetchData(url);
+		fetchNum();
+ }, [activePage, currentTab]);
+
+ useEffect(() => {
+		setPage(1);
+ }, [currentTab]);
 
 	if (loading) {
 		return <div>Loading...</div>;
@@ -188,14 +215,24 @@ function TableUser() {
 								Staffs
 							</a>
 							<a
-								className="inline-block px-4 pb-2 text-sm font-medium text-gray-500 border-b-2 border-transparent"
+								className={`inline-block px-4 pb-2 text-sm font-medium ${
+									currentTab === "Admins"
+										? "text-indigo-500 border-b-2 border-indigo-500"
+										: "text-gray-500 border-b-2 border-transparent"
+								}`}
 								href="#"
+								onClick={() => handleTabClick("Admins")}
 							>
 								Admins
 							</a>
 							<a
-								className="inline-block px-4 pb-2 text-sm font-medium text-gray-500 border-b-2 border-transparent"
+								className={`inline-block px-4 pb-2 text-sm font-medium ${
+									currentTab === "General Users"
+										? "text-indigo-500 border-b-2 border-indigo-500"
+										: "text-gray-500 border-b-2 border-transparent"
+								}`}
 								href="#"
+								onClick={() => handleTabClick("General Users")}
 							>
 								General Users
 							</a>
