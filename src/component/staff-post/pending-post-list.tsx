@@ -294,9 +294,7 @@ function TableUser() {
 							<tbody>{All}</tbody>
 						</table>
 					</div>
-					<Modal opened={opened} onClose={close} title="EDIT USER FORM">
-						{/* Modal content */}
-					</Modal>
+				
 				</div>
 				<Center mt={"lg"}>
 					<Pagination value={activePage} onChange={setPage} total={numPage} />

@@ -1,10 +1,26 @@
 import React, { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
-import { ActionIcon, Modal, rem } from "@mantine/core";
-import { IconPencil } from "@tabler/icons-react";
+import {  Modal } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { Center, Pagination } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import {
+	Avatar,
+	Table,
+	Group,
+	Text,
+	ActionIcon,
+	Menu,
+	rem,
+} from "@mantine/core";
+import {
+	IconPencil,
+	IconMessages,
+	IconNote,
+	IconReportAnalytics,
+	IconTrash,
+	IconDots,
+} from "@tabler/icons-react";
 
 
 
@@ -136,17 +152,69 @@ function TableUser() {
 				</span>
 			</td>
 			<td className="font-medium">{user.role}</td>
+			<td className="font-medium"> 03.06.2024</td>
 			<td style={{ textAlign: "center" }}>
-				<ActionIcon
-					variant="gradient"
-					size="lg"
-					radius="xl"
-					aria-label="Gradient action icon"
-					gradient={{ from: "red", to: "cyan", deg: 90 }}
-					onClick={open}
-				>
-					<IconPencil />
-				</ActionIcon>
+				<Group gap={0} justify="flex-end">
+					<ActionIcon variant="subtle" color="gray"></ActionIcon>
+					<Menu
+						transitionProps={{ transition: "pop" }}
+						withArrow
+						position="bottom-end"
+						withinPortal
+					>
+						<Menu.Target>
+							<ActionIcon variant="subtle" color="gray">
+								<IconDots
+									style={{ width: rem(16), height: rem(16) }}
+									stroke={1.5}
+								/>
+							</ActionIcon>
+						</Menu.Target>
+						<Menu.Dropdown>
+							<Menu.Item
+								leftSection={
+									<IconMessages
+										style={{ width: rem(16), height: rem(16) }}
+										stroke={1.5}
+									/>
+								}
+							>
+								Send direct Notification
+							</Menu.Item>
+							<Menu.Item
+								leftSection={
+									<IconNote
+										style={{ width: rem(16), height: rem(16) }}
+										stroke={1.5}
+									/>
+								}
+							>
+								Add note
+							</Menu.Item>
+							<Menu.Item
+								leftSection={
+									<IconReportAnalytics
+										style={{ width: rem(16), height: rem(16) }}
+										stroke={1.5}
+									/>
+								}
+							>
+								More actions
+							</Menu.Item>
+							<Menu.Item
+								leftSection={
+									<IconTrash
+										style={{ width: rem(16), height: rem(16) }}
+										stroke={1.5}
+									/>
+								}
+								color="red"
+							>
+								Ban account
+							</Menu.Item>
+						</Menu.Dropdown>
+					</Menu>
+				</Group>
 			</td>
 		</tr>
 	));
@@ -272,7 +340,7 @@ function TableUser() {
 									</th>
 									<th className="py-4 font-medium">
 										<a className="flex items-center" href="#">
-											<span>Uploaded Posts</span>
+											<span>Enrolled Date</span>
 											<span className="ml-2">
 												<svg
 													width="9"
@@ -314,7 +382,7 @@ function TableUser() {
 									</th>
 									<th className="py-4 font-medium" style={{ width: "5px" }}>
 										<a className="flex items-center" href="#">
-											<span>Options</span>
+											<span>Uploaded Posts</span>
 											<span className="ml-2">
 												<svg
 													width="9"
@@ -331,9 +399,7 @@ function TableUser() {
 							<tbody>{All}</tbody>
 						</table>
 					</div>
-					<Modal opened={opened} onClose={close} title="EDIT USER FORM">
-						{/* Modal content */}
-					</Modal>
+					
 				</div>
 				<Center mt={"lg"}>
 					<Pagination value={activePage} onChange={setPage} total={numPage} />
