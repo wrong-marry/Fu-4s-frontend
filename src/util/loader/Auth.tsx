@@ -1,7 +1,6 @@
-import { redirect } from "react-router-dom";
 import {fetchUser} from "../UserFetchUtil.tsx";
 
-export function Logout() {
+export async function logout() {
   localStorage.removeItem("username");
   localStorage.removeItem("token");
   window.location.href="/";
