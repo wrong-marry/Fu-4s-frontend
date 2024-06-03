@@ -13,16 +13,16 @@ export default function HomePage() {
         <>
             <Container className="container">
                 <Card>
-                <Stack gap="md">
-                    <Title order={2}>Recent Posts</Title>
-                    <RecentPost />
-                    <Title order={2}>Completed Tests</Title>
-                    No completed tests found
-                    {/*<CompletedTest />*/}
-                    <Title order={2}>Uploaded Posts</Title>
-                    No uploaded posts found
-                    {/*<UploadedPost />*/}
-                </Stack>
+                    <Stack gap="md">
+                        <Title order={2}>Recent Posts</Title>
+                        <RecentPost/>
+                        <Title order={2}>Completed Tests</Title>
+                        No completed tests found
+                        {/*<CompletedTest />*/}
+                        <Title order={2}>Uploaded Posts</Title>
+                        No uploaded posts found
+                        {/*<UploadedPost />*/}
+                    </Stack>
                 </Card>
             </Container>
         </>

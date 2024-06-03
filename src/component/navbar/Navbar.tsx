@@ -2,7 +2,7 @@ import {
   Button,
   Menu,
   rem,
-  // Avatar,
+  Avatar,
   Group,
   Text,
   useMantineColorScheme,
@@ -13,9 +13,7 @@ import darkLogo from "../../asset/darkLogo.png";
 import {
   NavLink,
   useLoaderData,
-  useNavigate,
-  useSearchParams,
-  useSubmit,
+  useNavigate
 } from "react-router-dom";
 import {
   IconPhoto,
@@ -29,36 +27,30 @@ import {
 
 import { DarkModeSwitch } from "react-toggle-dark-mode";
 import React, { useContext, useEffect } from "react";
-import { UserCredentialsContext } from "../../store/user-credentials-context";
+import {UserCredentials, UserCredentialsContext} from "../../store/user-credentials-context";
 import { useDisclosure } from "@mantine/hooks";
-// import FolderModal from "../modal/navbar/create/FolderModal";
-// import ClassModal from "../modal/navbar/create/ClassModal";
-// import GeneralSearchBar from "./search/GeneralSearchBar";
-import { toast } from "react-toastify";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
-import FolderModal from "../modal/navbar/create/FolderModal.tsx";
-import ClassModal from "../modal/navbar/create/ClassModal.tsx";
-import {logout} from "../../util/loader/Auth.tsx";
+import { Logout } from "../../util/loader/Auth.tsx";
+import NotificationCard from "../notification/NotificationCard.tsx";
 
-const userBtn = (data: LoaderData, handleLogout: any) => {
+const userBtn = (data: LoaderData, handleLogout: () => void) => {
   return (
     <>
       <Menu shadow="md" width={200}>
         <Menu.Target>
           <Group className="cursor-pointer border-none">
-            {/*<Avatar*/}
-            {/*  variant="filled"*/}
-            {/*  radius="xl"*/}
-            {/*  color="grape"*/}
-            {/*  className="cursor-pointer"*/}
-            {/*  src={data?.avatar}*/}
-            {/*/>*/}
+            <Avatar
+                variant="filled"
+                radius="xl"
+                color="grape"
+                className="cursor-pointer"
+                // src={data?.avatar}
+            />
             <Text className="text-sm font-semibold">
               {data ? data.firstName + " " + data.lastName : "Guest"}
             </Text>
           </Group>
         </Menu.Target>
-
         <Menu.Dropdown>
           <Menu.Label>Menu</Menu.Label>
           <NavLink to={"/user"}>
@@ -95,34 +87,44 @@ const userBtn = (data: LoaderData, handleLogout: any) => {
             leftSection={
               <IconLogout style={{ width: rem(14), height: rem(14) }} />
             }
-            onClick={() => {
-                handleLogout();
-            }}
+            onClick={handleLogout}
           >
             Logout
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>
     </>
-  );
+  ) as React.ReactElement;
 };
 
-const guestBtn = (mode: string) => {
+const guestBtn = () => {
   const navigate = useNavigate();
   return (
     <>
-        <Button onClick={()=>navigate("/auth")} variant={"light"} color="indigo" radius="md" fz="sm">
-          Login
-        </Button>
+      <Button
+        onClick={() => navigate("/auth")}
+        variant={"light"}
+        color="indigo"
+        radius="md"
+        fz="sm"
+      >
+        Login
+      </Button>
 
-        <Button onClick={()=>navigate("/auth/register")} variant="filled" color="indigo" radius="md" fz="sm">
-          Signup
-        </Button>
+      <Button
+        onClick={() => navigate("/auth/register")}
+        variant="filled"
+        color="indigo"
+        radius="md"
+        fz="sm"
+      >
+        Signup
+      </Button>
     </>
   );
 };
 
-interface LoaderData {
+export interface LoaderData {
   error?: boolean;
   username?: string;
   firstName?: string;
@@ -131,20 +133,17 @@ interface LoaderData {
 }
 
 function Navbar() {
-  const [opened, { open, close }] = useDisclosure(false);
-  const [classOpened, { open: classOpen, close: classClose }] =
-    useDisclosure(false);
+  const [, {open,}] = useDisclosure(false);
 
-  const { assignUserCredentials, clearUserCredentials } = useContext(
+  const {assignUserCredentials} = useContext(
     UserCredentialsContext
   );
-  const mode = useSearchParams()[0].get("mode");
   const data: LoaderData = useLoaderData() as LoaderData;
   useEffect(() => {
     if (data !== null) {
       assignUserCredentials({
         ...data,
-      });
+      } as unknown as UserCredentials);
     }
   }, [data]);
 
@@ -162,17 +161,17 @@ function Navbar() {
     setColorScheme(computedColorScheme === "dark" ? "light" : "dark");
   };
   const btnState =
-    data?.error || !data
-      ? guestBtn(mode as string)
-      : userBtn(data, logout);
-  const whichHomepage = data?.error || !data ? "/" : "/home";
-
+      data?.error || !data ? guestBtn() : userBtn(data, Logout);
+  const whichHomepage = "";
   return (
     <>
       <header className="w-full h-16 flex items-center justify-between sticky top-0 z-20 shadow-sm bg-[--mantine-color-body]">
         <div className="flex items-center w-full">
           <NavLink to={whichHomepage} className="w-32 mx-5">
-            <img src={(computedColorScheme === "dark") ? darkLogo : logo} alt="Dark FU4S logo"/>
+            <img
+              src={computedColorScheme === "dark" ? darkLogo : logo}
+              alt="Dark FU4S logo"
+            />
           </NavLink>
 
           <div className="ml-5 flex items-center">
@@ -232,23 +231,19 @@ function Navbar() {
                 <Menu.Item
                   onClick={open}
                   leftSection={
-                    <IconPhoto
-                      style={{ width: rem(14), height: rem(14) }}
-                    />
+                    <IconPhoto style={{ width: rem(14), height: rem(14) }} />
                   }
                 >
                   Learning material
                 </Menu.Item>
-
               </Menu.Dropdown>
             </Menu>
+
+            <NotificationCard />
             <Group>{btnState}</Group>
           </Group>
         </div>
       </header>
-
-      <FolderModal opened={opened} close={close} />
-      <ClassModal opened={classOpened} close={classClose} />
     </>
   );
 }

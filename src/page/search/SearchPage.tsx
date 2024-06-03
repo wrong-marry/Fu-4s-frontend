@@ -1,43 +1,87 @@
-import {Params, redirect, useActionData, useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {
+    NavigateFunction,
+    useNavigate,
+    useSearchParams
+} from "react-router-dom";
 import axios from "axios";
-import {useEffect, useState} from "react";
-import {Grid, Skeleton, Container, Flex, TextInput, NativeSelect, Pagination, Center} from '@mantine/core';
-import { toast } from "react-toastify";
+import React, {useEffect, useState} from "react";
+import {Container, Flex, TextInput, Pagination, Center} from '@mantine/core';
 import {Avatar, Badge, Card, Group, Stack, Text} from "@mantine/core";
 import {Carousel} from "@mantine/carousel";
 import classes from "../../component/home/Carousel.module.css";
 import '@mantine/dates/styles.css';
 import { Radio} from '@mantine/core';
-import {IconAdjustmentsAlt, IconSettings} from '@tabler/icons-react';
+import {IconAdjustmentsAlt} from '@tabler/icons-react';
 import { Select, rem } from '@mantine/core';
 
 import { useDisclosure } from '@mantine/hooks';
 import { Drawer, Button } from '@mantine/core';
 import {DateInput} from "@mantine/dates";
+import {useForm} from "@mantine/form";
+import dayjs from 'dayjs';
 
-function searchDrawer() {
+const SearchDrawer = (props: {
+    searchRequest: SearchRequest,
+    setSearchRequest: React.Dispatch<React.SetStateAction<SearchRequest>>
+}) => {
+    const searchRequest = props.searchRequest;
+    const setSearchRequest = props.setSearchRequest;
     const [opened, { open, close }] = useDisclosure(false);
-    const [value, setValue] = useState<Date | null>();
-    return (
-        <>
-            <Drawer
-                size={"xs"}
-                opened={opened}
-                onClose={close}
-                title="Advanced search options"
-                overlayProps={{ backgroundOpacity: 0.5, blur: 2 }}
-            >
+    const [value] = useState<Date | null>();
+    const form = useForm({
+        mode: 'uncontrolled',
+        initialValues: {
+            title:searchRequest?.title,
+            subjectCode:searchRequest?.subjectCode,
+            semester: null,
+            postTime:searchRequest?.postTime,
+            isTest:searchRequest?.isTest
+        },
+        validate: {
+        },
+    });
+    return (<>
+        <Drawer
+            size={"xs"}
+            opened={opened}
+            onClose={close}
+            title="Advanced search options"
+            overlayProps={{backgroundOpacity: 0.5, blur: 2}}
+        >
+            <form onSubmit={form.onSubmit((values) => {
+                setSearchRequest({ ...searchRequest,
+                    title:values.title,
+                    subjectCode:values.subjectCode,
+                    semester: values.semester,
+                    postTime: values.postTime,
+                    isTest: values.isTest,
+                });
+                close();
+            })}>
                 <TextInput
                     label="Title"
                     placeholder="Keyword for title"
                     description="The title must contains this keyword"
+                    key={form.key('title')}
+                    {...form.getInputProps('title')}
                 />
 
-                <NativeSelect
+                <Select
+                    name={"subjectCode"}
+                    placeholder={"Choose a subject"}
                     mt="md"
                     label="Subject"
-                    data={['Any subject','DBI202', 'SWP391', 'PRJ301', 'PRN202']}
+                    data={
+                        [
+                            {value: 'SWP391' as string, label:'SWP391'},
+                            {value: 'MAD101' as string, label:'MAD101'},
+                            {value: 'PRJ301' as string, label:'PRJ301'},
+                            {value: 'DBI202' as string, label:'DBI202'},
+                        ]
+                    }
                     description="Pick a subject code"
+                    key={form.key('subjectCode')}
+                    {...form.getInputProps('subjectCode')}
                 />
 
                 <TextInput
@@ -46,16 +90,19 @@ function searchDrawer() {
                     label="Semester"
                     placeholder="Semester"
                     description="Try entering the semester you are in"
+                    key={form.key('semester')}
+                    {...form.getInputProps('semester')}
                 />
 
                 <DateInput
                     mt="md"
                     value={value}
-                    onChange={setValue}
-                    valueFormat="YYYY MMM DD"
+                    valueFormat="DD/MM/YYYY HH:mm:ss"
                     label="Date"
                     description="Only find posts after"
                     placeholder="Upload time"
+                    key={form.key('postTime')}
+                    {...form.getInputProps('postTime')}
                 />
 
                 <Radio.Group
@@ -63,40 +110,53 @@ function searchDrawer() {
                     name="isTest"
                     label="Post type"
                     description="Choose the desired type of post"
+                    key={form.key('isTest')}
+                    {...form.getInputProps('isTest')}
                 >
                     <Group mt="xs">
                         <Radio label="All" value="null"/>
-                        <Radio value="true" label="Mock test" />
-                        <Radio value="false" label="Learning material" />
+                        <Radio value="true" label="Mock test"/>
+                        <Radio value="false" label="Learning material"/>
                     </Group>
                 </Radio.Group>
-                <Button mt={"xl"} ml={"30%"} onClick={()=>window.location.replace("/search")}>
-                    Search
-                </Button>
-            </Drawer>
-            <Flex justify={"space-around"} align={"center"}>
-                <Text>Showing 1000 results.</Text>
-                <Select
-                    leftSection={<IconAdjustmentsAlt style={{ width: rem(18), height: rem(18) }} stroke={1.5} />}
-                    placeholder="Sort by"
-                    data={[
-                        { group: 'Recency', items: ['Newest first', 'Oldest first'] },
-                        { group: 'Alphabet', items: ['A-Z', 'Z-A'] },
-                    ]}
-                />
-                <Text ta={"center"}>
-                    <Text  opacity={0.6} fz={12} >
-                        Did not find the post?
-                    </Text>
-                    <div>
-                        <Button onClick={open} m={"auto"} opacity={2}>
-                            Advanced search
-                        </Button>
-                    </div>
+
+                <Group justify="flex-end" mt="md">
+                    <Button type="submit">Search</Button>
+                </Group>
+            </form>
+        </Drawer>
+        <Flex justify={"space-around"} align={"center"}>
+            <Text>Showing 1000 results.</Text>
+            <Select
+                onChange={(value) => setSearchRequest({...searchRequest, order: value + "", isTest:null})}
+                leftSection={<IconAdjustmentsAlt style={{width: rem(18), height: rem(18)}} stroke={1.5}/>}
+                placeholder="Sort by"
+                data={[
+                    {
+                        group: 'Recency',
+                        items: [
+                            { label: 'Newest first', value: SearchOrder[SearchOrder.DATE_DESC]},
+                            { label: 'Oldest first', value: SearchOrder[SearchOrder.DATE_ASC]}
+                        ]
+                    },
+                    { group: 'Alphabet', items: [
+                            { label: 'A-Z', value: SearchOrder[SearchOrder.TITLE_ASC]},
+                            { label: 'Z-A', value: SearchOrder[SearchOrder.TITLE_DESC]}
+                        ] },
+                ]}
+            />
+            <Text ta={"center"}>
+                <Text  opacity={0.6} fz={12} >
+                    Did not find the post?
                 </Text>
-            </Flex>
-        </>
-    );
+                <div>
+                    <Button onClick={open} m={"auto"} opacity={2}>
+                        Advanced search
+                    </Button>
+                </div>
+            </Text>
+        </Flex>
+    </>)
 }
 
 export interface Post {
@@ -106,7 +166,7 @@ export interface Post {
     title: string;
     subjectCode: string;
     username: string;
-    isTest: boolean;
+    test: boolean;
 }
 interface ResponseMaterialData {
     totalMaterial: number;
@@ -117,18 +177,7 @@ interface ResponseTestData {
     tests: Post[];
 }
 export const POST_PAGE_SIZE = 10;
-export async function fetchPostData(keyword: string, page:number) {
-    try {
-        const response = await axios.get(
-            `http://localhost:8080/api/v1/search?keyword=${keyword}&pageSize=`+POST_PAGE_SIZE+
-            `&page=`+page
-        );
-        return response.data;
-    } catch (error) {
-        throw new Error("Error fetching post data");
-    }
-}
-interface SearchRequest {
+export interface SearchRequest {
     username: string|null;
     title: string|null;
     subjectCode: string|null;
@@ -137,7 +186,7 @@ interface SearchRequest {
     order: string;
     pageSize: number;
     currentPage: number;
-
+    semester: number|null;
 }
 enum SearchOrder {
     USERNAME_ASC, USERNAME_DESC, TITLE_ASC, TITLE_DESC, DATE_ASC, DATE_DESC
@@ -147,12 +196,15 @@ export async function advancedSearch(searchRequest: SearchRequest) {
         let api = `http://localhost:8080/api/v1/search?pageSize=`+POST_PAGE_SIZE;
         if (searchRequest.username) api+=`&username=${searchRequest.username}`;
         if (searchRequest.title) api+=`&keyword=${searchRequest.title}`;
-        if (searchRequest.isTest) api+=`&isTest=${searchRequest.isTest}`;
+        if (searchRequest.isTest!=null) api+=`&isTest=${searchRequest.isTest}`;
+        if (searchRequest.subjectCode) api+=`&subjectCode=${searchRequest.subjectCode}`;
+        if (searchRequest.semester) api+=`&semester=${searchRequest.semester}`;
+        if (searchRequest.postTime) api+=`&postTime=${dayjs(searchRequest.postTime).format('YYYY-MM-DDTHH:mm:ssZ[Z]')}`;
         api+=`&order=${searchRequest.order}`;
 
-        console.log(searchRequest);
         api+=`&page=${searchRequest.currentPage}`;
         const response = await axios.get(api);
+        console.log(api);
         return response.data;
     } catch (error) {
         throw new Error("Error fetching post data");
@@ -160,20 +212,11 @@ export async function advancedSearch(searchRequest: SearchRequest) {
 }
 function SearchPage() {
     const navigate = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const [resMaterialData, setResMaterialData] = useState<ResponseMaterialData>();
     const [resTestData, setResTestData] = useState<ResponseTestData>();
     const [currentMaterialPage, setCurrentMaterialPage] = useState<number>(1);
     const [currentTestPage, setCurrentTestPage] = useState<number>(1);
-    // const fetchData = async (page:number) => {
-    //     const data = await fetchPostData(searchParams.get("keyword")+"", page);
-    //     setResData  ({
-    //         totalMaterial: data?.data?.totalMaterial,
-    //         totalTest:data?.data?.totalTest,
-    //         learningMaterials: data?.data?.learningMaterials,
-    //         tests: data?.data?.tests,
-    //     });
-    // };
     const advancedFetchData = async (searchReq:SearchRequest) => {
         const data = await advancedSearch(searchReq);
         if (data?.data?.learningMaterials)
@@ -189,17 +232,16 @@ function SearchPage() {
     };
     const [searchRequest, setSearchRequest] = useState({
         username: null,
-        title: null,
+        title: searchParams.get("keyword"),
         subjectCode: null,
         postTime: null,
         isTest: null,
         order: SearchOrder[SearchOrder.DATE_DESC],
         pageSize: POST_PAGE_SIZE,
         currentPage: 1,
-    });
-    console.log(searchRequest);
+        semester: null
+    } as SearchRequest);
     useEffect(() => {
-        // if (searchParams.get("keyword")) setSearchRequest({...searchRequest, title: searchParams.get("keyword")});
         advancedFetchData(searchRequest);
     }, [searchRequest]);
 
@@ -210,223 +252,190 @@ function SearchPage() {
     return (
         <Container my="lg" size={"lg"}>
             <Text ta={"center"} fw={650} fz={25}>Search result</Text>
-            {searchDrawer()}
+            <SearchDrawer searchRequest={searchRequest} setSearchRequest={setSearchRequest} />
             <Text lh={3} ta={"center"}>______</Text>
-            <Text lh={2} fw={650} fz={25}>Learning material</Text>
-            {resMaterialData?.learningMaterials.length === 0 ? (
-                <Text c={"dimmed"}>No learning material found :(</Text>
-            ) : (
-                <Card display={"flex"}><Card.Section>
-                <Carousel
-                    slideSize={"33.333333%"}
-                    height={"180px"}
-                    align={"start"}
-                    slideGap="lg"
-                    controlsOffset="xs"
-                    controlSize={30}
-                    dragFree
-                    classNames={classes}
-                >
-                    {resMaterialData?.learningMaterials?.map((test, index) => (
-                        <Carousel.Slide key={index}>
-                            <Card
-                                shadow="sm"
-                                radius="md"
-                                padding={"lg"}
-                                withBorder
-                                component="a"
-                                className="h-full"
-                            >
-                                <Stack
-                                    onClick={() => {
-                                        navigate(`/post/${test.id}`);
-                                    }}
-                                    className="cursor-pointer justify-between h-full"
-                                >
-                                    <Stack gap={2}>
-                                        <Text fw={500} truncate="end">{test.title}</Text>
-                                        <Text fw={150} fz={13}>{test.postTime
-                                            .toString().substring(0,10)
-                                        }
-                                        </Text>
-                                        {
-                                            (test.isTest)?
-                                                <Badge color="indigo">
-                                                    Mock Test
-                                                </Badge> :
-                                                <Badge color="pink">
-                                                    Learning Material
-                                                </Badge>
-                                        }
-                                    </Stack>
-                                    <Group gap={"xs"}>
-                                        <Avatar variant="filled" radius="xl" size="sm" />
-                                        <Text size="sm">{test.username}</Text>
-                                        <Stack gap={2}>
-                                            <Badge color="blue">
-                                                {test.subjectCode}
-                                            </Badge>
-                                        </Stack>
-                                    </Group>
-                                </Stack>
-                            </Card>
-                        </Carousel.Slide>
-                    ))}
-                </Carousel>
-                </Card.Section>
-                    <Center>
-                        <Pagination
-                            mt={"lg"}
-                            value={currentMaterialPage}
-                            total={numberOfMaterialPages}
-                            getItemProps={(page) => ({
-                                onClick: () => {
-                                    setCurrentMaterialPage(page);
-                                    setSearchRequest({ ...searchRequest, currentPage: page, isTest: false });
-                                }
-                            })}
-                            getControlProps={(control) => {
-                                if (control === 'first') {
-                                    return { onClick: () => {
-                                            setCurrentTestPage(1);
-                                            setSearchRequest({ ...searchRequest, currentPage: 1, isTest: false });
-                                        } };
-                                }
+            {
+                (resTestData==null)?
+                    <></> :
+                (resMaterialData==null)?
+                    <></> :
+                    <>
+                        <Text lh={2} fw={650} fz={25}>Learning material</Text>
+                        {(resMaterialData?.learningMaterials.length === 0) ?
+                            <Text c={"dimmed"}>No learning material found</Text>
+                            :
+                            MyPostList(resMaterialData.learningMaterials, navigate)}
+                    </>
+            }
+            <Center>
+                <Pagination
+                    mt={"lg"}
+                    value={currentMaterialPage}
+                    total={numberOfMaterialPages}
+                    getItemProps={(page) => ({
+                        onClick: () => {
+                            setCurrentMaterialPage(page);
+                            setSearchRequest({...searchRequest, currentPage: page, isTest: false});
+                        }
+                    })}
+                    getControlProps={(control) => {
+                        if (control === 'first') {
+                            return { onClick: () => {
+                                    setCurrentMaterialPage(1);
+                                    setSearchRequest({...searchRequest, currentPage: 1, isTest: false});
+                                } };
+                        }
 
-                                if (control === 'last') {
-                                    return { onClick: () => {
-                                            setCurrentMaterialPage(numberOfMaterialPages);
-                                            setSearchRequest({ ...searchRequest, currenPage: numberOfMaterialPages, isTest: false });
-                                        } };
-                                }
+                        if (control === 'last') {
+                            return { onClick: () => {
+                                    setCurrentMaterialPage(numberOfMaterialPages);
+                                    setSearchRequest({
+                                        ...searchRequest,
+                                        currentPage: numberOfMaterialPages,
+                                        isTest: false
+                                    });
+                                } };
+                        }
 
-                                if (control === 'next') {
-                                    return { onClick: () => {
-                                            setCurrentMaterialPage(currentMaterialPage+1);
-                                            setSearchRequest({ ...searchRequest, currentPage: currentMaterialPage, isTest: false });
-                                        } };
-                                }
+                        if (control === 'next') {
+                            return { onClick: () => {
+                                    setCurrentMaterialPage(currentMaterialPage+1);
+                                    setSearchRequest({
+                                        ...searchRequest,
+                                        currentPage: currentMaterialPage,
+                                        isTest: false
+                                    });
+                                } };
+                        }
 
-                                if (control === 'previous') {
-                                    return { onClick: () => {
-                                            setCurrentMaterialPage(currentMaterialPage-1);
-                                            setSearchRequest({ ...searchRequest, currentPage: currentMaterialPage, isTest: false });
-                                        } };
-                                }
+                        if (control === 'previous') {
+                            return { onClick: () => {
+                                    setCurrentMaterialPage(currentMaterialPage-1);
+                                    setSearchRequest({ ...searchRequest, currentPage: currentMaterialPage, isTest: false });
+                                } };
+                        }
 
-                                return {};
-                            }}
-                        />
-                    </Center>
-                </Card>
-            )}
+                        return {};
+                    }}
+                />
+            </Center>
+            {
+                (resTestData==null)?
+                   <></> :
+                    <>
+                        <Text lh={2} fw={650} fz={25}>Mock test</Text>
+                        {(resTestData?.tests.length === 0) ?
+                        <Text c={"dimmed"}>No mock tests found</Text>
+                        :
+                            MyPostList(resTestData.tests, navigate)}
+                    </>
+            }
+            <Center>
+                <Pagination
+                    mt={"lg"}
+                    value={currentTestPage}
+                    total={numberOfTestPages}
+                    getItemProps={(page) => ({
+                        onClick: () => {
+                            setCurrentTestPage(page);
+                            setSearchRequest({ ...searchRequest, currentPage: page, isTest: true });
+                        }
+                    })}
+                    getControlProps={(control) => {
+                        if (control === 'first') {
+                            return { onClick: () => {
+                                    setCurrentTestPage(1);
+                                    setSearchRequest({ ...searchRequest, currentPage: 1, isTest: true });
+                                } };
+                        }
 
+                        if (control === 'last') {
+                            return { onClick: () => {
+                                    setCurrentTestPage(numberOfTestPages);
+                                    setSearchRequest({...searchRequest, currentPage: numberOfTestPages, isTest: true});
+                                } };
+                        }
 
-                <Text lh={2} fw={650} fz={25}>Mock test</Text>
-            {resTestData?.tests.length === 0 ? (
-                <Text c={"dimmed"}>No mock tests found :(</Text>
-            ) : (
-                <Card><Card.Section>
-                <Carousel
-                    slideSize={"33.333333%"}
-                    height={"180px"}
-                    align={"start"}
-                    slideGap="lg"
-                    controlsOffset="xs"
-                    controlSize={30}
-                    dragFree
-                    classNames={classes}
-                >
-                    {resTestData?.tests?.map((test, index) => (
-                        <Carousel.Slide key={index}>
-                            <Card
-                                shadow="sm"
-                                radius="md"
-                                padding={"lg"}
-                                withBorder
-                                component="a"
-                                className="h-full"
-                            >
-                                <Stack
-                                    onClick={() => {
-                                        navigate(`/post/${test.id}`);
-                                    }}
-                                    className="cursor-pointer justify-between h-full"
-                                >
-                                    <Stack gap={2}>
-                                        <Text fw={500} truncate="end">{test.title}</Text>
-                                        <Text fw={150} fz={13}>{test.postTime
-                                            .toString().substring(0,10)
-                                        }
-                                        </Text>
-                                        {
-                                                <Badge color="indigo">
-                                                    Mock Test
-                                                </Badge>
-                                        }
-                                    </Stack>
-                                    <Group gap={"xs"}>
-                                        <Avatar variant="filled" radius="xl" size="sm" />
-                                        <Text size="sm">{test.username}</Text>
-                                        <Stack gap={2}>
-                                            <Badge color="blue">
-                                                {test.subjectCode}
-                                            </Badge>
-                                        </Stack>
-                                    </Group>
-                                </Stack>
-                            </Card>
-                        </Carousel.Slide>
-                    ))}
-                </Carousel></Card.Section>
-                    <Center>
-                        <Pagination
-                            mt={"lg"}
-                            value={currentTestPage}
-                            total={numberOfTestPages}
-                            getItemProps={(page) => ({
-                                onClick: () => {
-                                    setCurrentTestPage(page);
-                                    setSearchRequest({ ...searchRequest, currentPage: page });
-                                }
-                            })}
-                            getControlProps={(control) => {
-                                if (control === 'first') {
-                                    return { onClick: () => {
-                                            setCurrentTestPage(1);
-                                            setSearchRequest({ ...searchRequest, currentPage: 1 });
-                                        } };
-                                }
+                        if (control === 'next') {
+                            return { onClick: () => {
+                                    setCurrentTestPage(currentTestPage+1);
+                                    setSearchRequest({ ...searchRequest, currentPage: currentTestPage, isTest: true });
+                                } };
+                        }
 
-                                if (control === 'last') {
-                                    return { onClick: () => {
-                                            setCurrentTestPage(numberOfMaterialPages);
-                                            setSearchRequest({ ...searchRequest, currentPage: numberOfTestPages });
-                                        } };
-                                }
+                        if (control === 'previous') {
+                            return { onClick: () => {
+                                    setCurrentTestPage(currentTestPage-1);
+                                    setSearchRequest({ ...searchRequest, currentPage: currentTestPage, isTest: false });
+                                } };
+                        }
 
-                                if (control === 'next') {
-                                    return { onClick: () => {
-                                            setCurrentTestPage(currentTestPage+1);
-                                            setSearchRequest({ ...searchRequest, currentPage: currentTestPage });
-                                        } };
-                                }
-
-                                if (control === 'previous') {
-                                    return { onClick: () => {
-                                            setCurrentTestPage(currentTestPage-1);
-                                            setSearchRequest({ ...searchRequest, currentPage: currentTestPage });
-                                        } };
-                                }
-
-                                return {};
-                            }}
-                        />
-                    </Center>
-                </Card>
-            )}
+                        return {};
+                    }}
+                />
+            </Center>
         </Container>
     );
 }
 
+const MyPostList = (resData: Post[], navigate: NavigateFunction) => {
+    return <>
+        <Card>
+            <Carousel
+                slideSize={"33.333333%"}
+                height={"180px"}
+                align={"start"}
+                slideGap="lg"
+                controlsOffset="xs"
+                controlSize={30}
+                dragFree
+                classNames={classes}
+            >
+                {resData?.map((test, index) => (
+                    <Carousel.Slide key={index}>
+                        <Card
+                            shadow="sm"
+                            radius="md"
+                            padding={"lg"}
+                            withBorder
+                            component="a"
+                            className="h-full"
+                        >
+                            <Stack
+                                onClick={() => navigate(`/post/${test.id}`)}
+                                className="cursor-pointer justify-between h-full"
+                            >
+                                <Stack gap={2}>
+                                    <Text fw={500} truncate="end">{test.title}</Text>
+                                    <Text fw={150} fz={13}>{test.postTime
+                                        .toString().substring(0,10)
+                                    }
+                                    </Text>
+                                    {
+                                        (test.test)?
+                                            <Badge color="indigo">
+                                                Mock Test
+                                            </Badge> :
+                                            <Badge color="pink">
+                                                Learning Material
+                                            </Badge>
+                                    }
+                                </Stack>
+                                <Group gap={"xs"}>
+                                    <Avatar variant="filled" radius="xl" size="sm" />
+                                    <Text size="sm">{test.username}</Text>
+                                    <Stack gap={2}>
+                                        <Badge color="blue">
+                                            {test.subjectCode}
+                                        </Badge>
+                                    </Stack>
+                                </Group>
+                            </Stack>
+                        </Card>
+                    </Carousel.Slide>
+                ))}
+            </Carousel>
+        </Card>
+        </>;
+}
 export default SearchPage;
