@@ -69,42 +69,31 @@ function NotificationList() {
     fetchNoti();
   }, [activePage]);
 
-  const markAsRead = async (id: string) => {
-    try {
-      await fetch(`http://localhost:8080/api/v1/notification/markAsRead`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id }),
-      });
-
-      setNotifications((prevNotifications) =>
-        prevNotifications.map((noti) =>
-          noti.id === id ? { ...noti, seen: true } : noti
-        )
-      );
-    } catch (error) {
-      console.error("Error marking notification as read:", error);
-    }
-  };
-
   const markAsUnread = async (id: string) => {
     try {
-      await fetch(`http://localhost:8080/api/v1/notification/markAsUnread`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id }),
-      });
-
-      setNotifications((prevNotifications) =>
-        prevNotifications.map((noti) =>
-          noti.id === id ? { ...noti, seen: false } : noti
-        )
+      const response = await fetch(
+        `http://localhost:8080/api/v1/notification/${id}/markAsUnread`,
+        {
+          method: "PATCH",
+        }
       );
+
+      if (response.ok) {
+        // Xử lý phản hồi nếu thành công
+        setNotifications((prevNotifications) =>
+          prevNotifications.map((noti) =>
+            noti.id === id ? { ...noti, seen: false } : noti
+          )
+        );
+      } else {
+        // Xử lý lỗi nếu phản hồi không thành công
+        console.error(
+          "Error marking notification as unread:",
+          response.statusText
+        );
+      }
     } catch (error) {
+      // Xử lý lỗi nếu có lỗi trong quá trình gửi yêu cầu
       console.error("Error marking notification as unread:", error);
     }
   };
@@ -132,7 +121,7 @@ function NotificationList() {
 
   const handleNotificationClick = (notification: Notification) => {
     if (!notification.seen) {
-      markAsRead(notification.id);
+      // markAsRead(notification.id);
     }
     navigate(notification.link);
   };
