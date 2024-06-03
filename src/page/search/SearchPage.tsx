@@ -57,6 +57,7 @@ const SearchDrawer = (props: {
                     semester: values.semester,
                     postTime: values.postTime,
                     isTest: values.isTest,
+                    updateBoth: true
                 });
                 close();
             })}>
@@ -130,7 +131,7 @@ const SearchDrawer = (props: {
         <Flex justify={"space-around"} align={"center"}>
             <Text>Showing {props.displayed} out of {props.total} results.</Text>
             <Select
-                onChange={(value) => setSearchRequest({...searchRequest, order: value + "", isTest:null})}
+                onChange={(value) => setSearchRequest({...searchRequest, order: value + ""})}
                 leftSection={<IconAdjustmentsAlt style={{width: rem(18), height: rem(18)}} stroke={1.5}/>}
                 placeholder="Sort by"
                 data={[
@@ -189,6 +190,7 @@ export interface SearchRequest {
     pageSize: number;
     currentPage: number;
     semester: number|null;
+    updateBoth: boolean | null;
 }
 enum SearchOrder {
     USERNAME_ASC, USERNAME_DESC, TITLE_ASC, TITLE_DESC, DATE_ASC, DATE_DESC
@@ -225,20 +227,20 @@ function SearchPage() {
         const data = await advancedSearch(searchReq);
         setTotalItem(0);
         setDisplayedNumber(0);
-        if (data?.data?.learningMaterials) {
+        if (data?.data?.learningMaterials || searchReq?.updateBoth) {
             setResMaterialData({
                 totalMaterial: data?.data?.totalMaterial,
                 learningMaterials: data?.data?.learningMaterials,
             });
-            setDisplayedNumber(prev => prev + data?.data?.learningMaterials.length);
-            setTotalItem(totalItem => totalItem + data?.data?.totalMaterial);
+            setDisplayedNumber(prev => prev + (data?.data?.learningMaterials?.length || 0));
+            setTotalItem(totalItem => totalItem + (data?.data?.totalMaterial || 0));
         }
-        if (data?.data?.tests) {
+        if (data?.data?.tests || searchReq?.updateBoth) {
             setResTestData({
                 totalTest: data?.data?.totalTest,
                 tests: data?.data?.tests,
             });
-            setDisplayedNumber(prev => prev + data?.data?.tests.length);
+            setDisplayedNumber(prev => prev + data?.data?.tests?.length);
             setTotalItem(totalItem => totalItem + data?.data?.totalTest);
         }
     };
@@ -255,7 +257,7 @@ function SearchPage() {
     } as SearchRequest);
     useEffect(() => {
         advancedFetchData(searchRequest);
-    }, [searchRequest]);
+    }, [searchRequest, searchParams]);
 
     const numberOfMaterialPages = (resMaterialData?.totalMaterial==0||resMaterialData?.totalMaterial==undefined)
             ?0:(Math.ceil(resMaterialData.totalMaterial/POST_PAGE_SIZE));
@@ -268,13 +270,11 @@ function SearchPage() {
                           displayed={displayedNumber}/>
             <Text lh={3} ta={"center"}>______</Text>
             {
-                (resTestData==null)?
-                    <></> :
                 (resMaterialData==null)?
                     <></> :
                     <>
                         <Text lh={2} fw={650} fz={25}>Learning material</Text>
-                        {(resMaterialData?.learningMaterials.length === 0) ?
+                        {((resMaterialData?.learningMaterials?.length || 0) === 0) ?
                             <Text c={"dimmed"}>No learning material found</Text>
                             :
                             MyPostList(resMaterialData.learningMaterials, navigate)}
@@ -337,7 +337,7 @@ function SearchPage() {
                    <></> :
                     <>
                         <Text lh={2} fw={650} fz={25}>Mock test</Text>
-                        {(resTestData?.tests.length === 0) ?
+                        {((resTestData?.tests?.length || 0) === 0) ?
                         <Text c={"dimmed"}>No mock tests found</Text>
                         :
                             MyPostList(resTestData.tests, navigate)}
