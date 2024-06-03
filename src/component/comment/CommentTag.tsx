@@ -25,6 +25,7 @@ export default function Comment(props: CommentData) {
     const time = props.date;
     const isMine: boolean = props.isMine;
     const id = props.id;
+    const [status, setStatus] = useState(props.status);
 
     const [contentStack, setContentStack] = useState(
         <Stack gap={3}>
@@ -46,7 +47,22 @@ export default function Comment(props: CommentData) {
                     <>
                         <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
                         <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={() => deleteComment(id)}>Delete</Anchor>
-                    </> : <Anchor fz={"sm"} mx={"sm"}>Reply</Anchor>}
+                    </> : <>
+                        <Anchor fz={"sm"} mx={"sm"}>Reply</Anchor>
+                        {
+                            ["STAFF", "ADMIN"].includes((localStorage.getItem("role") + "")) &&
+                            <Anchor fz={"sm"} mx={"sm"}
+                                    onClick={async () => {
+                                        const response = await axios.put(`http://localhost:8080/api/v1/comments/status/${id}`,
+                                            {
+                                                headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
+                                            }
+                                        );
+                                        if (response.status == 200) setStatus(status == "ACTIVE" ? "Hide" : "Unhide");
+                                    }}
+                            >{status == "ACTIVE" ? "Hide" : "Unhide"}</Anchor>
+                        }
+                    </>}
             </Group>
         </Stack> as React.ReactElement
     );

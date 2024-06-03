@@ -52,6 +52,8 @@ const PostPage: React.FC = () => {
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<CommentData[] | null>([]);
 
+
+  const isStaff = ["STAFF", "ADMIN"].includes((localStorage.getItem("role") + ""));
   const fetchPost = async () => {
     try {
       const response: AxiosResponse<Post> = await axios.get(
@@ -65,7 +67,7 @@ const PostPage: React.FC = () => {
   const fetchComments = async () => {
     try {
       const response: AxiosResponse<CommentData[]> = await axios.get(
-          `http://localhost:8080/api/v1/comments/post/${id}`
+          `http://localhost:8080/api/v1/comments/post/${id}` + (isStaff && "?isStaff=true")
       )
       setComments(response.data);
     } catch (error) {
