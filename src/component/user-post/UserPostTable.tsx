@@ -68,9 +68,14 @@ export function UserPostTable() {
                             Active
                         </span>
                         :
-                        <span className="inline-block py-1 px-2 text-white bg-red-500 rounded-full">
-                            Hidden
-                        </span>
+                        post.status == 'HIDDEN' ?
+                            <span className="inline-block py-1 px-2 text-white bg-red-500 rounded-full">
+                                Hidden
+                            </span>
+                            :
+                            <span className="inline-block py-1 px-2 text-white bg-yellow-500 rounded-full">
+                                Pending
+                            </span>
                     }
                 </td>
 
