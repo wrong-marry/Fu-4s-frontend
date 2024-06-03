@@ -45,6 +45,7 @@ export function CreateMockTestForm() {
     const [title, setTitle] = useState('');
     const [errorFile, setError] = useState<string | null>(null);
     const [fileData, setFileData] = useState<row[]>([]);
+    const [errorAll, setErrorAll] = useState('');
     const navigate = useNavigate();
 
     const isExcelFile = (file: File) => {
@@ -108,8 +109,12 @@ export function CreateMockTestForm() {
     );
 
     const handleAdd = () => {
-        if(file == null || !isExcelFile(file) || title == null || subject == null) return;
+        if(file == null || !isExcelFile(file) || title == "" || subject == "") {
+            setErrorAll("All fields are required");
+            return;
+        }
 
+        setError(null);
         let questions: Question[] = [];
         for(var row of fileData) {
             let answers : Answer[] = [];
@@ -156,7 +161,7 @@ export function CreateMockTestForm() {
         })
             .then((response: Response) => response.json())
             .then((data) => {
-                navigate(`/post/${data.id}`);
+                navigate(`/user/post`);
             })
 
     }
@@ -219,6 +224,8 @@ export function CreateMockTestForm() {
                             <Button onClick={handleAdd}  mt="xl" >
                                 Add Mock Test
                             </Button>
+
+                            <Text size="xs" color="red">{errorAll}</Text>
                         </Grid.Col>
                     </Grid>
                 </form>
