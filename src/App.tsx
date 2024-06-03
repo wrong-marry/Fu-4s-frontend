@@ -22,7 +22,7 @@ import UserProfilePage from "./page/user-profile/UserProfilePage";
 import UpdateProfilePage from "./page/user-profile/UpdateProfilePage";
 import ManageUser from "./page/manageUser-page/ManageUserPage";
 import { ChangePassWordForm } from "./component/user-profile/change-password/ChangePassWordForm";
-import { isLoggedIn, Logout } from "./util/loader/Auth";
+import { isLoggedIn, logout } from "./util/loader/Auth";
 import { ForbiddenPage } from "./page/403/ForbiddenPage";
 import { getAuthCredentials } from "./util/loader/Auth";
 import StudyPage from "./page/study/StudyPage.tsx";
@@ -32,6 +32,10 @@ import LearningMaterialList from "./component/subject-posting/LearningMaterialLi
 import LearningMaterialDetail from "./component/learning-material/LearningMaterialDetail.tsx";
 import NotificationList from "./component/notification/NotificationList.tsx";
 import SubjectList from "./component/manage-subject/SubjectList.tsx";
+import { UserPostPage } from "./page/user-post/UserPostPage.tsx";
+import { UserLearningMaterialPage } from "./page/user-post/UserLearningMaterialPage.tsx";
+import { UserMockTestTable } from "./component/user-post/UserMockTestTable.tsx";
+import { UserMockTestPage } from "./page/user-post/UserMockTestPage.tsx";
 export const loadingIndicator = (
   <Box pos={"relative"} h={"100vh"} w={"100vw"}>
     <LoadingOverlay
@@ -114,7 +118,7 @@ const router = createBrowserRouter([
       {
         path: "logout",
         element: <Suspense fallback={loadingIndicator}></Suspense>,
-        // loader: Logout,
+        loader: logout,
       },
       {
         path: "auth",
@@ -168,15 +172,66 @@ const router = createBrowserRouter([
       },
       {
         path: "user",
-        element: (
-          <Suspense fallback={loadingIndicator}>
-            <UserProfilePage />
-          </Suspense>
-        ),
-        loader: () => {
-          if (!isLoggedIn()) return redirect("/forbidden");
-          return null;
-        },
+        children: [
+          {
+            index: true,
+            path: "",
+            loader: async () => redirect("/user/profile"),
+          },
+          {
+            path: "profile",
+            element: (
+              <Suspense fallback={loadingIndicator}>
+                <UserProfilePage />
+              </Suspense>
+            ),
+            loader: () => {
+              if (!isLoggedIn()) return redirect("/forbidden");
+              return null;
+            },
+          },
+          {
+            path: "post",
+            children: [
+              {
+                path: "",
+                element: (
+                  <Suspense fallback={loadingIndicator}>
+                    <UserPostPage />
+                  </Suspense>
+                ),
+                loader: () => {
+                  if (!isLoggedIn()) return redirect("/forbidden");
+                  return null;
+                },
+              },
+              {
+                path: "mock-test",
+                element: (
+                  <Suspense fallback={loadingIndicator}>
+                    <UserMockTestPage />
+                  </Suspense>
+                ),
+                loader: () => {
+                  if (!isLoggedIn()) return redirect("/forbidden");
+                  return null;
+                },
+              },
+              {
+                path: "learning-material",
+                element: (
+                  <Suspense fallback={loadingIndicator}>
+                    <UserLearningMaterialPage />
+                  </Suspense>
+                ),
+                loader: () => {
+                  if (!isLoggedIn()) return redirect("/forbidden");
+                  return null;
+                },
+              },
+            ],
+          },
+        ],
       },
       {
         path: "update-profile",

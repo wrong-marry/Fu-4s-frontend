@@ -77,7 +77,7 @@ const DashboardSection: React.FC = () => {
 								<div className="flex flex-wrap items-end justify-between -m-2 mb-7">
 									<div className="w-auto p-2">
 										<h3 className="text-sm text-coolGray-500 font-medium">
-											Number of Users
+											Approved Posts
 										</h3>
 									</div>
 									<div className="w-auto p-2">
@@ -101,7 +101,7 @@ const DashboardSection: React.FC = () => {
 									{numOfUser}
 								</h2>
 								<p className="text-center max-w-max mx-auto px-2 py-1 text-green-500 font-medium text-xs bg-green-100 rounded-full">
-									web users
+									approved
 								</p>
 							</div>
 						</div>
@@ -110,7 +110,7 @@ const DashboardSection: React.FC = () => {
 								<div className="flex flex-wrap items-end justify-between -m-2 mb-7">
 									<div className="w-auto p-2">
 										<h3 className="text-sm text-coolGray-500 font-medium">
-											Number of Staffs
+											Rejected Posts
 										</h3>
 									</div>
 									<div className="w-auto p-2">
@@ -134,7 +134,7 @@ const DashboardSection: React.FC = () => {
 									{numOfStaff}
 								</h2>
 								<p className="text-center max-w-max mx-auto px-2 py-1 text-red-500 font-medium text-xs bg-red-100 rounded-full">
-									staffs
+									rejected
 								</p>
 							</div>
 						</div>
@@ -143,7 +143,7 @@ const DashboardSection: React.FC = () => {
 								<div className="flex flex-wrap items-end justify-between -m-2 mb-7">
 									<div className="w-auto p-2">
 										<h3 className="text-sm text-coolGray-500 font-medium">
-											Number of Admins
+											Pending Posts
 										</h3>
 									</div>
 									<div className="w-auto p-2">
@@ -167,7 +167,7 @@ const DashboardSection: React.FC = () => {
 									{numOfAdmin}
 								</h2>
 								<p className="text-center max-w-max mx-auto px-2 py-1 text-yellow-500 font-medium text-xs bg-yellow-100 rounded-full">
-									admins
+									waiting ...
 								</p>
 							</div>
 						</div>
@@ -200,7 +200,7 @@ const DashboardSection: React.FC = () => {
 									{numOfAccount}
 								</h2>
 								<p className="text-center max-w-max mx-auto px-2 py-1 text-green-500 font-medium text-xs bg-green-100 rounded-full">
-									all users
+									all posts
 								</p>
 							</div>
 						</div>
