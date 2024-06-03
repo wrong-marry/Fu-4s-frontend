@@ -68,7 +68,7 @@ const PostPage: React.FC = () => {
   const fetchComments = async () => {
     try {
       const response: AxiosResponse<CommentData[]> = await axios.get(
-          `http://localhost:8080/api/v1/comments/post/${id}` + (isStaff && "?isStaff=true")
+          `http://localhost:8080/api/v1/comments/post/${id}` + (isStaff?"?isStaff=true":"")
       )
       setComments(response.data);
     } catch (error) {

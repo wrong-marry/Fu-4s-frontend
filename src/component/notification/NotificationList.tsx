@@ -43,9 +43,9 @@ function NotificationList() {
     fetchData();
   }, [username]);
 
-  const handleNotificationClick = (link: string) => {
-    navigate(link);
-  };
+  // const handleNotificationClick = (link: string) => {
+  //   navigate(link);
+  // };
 
   if (loading) {
     return <div>Loading...</div>;
