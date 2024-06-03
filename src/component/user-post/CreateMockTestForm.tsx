@@ -5,12 +5,12 @@ import {
     Paper, Select,
     Space,
     TextInput,
-    Title
+    Title,
+    Text
 } from "@mantine/core";
 import classes from "../user-profile/update-profile/AuthenticationTitle.module.css";
 import {useEffect, useState} from "react";
 import * as XLSX from 'xlsx'
-import {data} from "autoprefixer";
 import {useNavigate} from "react-router-dom";
 
 interface Subject {
@@ -212,8 +212,9 @@ export function CreateMockTestForm() {
                                 onChange={setFile}
                                 accept={".xlsx"}
                             />
+                            <Text c="dimmed" size="xs">Only accept excel files. Import format instruction <Text td="underline" color="blue" component="a" href="">here</Text></Text>
 
-                            <Space h="md" />
+                            <Space h="xs" />
 
                             <Button onClick={handleAdd}  mt="xl" >
                                 Add Mock Test
