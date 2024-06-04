@@ -2,7 +2,7 @@ import {
   Button,
   Menu,
   rem,
-  // Avatar,
+  Avatar,
   Group,
   Text,
   useMantineColorScheme,
@@ -13,9 +13,7 @@ import darkLogo from "../../asset/darkLogo.png";
 import {
   NavLink,
   useLoaderData,
-  useNavigate,
-  useSearchParams,
-  useSubmit,
+  useNavigate
 } from "react-router-dom";
 import {
   IconPhoto,
@@ -29,31 +27,26 @@ import {
 
 import { DarkModeSwitch } from "react-toggle-dark-mode";
 import React, { useContext, useEffect } from "react";
-import { UserCredentialsContext } from "../../store/user-credentials-context";
+import {UserCredentials, UserCredentialsContext} from "../../store/user-credentials-context";
 import { useDisclosure } from "@mantine/hooks";
-// import FolderModal from "../modal/navbar/create/FolderModal";
-// import ClassModal from "../modal/navbar/create/ClassModal";
-// import GeneralSearchBar from "./search/GeneralSearchBar";
-import { toast } from "react-toastify";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
-import FolderModal from "../modal/navbar/create/FolderModal.tsx";
-import ClassModal from "../modal/navbar/create/ClassModal.tsx";
-import { logout } from "../../util/loader/Auth.tsx";
+import { Logout } from "../../util/loader/Auth.tsx";
+
 import NotificationCard from "../notification/NotificationCard.tsx";
 
-const userBtn = (data: LoaderData, handleLogout: any) => {
+const userBtn = (data: LoaderData, handleLogout: () => void) => {
   return (
     <>
       <Menu shadow="md" width={200}>
         <Menu.Target>
           <Group className="cursor-pointer border-none">
-            {/*<Avatar*/}
-            {/*  variant="filled"*/}
-            {/*  radius="xl"*/}
-            {/*  color="grape"*/}
-            {/*  className="cursor-pointer"*/}
-            {/*  src={data?.avatar}*/}
-            {/*/>*/}
+            <Avatar
+                variant="filled"
+                radius="xl"
+                color="grape"
+                className="cursor-pointer"
+                // src={data?.avatar}
+            />
             <Text className="text-sm font-semibold">
               {data ? data.firstName + " " + data.lastName : "Guest"}
             </Text>
@@ -95,19 +88,18 @@ const userBtn = (data: LoaderData, handleLogout: any) => {
             leftSection={
               <IconLogout style={{ width: rem(14), height: rem(14) }} />
             }
-            onClick={() => {
-              handleLogout();
-            }}
+            onClick={handleLogout}
+
           >
             Logout
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>
     </>
-  );
+  ) as React.ReactElement;
 };
 
-const guestBtn = (mode: string) => {
+const guestBtn = () => {
   const navigate = useNavigate();
   return (
     <>
@@ -134,7 +126,7 @@ const guestBtn = (mode: string) => {
   );
 };
 
-interface LoaderData {
+export interface LoaderData {
   error?: boolean;
   username?: string;
   firstName?: string;
@@ -143,20 +135,17 @@ interface LoaderData {
 }
 
 function Navbar() {
-  const [opened, { open, close }] = useDisclosure(false);
-  const [classOpened, { open: classOpen, close: classClose }] =
-    useDisclosure(false);
+  const [, {open,}] = useDisclosure(false);
 
-  const { assignUserCredentials, clearUserCredentials } = useContext(
+  const {assignUserCredentials} = useContext(
     UserCredentialsContext
   );
-  const mode = useSearchParams()[0].get("mode");
   const data: LoaderData = useLoaderData() as LoaderData;
   useEffect(() => {
     if (data !== null) {
       assignUserCredentials({
         ...data,
-      });
+      } as unknown as UserCredentials);
     }
   }, [data]);
 
@@ -174,8 +163,8 @@ function Navbar() {
     setColorScheme(computedColorScheme === "dark" ? "light" : "dark");
   };
   const btnState =
+      data?.error || !data ? guestBtn() : userBtn(data, Logout);
 
-    data?.error || !data ? guestBtn(mode as string) : userBtn(data, Logout);
   const whichHomepage = "";
   return (
     <>
@@ -258,9 +247,6 @@ function Navbar() {
           </Group>
         </div>
       </header>
-
-      <FolderModal opened={opened} close={close} />
-      <ClassModal opened={classOpened} close={classClose} />
     </>
   );
 }

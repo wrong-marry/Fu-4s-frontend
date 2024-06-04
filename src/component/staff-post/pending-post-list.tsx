@@ -134,7 +134,7 @@ function TableUser() {
 				<div className="pt-6 bg-white shadow rounded">
 					<div className="px-6 border-b">
 						<div className="flex flex-wrap items-center mb-6">
-							<h3 className="text-xl font-bold">USER MANAGEMENT</h3>
+							<h3 className="text-xl font-bold">POST MANAGEMENT</h3>
 							<a
 								className="ml-auto flex items-center py-2 px-3 text-xs text-white hover:bg-indigo-600 rounded"
 								href="#"
@@ -174,7 +174,7 @@ function TableUser() {
 								href="#"
 								onClick={() => handleTabClick("ALL")}
 							>
-								ALL
+								Pending posts
 							</a>
 							<a
 								className={`inline-block px-4 pb-2 text-sm font-medium ${
@@ -185,19 +185,19 @@ function TableUser() {
 								href="#"
 								onClick={() => handleTabClick("Staffs")}
 							>
-								Staffs
+								Active posts
 							</a>
 							<a
 								className="inline-block px-4 pb-2 text-sm font-medium text-gray-500 border-b-2 border-transparent"
 								href="#"
 							>
-								Admins
+								Hidden posts
 							</a>
 							<a
 								className="inline-block px-4 pb-2 text-sm font-medium text-gray-500 border-b-2 border-transparent"
 								href="#"
 							>
-								General Users
+								All posts
 							</a>
 						</div>
 					</div>
@@ -294,9 +294,7 @@ function TableUser() {
 							<tbody>{All}</tbody>
 						</table>
 					</div>
-					<Modal opened={opened} onClose={close} title="EDIT USER FORM">
-						{/* Modal content */}
-					</Modal>
+				
 				</div>
 				<Center mt={"lg"}>
 					<Pagination value={activePage} onChange={setPage} total={numPage} />

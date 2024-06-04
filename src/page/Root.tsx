@@ -1,8 +1,9 @@
 import { Outlet, useNavigation } from "react-router-dom";
 import { AppShell } from "@mantine/core";
 import Navbar from "../component/navbar/Navbar";
+import React, {useEffect} from "react";
 import { nprogress } from "@mantine/nprogress";
-import { useEffect } from "react";
+
 import { Footer } from "../component/layout/Footer/Footer";
 
 export default function Root() {
@@ -23,5 +24,5 @@ export default function Root() {
       </main>
       <Footer />
     </AppShell>
-  );
+  ) as React.ReactElement;
 }

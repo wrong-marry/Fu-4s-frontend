@@ -119,12 +119,10 @@ function NotificationList() {
     }
   };
 
-  const handleNotificationClick = (notification: Notification) => {
-    if (!notification.seen) {
-      // markAsRead(notification.id);
-    }
-    navigate(notification.link);
-  };
+  // const handleNotificationClick = (link: string) => {
+  //   navigate(link);
+  // };
+
 
   if (loading) {
     return <LoadingOverlay visible />;
