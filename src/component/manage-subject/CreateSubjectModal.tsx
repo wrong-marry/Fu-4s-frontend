@@ -41,7 +41,9 @@ const CreateSubjectModal: React.FC<CreateModalProps> = ({
         value={subject.semester.toString()}
         onChange={onInputChange}
       />
-      <Button onClick={onSave}>Create</Button>
+      <Button mt="10px" onClick={onSave}>
+        Create
+      </Button>
     </Modal>
   );
 };

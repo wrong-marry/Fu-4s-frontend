@@ -12,6 +12,7 @@ import { useDisclosure } from "@mantine/hooks";
 import EditSubjectModal from "./EditSubjectModal";
 import CreateSubjectModal from "./CreateSubjectModal";
 import DeleteSubjectModal from "./DeleteSubjectModal";
+import { notifications } from "@mantine/notifications";
 
 interface Subject {
   code: string;
@@ -130,8 +131,8 @@ function TableSubject() {
     if (subjectToDelete) {
       try {
         const token = localStorage.getItem("token");
-        await fetch(
-          `http://localhost:8080/api/v1/admin/deleteSubject/${subjectToDelete.code}`,
+        const response = await fetch(
+          `http://localhost:8080/api/v1/admin/deleteSubject?subjectCode=${subjectToDelete.code}`,
           {
             method: "DELETE",
             headers: {
@@ -139,10 +140,22 @@ function TableSubject() {
             },
           }
         );
-        setSubjects(
-          subjects.filter((subject) => subject.code !== subjectToDelete.code)
-        );
-        closeDeleteSubjectModal();
+
+        if (response.ok) {
+          setSubjects(
+            subjects.filter((subject) => subject.code !== subjectToDelete.code)
+          );
+          closeDeleteSubjectModal();
+
+          notifications.show({
+            title: "Subject deleted",
+            message: `${subjectToDelete.name}" has been deleted!`,
+            color: "blue",
+          });
+        } else {
+          // Xảy ra lỗi khi xóa subject
+          console.error("Error deleting subject:", await response.json());
+        }
       } catch (error) {
         console.error("Error deleting subject:", error);
       }
@@ -207,6 +220,7 @@ function TableSubject() {
       <td className="py-5 px-6 font-medium">{subject.code}</td>
       <td className="font-medium">{subject.name}</td>
       <td className="font-medium">{subject.semester}</td>
+
       <td style={{ textAlign: "center" }}>
         <ActionIcon
           variant="outline"
@@ -216,6 +230,8 @@ function TableSubject() {
         >
           <IconPencil />
         </ActionIcon>
+      </td>
+      <td style={{ textAlign: "center" }}>
         <ActionIcon
           variant="outline"
           size="lg"

@@ -1,6 +1,6 @@
 // EditModal.tsx
-import React from "react";
-import { Modal, TextInput, Button } from "@mantine/core";
+import React, { ChangeEvent } from "react";
+import { Modal, TextInput, Button, Select } from "@mantine/core";
 
 interface EditModalProps {
   opened: boolean;
@@ -9,9 +9,11 @@ interface EditModalProps {
   subject: {
     code: string;
     name: string;
-    semester: number;
+    semester: string;
   };
-  onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onInputChange: (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => void;
 }
 
 const EditSubjectModal: React.FC<EditModalProps> = ({
@@ -35,13 +37,18 @@ const EditSubjectModal: React.FC<EditModalProps> = ({
         value={subject.name}
         onChange={onInputChange}
       />
-      <TextInput
+      <Select
         label="Semester"
         name="semester"
         value={subject.semester.toString()}
-        onChange={onInputChange}
+        onChange={(value) =>
+          onInputChange({ target: { name: "semester", value: value ?? "" } })
+        }
+        data={["1", "2", "3", "4", "5", "6", "7", "8", "9"]}
       />
-      <Button onClick={onSave}>Save</Button>
+      <Button mt="10px" onClick={onSave}>
+        Save
+      </Button>
     </Modal>
   );
 };
