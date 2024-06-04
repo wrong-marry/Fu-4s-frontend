@@ -134,6 +134,7 @@ function TableUser() {
 				<div className="pt-6 bg-white shadow rounded">
 					<div className="px-6 border-b">
 						<div className="flex flex-wrap items-center mb-6">
+
 							<h3 className="text-xl font-bold">POST MANAGEMENT</h3>
 							<a
 								className="ml-auto flex items-center py-2 px-3 text-xs text-white hover:bg-indigo-600 rounded"
@@ -174,6 +175,7 @@ function TableUser() {
 								href="#"
 								onClick={() => handleTabClick("ALL")}
 							>
+
 								Pending posts
 							</a>
 							<a
@@ -185,18 +187,21 @@ function TableUser() {
 								href="#"
 								onClick={() => handleTabClick("Staffs")}
 							>
+
 								Active posts
 							</a>
 							<a
 								className="inline-block px-4 pb-2 text-sm font-medium text-gray-500 border-b-2 border-transparent"
 								href="#"
 							>
+
 								Hidden posts
 							</a>
 							<a
 								className="inline-block px-4 pb-2 text-sm font-medium text-gray-500 border-b-2 border-transparent"
 								href="#"
 							>
+
 								All posts
 							</a>
 						</div>
@@ -294,7 +299,7 @@ function TableUser() {
 							<tbody>{All}</tbody>
 						</table>
 					</div>
-				
+
 				</div>
 				<Center mt={"lg"}>
 					<Pagination value={activePage} onChange={setPage} total={numPage} />

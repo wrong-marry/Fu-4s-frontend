@@ -10,6 +10,7 @@ interface Post {
 }
 
 export function UserLearningMaterialTable() {
+
     const username = localStorage.getItem("username");
     const pageSize = 2;
 
@@ -67,6 +68,7 @@ export function UserLearningMaterialTable() {
                             Active
                         </span>
                         :
+
                         post.status == 'HIDDEN' ?
                             <span className="inline-block py-1 px-2 text-white bg-red-500 rounded-full">
                                 Hidden

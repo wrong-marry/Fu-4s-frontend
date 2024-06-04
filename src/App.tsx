@@ -22,7 +22,7 @@ import UserProfilePage from "./page/user-profile/UserProfilePage";
 import UpdateProfilePage from "./page/user-profile/UpdateProfilePage";
 import ManageUser from "./page/manageUser-page/ManageUserPage";
 import { ChangePassWordForm } from "./component/user-profile/change-password/ChangePassWordForm";
-import { isLoggedIn, Logout } from "./util/loader/Auth";
+import { isLoggedIn, logout } from "./util/loader/Auth";
 import { ForbiddenPage } from "./page/403/ForbiddenPage";
 import { getAuthCredentials } from "./util/loader/Auth";
 import StudyPage from "./page/study/StudyPage.tsx";
@@ -30,10 +30,12 @@ import SearchPage from "./page/search/SearchPage.tsx";
 import PostPage from "./page/post/PostPage.tsx";
 import LearningMaterialDetail from "./component/learning-material/LearningMaterialDetail.tsx";
 import NotificationList from "./component/notification/NotificationList.tsx";
+import { UserPostPage } from "./page/user-post/UserPostPage.tsx";
+import { UserLearningMaterialPage } from "./page/user-post/UserLearningMaterialPage.tsx";
+import { UserMockTestPage } from "./page/user-post/UserMockTestPage.tsx";
+import ManageSubjectPage from "./page/manage-subject/ManageSubjectPage.tsx";
 import TakingTestPage from "./page/mock-test-detail-page/TakingTestPage.tsx";
-import {UserPostPage} from "./page/user-post/UserPostPage.tsx";
-import {UserLearningMaterialPage} from "./page/user-post/UserLearningMaterialPage.tsx";
-import {UserMockTestPage} from "./page/user-post/UserMockTestPage.tsx";
+
 import CreateMockTestPage from "./page/user-post/CreateMockTestPage.tsx";
 import MockTestDetail from "./component/mock-test/MockTestDetail.tsx";
 import ManagePostForStaff from "./page/manage-post-forstaff/ManagePostPage.tsx";
@@ -121,13 +123,17 @@ const router = createBrowserRouter([
             element: <ManagePostForStaff />,
         },
       {
+        path: "manage-subject",
+        element: <ManageSubjectPage />,
+      },
+      {
         path: "change-password",
         element: <ChangePassWordForm />,
       },
       {
         path: "logout",
         element: <Suspense fallback={loadingIndicator}></Suspense>,
-        // loader: Logout,
+        loader: logout,
       },
       {
         path: "auth",
@@ -243,6 +249,7 @@ const router = createBrowserRouter([
             ],
         },
       {
+
         path: "update-profile",
         element: (
           <Suspense fallback={loadingIndicator}>

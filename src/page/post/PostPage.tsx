@@ -1,14 +1,11 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios, { AxiosResponse } from "axios";
-import {
-  Text,
-  Container,
-  Title, Space, Textarea, Button,
-} from "@mantine/core";
+import { Text, Container, Title, Space, Textarea, Button } from "@mantine/core";
 
 import Comment from "../../component/comment/CommentTag";
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import LearningMaterialDetail from "../../component/learning-material/LearningMaterialDetail";
+
 import QuestionPage from "../question-page/QuestionPage";
 import MockTestDetailPage from "../mock-test-detail-page/MockTestDetailPage";
 import MockTestDetail from "../../component/mock-test/MockTestDetail";
@@ -37,30 +34,31 @@ export interface CommentData {
 }
 
 const PostPage: React.FC = () => {
-
   const { id } = useParams<{ id: string }>();
 
   const form = useForm({
-    mode: 'uncontrolled',
+    mode: "uncontrolled",
     initialValues: {
-      'date': format(Date.now(), "yyyy-MM-dd'T'HH:mm:ss.SSS+SS:SS"),
-      'username': localStorage.getItem("username"),
-      'content': '',
+      date: format(Date.now(), "yyyy-MM-dd'T'HH:mm:ss.SSS+SS:SS"),
+      username: localStorage.getItem("username"),
+      content: "",
     },
     validate: {
-      content: (value: string) => (/^\S/.test(value) ? null : 'Invalid content'),
+      content: (value: string) =>
+        /^\S/.test(value) ? null : "Invalid content",
     },
   });
 
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<CommentData[] | null>([]);
 
-
-  const isStaff = ["STAFF", "ADMIN"].includes((localStorage.getItem("role") + ""));
+  const isStaff = ["STAFF", "ADMIN"].includes(
+    localStorage.getItem("role") + ""
+  );
   const fetchPost = async () => {
     try {
       const response: AxiosResponse<Post> = await axios.get(
-          `http://localhost:8080/api/v1/post/get?id=${id}`
+        `http://localhost:8080/api/v1/post/get?id=${id}`
       );
       setPost(response.data);
     } catch (error) {
@@ -70,16 +68,17 @@ const PostPage: React.FC = () => {
   const fetchComments = async () => {
     try {
       const response: AxiosResponse<CommentData[]> = await axios.get(
+
           `http://localhost:8080/api/v1/comments/post/${id}` + (isStaff?"?isStaff=true":"")
       )
       setComments(response.data);
     } catch (error) {
       console.error("Error fetching comment:", error);
     }
-  }
+  };
   useEffect(() => {
     fetchPost();
-    fetchComments()
+    fetchComments();
   }, [id]);
 
   if (!post) {
@@ -100,35 +99,45 @@ const PostPage: React.FC = () => {
                             isMine={c.account == localStorage.getItem("username")}
                             account={c.account} status={c.status}
             />
-          })}
-      <form onSubmit={form.onSubmit(async (values) => {
-        console.log(values);
-        try {
-          const response: AxiosResponse<string> = await axios.post(
-              `http://localhost:8080/api/v1/comments/upload/post-${id}`,
-              values,
-              {
-                headers: {Authorization: "Bearer " + localStorage.getItem("token")}
+          );
+        })}
+        <form
+          onSubmit={form.onSubmit(async (values) => {
+            console.log(values);
+            try {
+              const response: AxiosResponse<string> = await axios.post(
+                `http://localhost:8080/api/v1/comments/upload/post-${id}`,
+                values,
+                {
+                  headers: {
+                    Authorization: "Bearer " + localStorage.getItem("token"),
+                  },
+                }
+              );
+              if (response.status == 200) {
+                await fetchComments();
+                form.reset();
               }
-          )
-          if (response.status == 200) {
-            await fetchComments();
-            form.reset();
-          }
-        } catch (error) {
-          console.error("Error posting comment:", error);
-        }
-      })}>
-        <Textarea size={"md"} my={"md"} placeholder={"Your comment"} autosize
-                  minRows={2}
-                  maxRows={4}
-                  key={form.key('content')}
-                  {...form.getInputProps('content')}
-        ></Textarea>
-        <Button type={"submit"}>Comment</Button>
-      </form>
-    </Container>
-  </>
+            } catch (error) {
+              console.error("Error posting comment:", error);
+            }
+          })}
+        >
+          <Textarea
+            size={"md"}
+            my={"md"}
+            placeholder={"Your comment"}
+            autosize
+            minRows={2}
+            maxRows={4}
+            key={form.key("content")}
+            {...form.getInputProps("content")}
+          ></Textarea>
+          <Button type={"submit"}>Comment</Button>
+        </form>
+      </Container>
+    </>
+  );
 };
 
 export default PostPage;

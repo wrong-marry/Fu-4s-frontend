@@ -10,11 +10,7 @@ import {
 } from "@mantine/core";
 import logo from "../../asset/logo.png";
 import darkLogo from "../../asset/darkLogo.png";
-import {
-  NavLink,
-  useLoaderData,
-  useNavigate
-} from "react-router-dom";
+import { NavLink, useLoaderData, useNavigate } from "react-router-dom";
 import {
   IconPhoto,
   IconLibraryPlus,
@@ -27,9 +23,13 @@ import {
 
 import { DarkModeSwitch } from "react-toggle-dark-mode";
 import React, { useContext, useEffect } from "react";
-import {UserCredentials, UserCredentialsContext} from "../../store/user-credentials-context";
+import {
+  UserCredentials,
+  UserCredentialsContext,
+} from "../../store/user-credentials-context";
 import { useDisclosure } from "@mantine/hooks";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
+
 import { Logout } from "../../util/loader/Auth.tsx";
 
 import NotificationCard from "../notification/NotificationCard.tsx";
@@ -41,11 +41,11 @@ const userBtn = (data: LoaderData, handleLogout: () => void) => {
         <Menu.Target>
           <Group className="cursor-pointer border-none">
             <Avatar
-                variant="filled"
-                radius="xl"
-                color="grape"
-                className="cursor-pointer"
-                // src={data?.avatar}
+              variant="filled"
+              radius="xl"
+              color="grape"
+              className="cursor-pointer"
+              // src={data?.avatar}
             />
             <Text className="text-sm font-semibold">
               {data ? data.firstName + " " + data.lastName : "Guest"}
@@ -136,11 +136,9 @@ export interface LoaderData {
 }
 
 function Navbar() {
-  const [, {open,}] = useDisclosure(false);
+  const [, { open }] = useDisclosure(false);
 
-  const {assignUserCredentials} = useContext(
-    UserCredentialsContext
-  );
+  const { assignUserCredentials } = useContext(UserCredentialsContext);
   const data: LoaderData = useLoaderData() as LoaderData;
   useEffect(() => {
     if (data !== null) {
@@ -163,6 +161,7 @@ function Navbar() {
   const toggleColorScheme = () => {
     setColorScheme(computedColorScheme === "dark" ? "light" : "dark");
   };
+
   const btnState =
       data?.error || !data ? guestBtn() : userBtn(data, Logout);
 
@@ -247,8 +246,6 @@ function Navbar() {
 
               </Menu.Dropdown>
             </Menu>
-
-            <NotificationCard />
             <Group>{btnState}</Group>
           </Group>
         </div>
