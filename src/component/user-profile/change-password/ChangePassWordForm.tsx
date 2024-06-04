@@ -16,6 +16,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "@mantine/form";
 import { emptyUser, fetchUser } from "../../../util/UserFetchUtil";
+import { notifications } from "@mantine/notifications";
 
 export function ChangePassWordForm() {
   const [user, setUser] = useState(emptyUser);
@@ -60,7 +61,10 @@ export function ChangePassWordForm() {
     //     newData
     //   )
     //   .catch((err) => console.log(err));
-    window.alert("Password changed successfully!\nPlease click OK button to continue");
+    notifications.show({
+      title:"Password Changed successfully",
+      message:"You are now back to your profile page"
+    })
     navigate("/user");
   };
 

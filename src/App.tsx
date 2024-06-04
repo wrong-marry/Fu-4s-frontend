@@ -31,6 +31,7 @@ import PostPage from "./page/post/PostPage.tsx";
 import LearningMaterialList from "./component/subject-posting/LearningMaterialList.tsx";
 import LearningMaterialDetail from "./component/learning-material/LearningMaterialDetail.tsx";
 import NotificationList from "./component/notification/NotificationList.tsx";
+import TakingTestPage from "./page/mock-test-detail-page/TakingTestPage.tsx";
 import {UserPostPage} from "./page/user-post/UserPostPage.tsx";
 import {UserLearningMaterialPage} from "./page/user-post/UserLearningMaterialPage.tsx";
 import {UserMockTestTable} from "./component/user-post/UserMockTestTable.tsx";
@@ -81,6 +82,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "test",
+            element: (
+              <Suspense fallback={loadingIndicator}>
+                <TakingTestPage />
+              </Suspense>
+            ),
+      },
+      {
         path: "learning-material/:id",
         element: (
           <Suspense fallback={loadingIndicator}>
@@ -94,7 +103,7 @@ const router = createBrowserRouter([
           <Suspense fallback={loadingIndicator}>
             <NotificationList />
           </Suspense>
-        ),
+        )
       },
       {
         path: "study",
