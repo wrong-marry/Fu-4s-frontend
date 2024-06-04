@@ -38,7 +38,7 @@ import { toast } from "react-toastify";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
 import FolderModal from "../modal/navbar/create/FolderModal.tsx";
 import ClassModal from "../modal/navbar/create/ClassModal.tsx";
-import { Logout } from "../../util/loader/Auth.tsx";
+import { logout } from "../../util/loader/Auth.tsx";
 import NotificationCard from "../notification/NotificationCard.tsx";
 
 const userBtn = (data: LoaderData, handleLogout: any) => {
@@ -71,13 +71,13 @@ const userBtn = (data: LoaderData, handleLogout: any) => {
             </Menu.Item>
           </NavLink>
 
-          <NavLink to={"/settings"}>
+          <NavLink to={"/user/post"}>
             <Menu.Item
               leftSection={
                 <IconSettings style={{ width: rem(14), height: rem(14) }} />
               }
             >
-              Settings
+              Manage Posts
             </Menu.Item>
           </NavLink>
 
@@ -174,6 +174,7 @@ function Navbar() {
     setColorScheme(computedColorScheme === "dark" ? "light" : "dark");
   };
   const btnState =
+
     data?.error || !data ? guestBtn(mode as string) : userBtn(data, Logout);
   const whichHomepage = "";
   return (
