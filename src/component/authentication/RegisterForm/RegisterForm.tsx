@@ -58,6 +58,7 @@ export default function RegisterForm(props: PaperProps) {
                 .then((data) => {
                     localStorage.setItem('username', data.username);
                     localStorage.setItem('token', data.token);
+                    window.location.replace("/home");
                     navigate("/home")
                 })
         }

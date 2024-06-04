@@ -1,6 +1,7 @@
 import {fetchUser} from "../UserFetchUtil.tsx";
 
-export function Logout() {
+
+export async function Logout() {
   localStorage.removeItem("username");
   localStorage.removeItem("token");
   window.location.href="/";
@@ -10,6 +11,8 @@ export function isLoggedIn() {
   const token = getToken();
   return !(username == null || token == null);
 }
+
+
 export function getUsername() {
   return localStorage.getItem("username");
 }

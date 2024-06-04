@@ -1,10 +1,227 @@
-import React from 'react';
-import Fab from "@mui/material/Fab";
-import EditIcon from "@mui/icons-material/Edit";
+import React, { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
+import { useNavigate } from "react-router-dom";
+import { Center, Pagination } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import {
+	Group,
+	ActionIcon,
+	Menu,
+	rem,
+} from "@mantine/core";
+import {
+	IconMessages,
+	IconNote,
+	IconReportAnalytics,
+	IconTrash,
+	IconDots,
+} from "@tabler/icons-react";
 
-const TableUser: React.FC = () => {
-  return (
+
+
+interface User {
+	username: string;
+	email: string;
+	role: string;
+	status: string;
+}
+
+
+function TableUser() {
+	const pageSize = 5;
+	const [activePage, setPage] = useState(1);
+	const [numPage, setNumPage] = useState(1);
+	const [users, SetUsers] = useState<User[]>([]);
+	const [loading, setLoading] = useState<boolean>(true);
+	const [error, setError] = useState<string | null>(null);
+	const navigate = useNavigate();
+	 const [currentTab, setCurrentTab] = useState("ALL");
+
+
+	 
+
+ useEffect(() => {
+	
+	const fetchNum = async () => {
+		try {
+			const token = localStorage.getItem("token");
+			const baseURL = "http://localhost:8080/api/v1/admin";
+			let url = "";
+
+			if (currentTab === "ALL") {
+				url = `${baseURL}/getNumUser`;
+			} else if (currentTab === "Staffs") {
+				url = `${baseURL}/getNumEachRole?userrole=STAFF`;
+			} else if (currentTab === "Admins") {
+				url = `${baseURL}/getNumEachRole?userrole=ADMIN`;
+			} else if (currentTab === "General Users") {
+				url = `${baseURL}/getNumEachRole?userrole=USER`;
+			}
+			const response = await fetch(url, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+			const data = await response.json();
+			setNumPage(Math.ceil((data + 1) / pageSize));
+		} catch (error) {
+			console.error("Error fetching post:", error);
+		}
+	};
+
+	
+	const fetchData = async (url: string) => {
+		try {
+			const token = localStorage.getItem("token");
+			const response = await fetch(url, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+
+			const data: User[] = await response.json();
+			SetUsers(data);
+			setLoading(false);
+		} catch (error: any) {
+			setError(error.message);
+			setLoading(false);
+		}
+	};
+
+		const baseURL = "http://localhost:8080/api/v1/admin";
+		 let url = "" ;
+
+			if (currentTab === "ALL") {
+				url = `${baseURL}/getAllUser?pageNum=${activePage}&pageSize=${pageSize}`;
+			} else if (currentTab === "Staffs") {
+				url = `${baseURL}/getAllByUserRole?userrole=STAFF&pageNum=${activePage}&pageSize=${pageSize}`;
+			} else if (currentTab === "Admins") {
+				url = `${baseURL}/getAllByUserRole?userrole=ADMIN&pageNum=${activePage}&pageSize=${pageSize}`;
+			} else if (currentTab === "General Users") {
+				url = `${baseURL}/getAllByUserRole?userrole=USER&pageNum=${activePage}&pageSize=${pageSize}`;
+			}
+		fetchData(url);
+		fetchNum();
+ }, [activePage, currentTab]);
+
+ useEffect(() => {
+		setPage(1);
+ }, [currentTab]);
+
+	if (loading) {
+		return <div>Loading...</div>;
+	}
+
+	if (error) {
+		return <div>Error: {error}</div>;
+	}
+
+	const handleGetUserClick = (username: string) => {
+		navigate(`/user-detail/${username}`);
+	};
+
+	const All = users.map((user) => (
+		<tr className="text-xs bg-gray-50" key={user.username}>
+			<td
+				className="flex items-center py-5 px-6 font-medium"
+				onClick={() => handleGetUserClick(user.username)}
+				style={{
+					cursor: "pointer",
+				}}
+			>
+				{user.username}
+			</td>
+			<td className="font-medium">{user.email}</td>
+			<td></td>
+			<td>
+				<span
+					className={`inline-block py-1 px-2 text-white rounded-full ${
+						user.status === "ACTIVE"
+							? "bg-green-500"
+							: user.status === "BANNED"
+							? "bg-red-500"
+							: ""
+					}`}
+				>
+					{user.status}
+				</span>
+			</td>
+			<td className="font-medium">{user.role}</td>
+			<td className="font-medium"> 03.06.2024</td>
+			<td style={{ textAlign: "center" }}>
+				<Group gap={0} justify="flex-end">
+					<Menu
+						transitionProps={{ transition: "pop" }}
+						withArrow
+						position="bottom-end"
+						withinPortal
+					>
+						<Menu.Target>
+							<ActionIcon variant="subtle" color="gray">
+								<IconDots
+									style={{ width: rem(16), height: rem(16) }}
+									stroke={1.5}
+								/>
+							</ActionIcon>
+						</Menu.Target>
+						<Menu.Dropdown>
+							<Menu.Item
+								leftSection={
+									<IconMessages
+										style={{ width: rem(16), height: rem(16) }}
+										stroke={1.5}
+									/>
+								}
+							>
+								Send direct Notification
+							</Menu.Item>
+							<Menu.Item
+								leftSection={
+									<IconNote
+										style={{ width: rem(16), height: rem(16) }}
+										stroke={1.5}
+									/>
+								}
+							>
+								Add note
+							</Menu.Item>
+							<Menu.Item
+								leftSection={
+									<IconReportAnalytics
+										style={{ width: rem(16), height: rem(16) }}
+										stroke={1.5}
+									/>
+								}
+							>
+								More actions
+							</Menu.Item>
+							<Menu.Item
+								leftSection={
+									<IconTrash
+										style={{ width: rem(16), height: rem(16) }}
+										stroke={1.5}
+									/>
+								}
+								color="red"
+							>
+								Ban account
+							</Menu.Item>
+						</Menu.Dropdown>
+					</Menu>
+				</Group>
+			</td>
+		</tr>
+	));
+
+	const handleTabClick = (tab: string) => {
+		setCurrentTab(tab);
+	};
+
+	return (
 		<section className="py-8">
 			<div className="container px-4 mx-auto">
 				<div className="pt-6 bg-white shadow rounded">
@@ -17,10 +234,6 @@ const TableUser: React.FC = () => {
 							>
 								<span className="mr-1">
 									<SearchIcon style={{ fontSize: 30, color: "#AFABF1" }} />
-									<path
-										d="M13 8.33337C12.6 8.33337 12.3333 8.60004 12.3333 9.00004V11.6667C12.3333 12.0667 12.0666 12.3334 11.6666 12.3334H2.33331C1.93331 12.3334 1.66665 12.0667 1.66665 11.6667V9.00004C1.66665 8.60004 1.39998 8.33337 0.99998 8.33337C0.59998 8.33337 0.333313 8.60004 0.333313 9.00004V11.6667C0.333313 12.8 1.19998 13.6667 2.33331 13.6667H11.6666C12.8 13.6667 13.6666 12.8 13.6666 11.6667V9.00004C13.6666 8.60004 13.4 8.33337 13 8.33337ZM4.79998 4.13337L6.33331 2.60004V9.00004C6.33331 9.40004 6.59998 9.66671 6.99998 9.66671C7.39998 9.66671 7.66665 9.40004 7.66665 9.00004V2.60004L9.19998 4.13337C9.46665 4.40004 9.86665 4.40004 10.1333 4.13337C10.4 3.86671 10.4 3.46671 10.1333 3.20004L7.46665 0.533374C7.19998 0.266707 6.79998 0.266707 6.53331 0.533374L3.86665 3.20004C3.59998 3.46671 3.59998 3.86671 3.86665 4.13337C4.13331 4.40004 4.53331 4.40004 4.79998 4.13337Z"
-										fill="#AFABF1"
-									></path>
 								</span>
 								<span style={{ display: "inline-block", width: "100%" }}>
 									<input
@@ -46,22 +259,48 @@ const TableUser: React.FC = () => {
 						</div>
 						<div>
 							<a
-								className="inline-block px-4 pb-2 text-sm font-medium text-indigo-500 border-b-2 border-indigo-500"
+								className={`inline-block px-4 pb-2 text-sm font-medium ${
+									currentTab === "ALL"
+										? "text-indigo-500 border-b-2 border-indigo-500"
+										: "text-gray-500 border-b-2 border-transparent"
+								}`}
 								href="#"
+								onClick={() => handleTabClick("ALL")}
 							>
-								General Users
+								ALL
 							</a>
 							<a
-								className="inline-block px-4 pb-2 text-sm font-medium text-gray-500 border-b-2 border-transparent"
+								className={`inline-block px-4 pb-2 text-sm font-medium ${
+									currentTab === "Staffs"
+										? "text-indigo-500 border-b-2 border-indigo-500"
+										: "text-gray-500 border-b-2 border-transparent"
+								}`}
 								href="#"
+								onClick={() => handleTabClick("Staffs")}
 							>
 								Staffs
 							</a>
 							<a
-								className="inline-block px-4 pb-2 text-sm font-medium text-gray-500 border-b-2 border-transparent"
+								className={`inline-block px-4 pb-2 text-sm font-medium ${
+									currentTab === "Admins"
+										? "text-indigo-500 border-b-2 border-indigo-500"
+										: "text-gray-500 border-b-2 border-transparent"
+								}`}
 								href="#"
+								onClick={() => handleTabClick("Admins")}
 							>
 								Admins
+							</a>
+							<a
+								className={`inline-block px-4 pb-2 text-sm font-medium ${
+									currentTab === "General Users"
+										? "text-indigo-500 border-b-2 border-indigo-500"
+										: "text-gray-500 border-b-2 border-transparent"
+								}`}
+								href="#"
+								onClick={() => handleTabClick("General Users")}
+							>
+								General Users
 							</a>
 						</div>
 					</div>
@@ -69,8 +308,7 @@ const TableUser: React.FC = () => {
 						<table className="table-auto w-full">
 							<thead>
 								<tr className="text-xs text-gray-500 text-left">
-									<th className="flex items-center pl-6 py-4 font-medium">
-										<input className="mr-3" type="checkbox" name="" id="" />
+									<th className="items-center pl-6 py-4 font-medium">
 										<a className="flex items-center" href="#">
 											<span>Account </span>
 											<span className="ml-2">
@@ -80,18 +318,13 @@ const TableUser: React.FC = () => {
 													viewBox="0 0 9 12"
 													fill="none"
 													xmlns="http://www.w3.org/2000/svg"
-												>
-													<path
-														d="M7.85957 7.52667L4.99957 10.3933L2.13957 7.52667C2.01403 7.40114 1.84377 7.33061 1.66623 7.33061C1.4887 7.33061 1.31843 7.40114 1.1929 7.52667C1.06736 7.65221 0.996837 7.82247 0.996837 8.00001C0.996837 8.17754 1.06736 8.3478 1.1929 8.47334L4.52623 11.8067C4.65114 11.9308 4.82011 12.0005 4.99623 12.0005C5.17236 12.0005 5.34132 11.9308 5.46623 11.8067L8.79957 8.47334C8.86173 8.41118 8.91103 8.33739 8.94467 8.25617C8.97831 8.17496 8.99563 8.08791 8.99563 8.00001C8.99563 7.9121 8.97831 7.82505 8.94467 7.74384C8.91103 7.66262 8.86173 7.58883 8.79957 7.52667C8.73741 7.46451 8.66361 7.41521 8.5824 7.38157C8.50118 7.34793 8.41414 7.33061 8.32623 7.33061C8.23833 7.33061 8.15128 7.34793 8.07007 7.38157C7.98885 7.41521 7.91506 7.46451 7.8529 7.52667H7.85957ZM2.13957 4.47334L4.99957 1.60667L7.85957 4.47334C7.98447 4.59751 8.15344 4.6672 8.32957 4.6672C8.50569 4.6672 8.67466 4.59751 8.79957 4.47334C8.92373 4.34843 8.99343 4.17946 8.99343 4.00334C8.99343 3.82722 8.92373 3.65825 8.79957 3.53334L5.46623 0.200006C5.40426 0.137521 5.33052 0.0879247 5.24928 0.0540789C5.16804 0.0202331 5.08091 0.00280762 4.9929 0.00280762C4.90489 0.00280762 4.81775 0.0202331 4.73651 0.0540789C4.65527 0.0879247 4.58154 0.137521 4.51957 0.200006L1.18623 3.53334C1.06158 3.65976 0.992254 3.83052 0.993504 4.00805C0.994754 4.18559 1.06648 4.35535 1.1929 4.48001C1.31932 4.60466 1.49008 4.67398 1.66761 4.67273C1.84515 4.67148 2.01491 4.59976 2.13957 4.47334Z"
-														fill="#67798E"
-													></path>
-												</svg>
+												></svg>
 											</span>
 										</a>
 									</th>
-									<th className="py-4 font-medium">
+									<th className=" py-4 font-medium">
 										<a className="flex items-center" href="#">
-											<span> Enrolled Date</span>
+											<span> Email </span>
 											<span className="ml-2">
 												<svg
 													width="9"
@@ -99,18 +332,13 @@ const TableUser: React.FC = () => {
 													viewBox="0 0 9 12"
 													fill="none"
 													xmlns="http://www.w3.org/2000/svg"
-												>
-													<path
-														d="M7.85957 7.52667L4.99957 10.3933L2.13957 7.52667C2.01403 7.40114 1.84377 7.33061 1.66623 7.33061C1.4887 7.33061 1.31843 7.40114 1.1929 7.52667C1.06736 7.65221 0.996837 7.82247 0.996837 8.00001C0.996837 8.17754 1.06736 8.3478 1.1929 8.47334L4.52623 11.8067C4.65114 11.9308 4.82011 12.0005 4.99623 12.0005C5.17236 12.0005 5.34132 11.9308 5.46623 11.8067L8.79957 8.47334C8.86173 8.41118 8.91103 8.33739 8.94467 8.25617C8.97831 8.17496 8.99563 8.08791 8.99563 8.00001C8.99563 7.9121 8.97831 7.82505 8.94467 7.74384C8.91103 7.66262 8.86173 7.58883 8.79957 7.52667C8.73741 7.46451 8.66361 7.41521 8.5824 7.38157C8.50118 7.34793 8.41414 7.33061 8.32623 7.33061C8.23833 7.33061 8.15128 7.34793 8.07007 7.38157C7.98885 7.41521 7.91506 7.46451 7.8529 7.52667H7.85957ZM2.13957 4.47334L4.99957 1.60667L7.85957 4.47334C7.98447 4.59751 8.15344 4.6672 8.32957 4.6672C8.50569 4.6672 8.67466 4.59751 8.79957 4.47334C8.92373 4.34843 8.99343 4.17946 8.99343 4.00334C8.99343 3.82722 8.92373 3.65825 8.79957 3.53334L5.46623 0.200006C5.40426 0.137521 5.33052 0.0879247 5.24928 0.0540789C5.16804 0.0202331 5.08091 0.00280762 4.9929 0.00280762C4.90489 0.00280762 4.81775 0.0202331 4.73651 0.0540789C4.65527 0.0879247 4.58154 0.137521 4.51957 0.200006L1.18623 3.53334C1.06158 3.65976 0.992254 3.83052 0.993504 4.00805C0.994754 4.18559 1.06648 4.35535 1.1929 4.48001C1.31932 4.60466 1.49008 4.67398 1.66761 4.67273C1.84515 4.67148 2.01491 4.59976 2.13957 4.47334Z"
-														fill="#67798E"
-													></path>
-												</svg>
+												></svg>
 											</span>
 										</a>
 									</th>
 									<th className="py-4 font-medium">
 										<a className="flex items-center" href="#">
-											<span>Uploaded Posts</span>
+											<span>Enrolled Date</span>
 											<span className="ml-2">
 												<svg
 													width="9"
@@ -118,16 +346,11 @@ const TableUser: React.FC = () => {
 													viewBox="0 0 9 12"
 													fill="none"
 													xmlns="http://www.w3.org/2000/svg"
-												>
-													<path
-														d="M7.85957 7.52667L4.99957 10.3933L2.13957 7.52667C2.01403 7.40114 1.84377 7.33061 1.66623 7.33061C1.4887 7.33061 1.31843 7.40114 1.1929 7.52667C1.06736 7.65221 0.996837 7.82247 0.996837 8.00001C0.996837 8.17754 1.06736 8.3478 1.1929 8.47334L4.52623 11.8067C4.65114 11.9308 4.82011 12.0005 4.99623 12.0005C5.17236 12.0005 5.34132 11.9308 5.46623 11.8067L8.79957 8.47334C8.86173 8.41118 8.91103 8.33739 8.94467 8.25617C8.97831 8.17496 8.99563 8.08791 8.99563 8.00001C8.99563 7.9121 8.97831 7.82505 8.94467 7.74384C8.91103 7.66262 8.86173 7.58883 8.79957 7.52667C8.73741 7.46451 8.66361 7.41521 8.5824 7.38157C8.50118 7.34793 8.41414 7.33061 8.32623 7.33061C8.23833 7.33061 8.15128 7.34793 8.07007 7.38157C7.98885 7.41521 7.91506 7.46451 7.8529 7.52667H7.85957ZM2.13957 4.47334L4.99957 1.60667L7.85957 4.47334C7.98447 4.59751 8.15344 4.6672 8.32957 4.6672C8.50569 4.6672 8.67466 4.59751 8.79957 4.47334C8.92373 4.34843 8.99343 4.17946 8.99343 4.00334C8.99343 3.82722 8.92373 3.65825 8.79957 3.53334L5.46623 0.200006C5.40426 0.137521 5.33052 0.0879247 5.24928 0.0540789C5.16804 0.0202331 5.08091 0.00280762 4.9929 0.00280762C4.90489 0.00280762 4.81775 0.0202331 4.73651 0.0540789C4.65527 0.0879247 4.58154 0.137521 4.51957 0.200006L1.18623 3.53334C1.06158 3.65976 0.992254 3.83052 0.993504 4.00805C0.994754 4.18559 1.06648 4.35535 1.1929 4.48001C1.31932 4.60466 1.49008 4.67398 1.66761 4.67273C1.84515 4.67148 2.01491 4.59976 2.13957 4.47334Z"
-														fill="#67798E"
-													></path>
-												</svg>
+												></svg>
 											</span>
 										</a>
 									</th>
-									<th className="py-4 font-medium">
+									<th className=" py-4 font-medium">
 										<a className="flex items-center" href="#">
 											<span>Status</span>
 											<span className="ml-2">
@@ -137,16 +360,11 @@ const TableUser: React.FC = () => {
 													viewBox="0 0 9 12"
 													fill="none"
 													xmlns="http://www.w3.org/2000/svg"
-												>
-													<path
-														d="M7.85957 7.52667L4.99957 10.3933L2.13957 7.52667C2.01403 7.40114 1.84377 7.33061 1.66623 7.33061C1.4887 7.33061 1.31843 7.40114 1.1929 7.52667C1.06736 7.65221 0.996837 7.82247 0.996837 8.00001C0.996837 8.17754 1.06736 8.3478 1.1929 8.47334L4.52623 11.8067C4.65114 11.9308 4.82011 12.0005 4.99623 12.0005C5.17236 12.0005 5.34132 11.9308 5.46623 11.8067L8.79957 8.47334C8.86173 8.41118 8.91103 8.33739 8.94467 8.25617C8.97831 8.17496 8.99563 8.08791 8.99563 8.00001C8.99563 7.9121 8.97831 7.82505 8.94467 7.74384C8.91103 7.66262 8.86173 7.58883 8.79957 7.52667C8.73741 7.46451 8.66361 7.41521 8.5824 7.38157C8.50118 7.34793 8.41414 7.33061 8.32623 7.33061C8.23833 7.33061 8.15128 7.34793 8.07007 7.38157C7.98885 7.41521 7.91506 7.46451 7.8529 7.52667H7.85957ZM2.13957 4.47334L4.99957 1.60667L7.85957 4.47334C7.98447 4.59751 8.15344 4.6672 8.32957 4.6672C8.50569 4.6672 8.67466 4.59751 8.79957 4.47334C8.92373 4.34843 8.99343 4.17946 8.99343 4.00334C8.99343 3.82722 8.92373 3.65825 8.79957 3.53334L5.46623 0.200006C5.40426 0.137521 5.33052 0.0879247 5.24928 0.0540789C5.16804 0.0202331 5.08091 0.00280762 4.9929 0.00280762C4.90489 0.00280762 4.81775 0.0202331 4.73651 0.0540789C4.65527 0.0879247 4.58154 0.137521 4.51957 0.200006L1.18623 3.53334C1.06158 3.65976 0.992254 3.83052 0.993504 4.00805C0.994754 4.18559 1.06648 4.35535 1.1929 4.48001C1.31932 4.60466 1.49008 4.67398 1.66761 4.67273C1.84515 4.67148 2.01491 4.59976 2.13957 4.47334Z"
-														fill="#67798E"
-													></path>
-												</svg>
+												></svg>
 											</span>
 										</a>
 									</th>
-									<th className="py-4 font-medium">
+									<th className=" py-4 font-medium">
 										<a className="flex items-center" href="#">
 											<span>Role</span>
 											<span className="ml-2">
@@ -156,18 +374,16 @@ const TableUser: React.FC = () => {
 													viewBox="0 0 9 12"
 													fill="none"
 													xmlns="http://www.w3.org/2000/svg"
-												>
-													<path
-														d="M7.85957 7.52667L4.99957 10.3933L2.13957 7.52667C2.01403 7.40114 1.84377 7.33061 1.66623 7.33061C1.4887 7.33061 1.31843 7.40114 1.1929 7.52667C1.06736 7.65221 0.996837 7.82247 0.996837 8.00001C0.996837 8.17754 1.06736 8.3478 1.1929 8.47334L4.52623 11.8067C4.65114 11.9308 4.82011 12.0005 4.99623 12.0005C5.17236 12.0005 5.34132 11.9308 5.46623 11.8067L8.79957 8.47334C8.86173 8.41118 8.91103 8.33739 8.94467 8.25617C8.97831 8.17496 8.99563 8.08791 8.99563 8.00001C8.99563 7.9121 8.97831 7.82505 8.94467 7.74384C8.91103 7.66262 8.86173 7.58883 8.79957 7.52667C8.73741 7.46451 8.66361 7.41521 8.5824 7.38157C8.50118 7.34793 8.41414 7.33061 8.32623 7.33061C8.23833 7.33061 8.15128 7.34793 8.07007 7.38157C7.98885 7.41521 7.91506 7.46451 7.8529 7.52667H7.85957ZM2.13957 4.47334L4.99957 1.60667L7.85957 4.47334C7.98447 4.59751 8.15344 4.6672 8.32957 4.6672C8.50569 4.6672 8.67466 4.59751 8.79957 4.47334C8.92373 4.34843 8.99343 4.17946 8.99343 4.00334C8.99343 3.82722 8.92373 3.65825 8.79957 3.53334L5.46623 0.200006C5.40426 0.137521 5.33052 0.0879247 5.24928 0.0540789C5.16804 0.0202331 5.08091 0.00280762 4.9929 0.00280762C4.90489 0.00280762 4.81775 0.0202331 4.73651 0.0540789C4.65527 0.0879247 4.58154 0.137521 4.51957 0.200006L1.18623 3.53334C1.06158 3.65976 0.992254 3.83052 0.993504 4.00805C0.994754 4.18559 1.06648 4.35535 1.1929 4.48001C1.31932 4.60466 1.49008 4.67398 1.66761 4.67273C1.84515 4.67148 2.01491 4.59976 2.13957 4.47334Z"
-														fill="#67798E"
-													></path>
-												</svg>
+												></svg>
 											</span>
 										</a>
 									</th>
-									<th className="py-4 font-medium" style={{ width: "5px" }}>
+									<th
+										className=" py-4 font-medium"
+										style={{ width: "5px" }}
+									>
 										<a className="flex items-center" href="#">
-											<span>Options</span>
+											<span>Uploaded Posts</span>
 											<span className="ml-2">
 												<svg
 													width="9"
@@ -175,156 +391,21 @@ const TableUser: React.FC = () => {
 													viewBox="0 0 9 12"
 													fill="none"
 													xmlns="http://www.w3.org/2000/svg"
-												>
-													<path
-														d="M7.85957 7.52667L4.99957 10.3933L2.13957 7.52667C2.01403 7.40114 1.84377 7.33061 1.66623 7.33061C1.4887 7.33061 1.31843 7.40114 1.1929 7.52667C1.06736 7.65221 0.996837 7.82247 0.996837 8.00001C0.996837 8.17754 1.06736 8.3478 1.1929 8.47334L4.52623 11.8067C4.65114 11.9308 4.82011 12.0005 4.99623 12.0005C5.17236 12.0005 5.34132 11.9308 5.46623 11.8067L8.79957 8.47334C8.86173 8.41118 8.91103 8.33739 8.94467 8.25617C8.97831 8.17496 8.99563 8.08791 8.99563 8.00001C8.99563 7.9121 8.97831 7.82505 8.94467 7.74384C8.91103 7.66262 8.86173 7.58883 8.79957 7.52667C8.73741 7.46451 8.66361 7.41521 8.5824 7.38157C8.50118 7.34793 8.41414 7.33061 8.32623 7.33061C8.23833 7.33061 8.15128 7.34793 8.07007 7.38157C7.98885 7.41521 7.91506 7.46451 7.8529 7.52667H7.85957ZM2.13957 4.47334L4.99957 1.60667L7.85957 4.47334C7.98447 4.59751 8.15344 4.6672 8.32957 4.6672C8.50569 4.6672 8.67466 4.59751 8.79957 4.47334C8.92373 4.34843 8.99343 4.17946 8.99343 4.00334C8.99343 3.82722 8.92373 3.65825 8.79957 3.53334L5.46623 0.200006C5.40426 0.137521 5.33052 0.0879247 5.24928 0.0540789C5.16804 0.0202331 5.08091 0.00280762 4.9929 0.00280762C4.90489 0.00280762 4.81775 0.0202331 4.73651 0.0540789C4.65527 0.0879247 4.58154 0.137521 4.51957 0.200006L1.18623 3.53334C1.06158 3.65976 0.992254 3.83052 0.993504 4.00805C0.994754 4.18559 1.06648 4.35535 1.1929 4.48001C1.31932 4.60466 1.49008 4.67398 1.66761 4.67273C1.84515 4.67148 2.01491 4.59976 2.13957 4.47334Z"
-														fill="#67798E"
-													></path>
-												</svg>
+												></svg>
 											</span>
 										</a>
 									</th>
 								</tr>
 							</thead>
-							<tbody>
-								<tr className="text-xs bg-gray-50">
-									<td className="flex items-center py-5 px-6 font-medium">
-										<input className="mr-3" type="checkbox" name="" id="" />
-										<p>M063592DR2</p>
-									</td>
-									<td className="font-medium">08.04.2021</td>
-									<td className="font-medium">Code 5928MD01</td>
-									<td>
-										<span className="inline-block py-1 px-2 text-white bg-green-500 rounded-full">
-											Completed
-										</span>
-									</td>
-									<td>$2500.00</td>
-									<td style={{ textAlign: "center" }}>
-										<Fab
-											
-											aria-label="edit"
-											style={{
-												width: "fit-content",
-												height: "fit-content",
-												padding: "8px",
-											}}
-										>
-											<EditIcon style={{ fontSize: "90%" }} />
-										</Fab>
-									</td>
-								</tr>
-								<tr className="text-xs">
-									<td className="flex items-center py-5 px-6 font-medium">
-										<input className="mr-3" type="checkbox" name="" id="" />
-										<p>M063592DR2</p>
-									</td>
-									<td className="font-medium">08.04.2021</td>
-									<td className="font-medium">Code 5928MD01</td>
-									<td>
-										<span className="inline-block py-1 px-2 text-white bg-green-500 rounded-full">
-											Completed
-										</span>
-									</td>
-									<td>$2500.00</td>
-									<td style={{ textAlign: "center" }}>
-										<Fab
-											aria-label="edit"
-											style={{
-												width: "fit-content",
-												height: "fit-content",
-												padding: "8px",
-											}}
-										>
-											<EditIcon style={{ fontSize: "90%" }} />
-										</Fab>
-									</td>
-								</tr>
-								<tr className="text-xs bg-gray-50">
-									<td className="flex items-center py-5 px-6 font-medium">
-										<input className="mr-3" type="checkbox" name="" id="" />
-										<p>M063592DR2</p>
-									</td>
-									<td className="font-medium">08.04.2021</td>
-									<td className="font-medium">Code 5928MD01</td>
-									<td>
-										<span className="inline-block py-1 px-2 text-white bg-green-500 rounded-full">
-											Completed
-										</span>
-									</td>
-									<td>$2500.00</td>
-									<td style={{ textAlign: "center" }}>
-										<Fab
-											aria-label="edit"
-											style={{
-												width: "fit-content",
-												height: "fit-content",
-												padding: "8px",
-											}}
-										>
-											<EditIcon style={{ fontSize: "90%" }} />
-										</Fab>
-									</td>
-								</tr>
-								<tr className="text-xs">
-									<td className="flex items-center py-5 px-6 font-medium">
-										<input className="mr-3" type="checkbox" name="" id="" />
-										<p>M063592DR2</p>
-									</td>
-									<td className="font-medium">08.04.2021</td>
-									<td className="font-medium">Code 5928MD01</td>
-									<td>
-										<span className="inline-block py-1 px-2 text-white bg-green-500 rounded-full">
-											Completed
-										</span>
-									</td>
-									<td>$2500.00</td>
-									<td style={{ textAlign: "center" }}>
-										<Fab
-											
-											aria-label="edit"
-											style={{
-												width: "fit-content",
-												height: "fit-content",
-												padding: "8px",
-											}}
-										>
-											<EditIcon style={{ fontSize: "90%" }} />
-										</Fab>
-									</td>
-								</tr>
-								<tr className="text-xs bg-gray-50">
-									<td className="flex items-center py-5 px-6 font-medium">
-										<input className="mr-3" type="checkbox" name="" id="" />
-										<p>M063592DR2</p>
-									</td>
-									<td className="font-medium">08.04.2021</td>
-									<td className="font-medium">Code 5928MD01</td>
-									<td>
-										<span className="inline-block py-1 px-2 text-white bg-green-500 rounded-full">
-											Completed
-										</span>
-									</td>
-									<td>$2500.00</td>
-									<td style={{ textAlign: "center" }}>
-										<Fab
-											aria-label="edit"
-											style={{
-												width: "fit-content",
-												height: "fit-content",
-												padding: "8px",
-											}}
-										>
-											<EditIcon style={{ fontSize: "90%" }} />
-										</Fab>
-									</td>
-								</tr>
-							</tbody>
+							<tbody>{All}</tbody>
 						</table>
 					</div>
 				</div>
+				<Center mt={"lg"}>
+					<Pagination value={activePage} onChange={setPage} total={numPage} />
+				</Center>
 			</div>
 		</section>
 	);
 }
- export default TableUser ; 
+export default TableUser;
