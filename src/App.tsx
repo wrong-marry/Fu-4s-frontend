@@ -22,7 +22,7 @@ import UserProfilePage from "./page/user-profile/UserProfilePage";
 import UpdateProfilePage from "./page/user-profile/UpdateProfilePage";
 import ManageUser from "./page/manageUser-page/ManageUserPage";
 import { ChangePassWordForm } from "./component/user-profile/change-password/ChangePassWordForm";
-import { isLoggedIn, logout } from "./util/loader/Auth";
+import { isLoggedIn, Logout } from "./util/loader/Auth";
 import { ForbiddenPage } from "./page/403/ForbiddenPage";
 import { getAuthCredentials } from "./util/loader/Auth";
 import StudyPage from "./page/study/StudyPage.tsx";
@@ -136,7 +136,7 @@ const router = createBrowserRouter([
       {
         path: "logout",
         element: <Suspense fallback={loadingIndicator}></Suspense>,
-        loader: logout,
+        loader: Logout,
       },
       {
         path: "auth",

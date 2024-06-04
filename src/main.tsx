@@ -22,7 +22,6 @@ const theme = {
     fontFamily: "Open Sans Variable, sans-serif",
   },
 };
-import { Notifications } from "@mantine/notifications";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <MantineProvider defaultColorScheme="light" theme={theme}>
     <ModalsProvider>

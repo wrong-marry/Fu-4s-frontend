@@ -88,7 +88,7 @@ const PostPage: React.FC = () => {
 
   return <>
     {!post.test && <LearningMaterialDetail />}
-			{post.test && <MockTestDetail />}
+			{post.test && <MockTestDetailPage {...post} />}
     <Space h={"md"}/>
     <Container>
       <Title order={2}>Comment section</Title>
@@ -99,7 +99,7 @@ const PostPage: React.FC = () => {
                             isMine={c.account == localStorage.getItem("username")}
                             account={c.account} status={c.status}
             />
-          );
+
         })}
         <form
           onSubmit={form.onSubmit(async (values) => {
@@ -137,7 +137,7 @@ const PostPage: React.FC = () => {
         </form>
       </Container>
     </>
-  );
+
 };
 
 export default PostPage;
