@@ -31,11 +31,11 @@ import PostPage from "./page/post/PostPage.tsx";
 import LearningMaterialList from "./component/subject-posting/LearningMaterialList.tsx";
 import LearningMaterialDetail from "./component/learning-material/LearningMaterialDetail.tsx";
 import NotificationList from "./component/notification/NotificationList.tsx";
-import SubjectList from "./component/manage-subject/SubjectList.tsx";
 import { UserPostPage } from "./page/user-post/UserPostPage.tsx";
 import { UserLearningMaterialPage } from "./page/user-post/UserLearningMaterialPage.tsx";
 import { UserMockTestTable } from "./component/user-post/UserMockTestTable.tsx";
 import { UserMockTestPage } from "./page/user-post/UserMockTestPage.tsx";
+import ManageSubjectPage from "./page/manage-subject/ManageSubjectPage.tsx";
 export const loadingIndicator = (
   <Box pos={"relative"} h={"100vh"} w={"100vw"}>
     <LoadingOverlay
@@ -109,7 +109,7 @@ const router = createBrowserRouter([
       },
       {
         path: "manage-subject",
-        element: <SubjectList />,
+        element: <ManageSubjectPage />,
       },
       {
         path: "change-password",
