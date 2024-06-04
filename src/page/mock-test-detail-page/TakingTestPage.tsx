@@ -14,6 +14,7 @@ import {
   Grid,
   Group,
   Modal,
+  Notification,
   Text,
   Title,
   Transition,
@@ -30,6 +31,8 @@ import axios, { AxiosResponse } from "axios";
 import { Post } from "../post/PostPage";
 import TestQuestion from "../../component/question/TestQuestion";
 import { HeroText } from "../../component/hero-text/HeroText";
+import { ProgressCardColored } from "../../component/progress-card/ProgressCard";
+import { notifications } from "@mantine/notifications";
 
 export default function TakingTestPage() {
   const [searchParam, setSearchParam] = useSearchParams();
@@ -67,6 +70,9 @@ export default function TakingTestPage() {
   const increaseNumberOfQuestionsChecked = () => {
     setNumberOfQuestionsChecked(numberOfQuestionChecked + 1);
   };
+  const decreaseNumberOfQuestionsChecked = () => {
+    setNumberOfQuestionsChecked(numberOfQuestionChecked - 1);
+  };
 
   const questionsDisplay = questions.map((question: Question) => {
     ++questionIndex;
@@ -76,6 +82,7 @@ export default function TakingTestPage() {
         question={question}
         questionIndex={questionIndex}
         increaseNumberOfQuestionsChecked={increaseNumberOfQuestionsChecked}
+        decreaseNumberOfQuestionsChecked={decreaseNumberOfQuestionsChecked}
       />
     );
   });
@@ -93,14 +100,10 @@ export default function TakingTestPage() {
               Mock Test
             </Badge>
           </Group>
-          <Title order={2} className="text-3xl font-md" ta="center" mt={30}>
+          <Title order={2} className="text-3xl font-md" ta="center" my={30}>
             {post?.title}
           </Title>
-          <Center my={15}>
-            <Text size="xl" fw={900}>
-              {numberOfQuestionChecked} / {numberOfQuestion}
-            </Text>
-          </Center>
+
           <Grid>
             <Grid.Col span={4}>
               <Badge color="pink" size="lg">
@@ -137,6 +140,12 @@ export default function TakingTestPage() {
             </Button>
           )}
         </Transition>
+      </Affix>
+      <Affix position={{ top: 150 , right:20}}>
+        <ProgressCardColored
+          numberOfQuestion={numberOfQuestion}
+          numberOfQuestionChecked={numberOfQuestionChecked}
+        />
       </Affix>
     </>
   );

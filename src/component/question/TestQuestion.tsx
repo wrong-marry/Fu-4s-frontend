@@ -51,13 +51,17 @@ export default function TestQuestion(props: any) {
             if(!checked)
                 {
                     props.increaseNumberOfQuestionsChecked();
+                    setChecked(true);
                 }
-            setChecked(true);
+            if(checked&&value===answer.content){
+                setChecked(false);
+                props.decreaseNumberOfQuestionsChecked();
+            }
         }}
         radius="md"
         value={answer.content}
         key={answer.id}
-        checked={value === answer.content || (showAnswer && answer.correct)}
+        checked={checked&&(value === answer.content || (showAnswer && answer.correct))}
         onChangeCapture={() => handleRadioChange(answer.content)}
       >
         <Group wrap="nowrap" align="flex-start">
