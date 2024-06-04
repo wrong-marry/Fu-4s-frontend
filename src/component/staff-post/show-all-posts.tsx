@@ -3,6 +3,7 @@ import  { useEffect, useState } from 'react';
 
 
 const DashboardSection: React.FC = () => {
+
 	  const [numOfPost, setNumOfPost] = useState(0);
 		const [numOfHidden, setNumOfHidden] = useState(0);
 		const [numOfActive, setNumOfActive] = useState(0);
@@ -22,6 +23,7 @@ const DashboardSection: React.FC = () => {
                 console.error("Error fetching post:", error);
             }
         };
+
 				const fetchNumOfActive = async () => {
 					// ${localStorage.getItem('username')}
 					try {
@@ -35,6 +37,7 @@ const DashboardSection: React.FC = () => {
 						console.error("Error fetching post:", error);
 					}
 				};
+
 					const fetchNumOfHidden = async () => {
 						// ${localStorage.getItem('username')}
 						try {
@@ -47,6 +50,7 @@ const DashboardSection: React.FC = () => {
 							console.error("Error fetching post:", error);
 						}
 					};
+
 						const fetchNumOfPending = async () => {
 							// ${localStorage.getItem('username')}
 							try {
@@ -59,6 +63,7 @@ const DashboardSection: React.FC = () => {
 								console.error("Error fetching post:", error);
 							}
 						};
+
 						fetchNumOfActive(); 
 						fetchNumOfHidden();
 						fetchNumOfPending(); 
@@ -80,6 +85,7 @@ const DashboardSection: React.FC = () => {
 								<div className="flex flex-wrap items-end justify-between -m-2 mb-7">
 									<div className="w-auto p-2">
 										<h3 className="text-sm text-coolGray-500 font-medium">
+
 											Active Posts
 										</h3>
 									</div>
@@ -101,6 +107,7 @@ const DashboardSection: React.FC = () => {
 									</div>
 								</div>
 								<h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
+
 									{numOfActive}
 								</h2>
 								<p className="text-center max-w-max mx-auto px-2 py-1 text-green-500 font-medium text-xs bg-green-100 rounded-full">
@@ -113,6 +120,7 @@ const DashboardSection: React.FC = () => {
 								<div className="flex flex-wrap items-end justify-between -m-2 mb-7">
 									<div className="w-auto p-2">
 										<h3 className="text-sm text-coolGray-500 font-medium">
+
 											Hidden Posts
 										</h3>
 									</div>
@@ -134,6 +142,7 @@ const DashboardSection: React.FC = () => {
 									</div>
 								</div>
 								<h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
+
 									{numOfHidden}
 								</h2>
 								<p className="text-center max-w-max mx-auto px-2 py-1 text-red-500 font-medium text-xs bg-red-100 rounded-full">
@@ -167,6 +176,7 @@ const DashboardSection: React.FC = () => {
 									</div>
 								</div>
 								<h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
+
 									{numOfPending}
 								</h2>
 								<p className="text-center max-w-max mx-auto px-2 py-1 text-yellow-500 font-medium text-xs bg-yellow-100 rounded-full">
@@ -200,6 +210,7 @@ const DashboardSection: React.FC = () => {
 									</div>
 								</div>
 								<h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
+
 									{numOfPost}
 								</h2>
 								<p className="text-center max-w-max mx-auto px-2 py-1 text-green-500 font-medium text-xs bg-green-100 rounded-full">

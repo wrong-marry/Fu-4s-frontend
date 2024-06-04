@@ -10,11 +10,7 @@ import {
 } from "@mantine/core";
 import logo from "../../asset/logo.png";
 import darkLogo from "../../asset/darkLogo.png";
-import {
-  NavLink,
-  useLoaderData,
-  useNavigate
-} from "react-router-dom";
+import { NavLink, useLoaderData, useNavigate } from "react-router-dom";
 import {
 	IconPhoto,
 	IconLibraryPlus,
@@ -28,10 +24,15 @@ import {
 
 import { DarkModeSwitch } from "react-toggle-dark-mode";
 import React, { useContext, useEffect } from "react";
-import {UserCredentials, UserCredentialsContext} from "../../store/user-credentials-context";
+import {
+  UserCredentials,
+  UserCredentialsContext,
+} from "../../store/user-credentials-context";
 import { useDisclosure } from "@mantine/hooks";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
+
 import { Logout } from "../../util/loader/Auth.tsx";
+
 import NotificationCard from "../notification/NotificationCard.tsx";
 
 const userBtn = (data: LoaderData, handleLogout: () => void) => {
@@ -41,17 +42,18 @@ const userBtn = (data: LoaderData, handleLogout: () => void) => {
         <Menu.Target>
           <Group className="cursor-pointer border-none">
             <Avatar
-                variant="filled"
-                radius="xl"
-                color="grape"
-                className="cursor-pointer"
-                // src={data?.avatar}
+              variant="filled"
+              radius="xl"
+              color="grape"
+              className="cursor-pointer"
+              // src={data?.avatar}
             />
             <Text className="text-sm font-semibold">
               {data ? data.firstName + " " + data.lastName : "Guest"}
             </Text>
           </Group>
         </Menu.Target>
+
         <Menu.Dropdown>
           <Menu.Label>Menu</Menu.Label>
           <NavLink to={"/user"}>
@@ -89,6 +91,7 @@ const userBtn = (data: LoaderData, handleLogout: () => void) => {
               <IconLogout style={{ width: rem(14), height: rem(14) }} />
             }
             onClick={handleLogout}
+
           >
             Logout
           </Menu.Item>
@@ -216,11 +219,9 @@ export interface LoaderData {
 }
 
 function Navbar() {
-  const [, {open,}] = useDisclosure(false);
+  const [, { open }] = useDisclosure(false);
 
-  const {assignUserCredentials} = useContext(
-    UserCredentialsContext
-  );
+  const { assignUserCredentials } = useContext(UserCredentialsContext);
   const data: LoaderData = useLoaderData() as LoaderData;
   useEffect(() => {
     if (data !== null) {
@@ -243,12 +244,14 @@ function Navbar() {
   const toggleColorScheme = () => {
     setColorScheme(computedColorScheme === "dark" ? "light" : "dark");
   };
+
   const btnState =
 		data?.error || !data
 			? guestBtn()
 			: data.role === "ADMIN"
 			? adminBtn(data, Logout)
 			: userBtn(data, Logout);
+
   const whichHomepage = "";
 
   return (
@@ -336,6 +339,7 @@ function Navbar() {
 			</header>
 		</>
 	);
+
 }
 
 export default Navbar;

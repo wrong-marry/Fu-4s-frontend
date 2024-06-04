@@ -11,7 +11,8 @@ interface Post {
 }
 
 export function UserMockTestTable() {
-    const username = 'user1';
+
+    const username = localStorage.getItem("username");
     const pageSize = 2;
 
     const [activePage, setPage] = useState(1);
@@ -68,9 +69,15 @@ export function UserMockTestTable() {
                             Active
                         </span>
                         :
-                        <span className="inline-block py-1 px-2 text-white bg-red-500 rounded-full">
-                            Hidden
-                        </span>
+
+                        post.status == 'HIDDEN' ?
+                            <span className="inline-block py-1 px-2 text-white bg-red-500 rounded-full">
+                                Hidden
+                            </span>
+                            :
+                            <span className="inline-block py-1 px-2 text-white bg-yellow-500 rounded-full">
+                                Pending
+                            </span>
                     }
                 </td>
 
@@ -82,7 +89,7 @@ export function UserMockTestTable() {
 
                 <td style={{textAlign: "center"}}>
                     <span className="inline-block py-1 px-2 text-white bg-gray-600 rounded-full">
-                            <a href="">Edit</a>
+                            <a href={"/edit-mock-test/" + post.id}>Edit</a>
                     </span>
                 </td>
             </tr>
