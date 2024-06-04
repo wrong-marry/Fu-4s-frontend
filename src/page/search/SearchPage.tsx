@@ -240,7 +240,7 @@ function SearchPage() {
                 totalTest: data?.data?.totalTest,
                 tests: data?.data?.tests,
             });
-            setDisplayedNumber(prev => prev + data?.data?.tests?.length);
+            setDisplayedNumber(prev => prev + (data?.data?.tests?.length || 0));
             setTotalItem(totalItem => totalItem + data?.data?.totalTest);
         }
     };

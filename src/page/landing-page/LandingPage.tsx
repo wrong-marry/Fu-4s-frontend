@@ -15,7 +15,12 @@ export default function LandingPage() {
                 </Title>
             </div>
             <HeroContent2/>
-            <Carousel />
+            <div className="p-10 mx-auto">
+                <Title className="text-center text-4xl">
+                    Why you should use FU-4S
+                </Title>
+            </div>
+            <Carousel/>
         </div>
     ) as React.ReactElement;
-  }
+}
