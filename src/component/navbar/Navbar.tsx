@@ -307,7 +307,7 @@ function Navbar() {
 
 							<Menu.Dropdown>
 								<Menu.Label>Create</Menu.Label>
-								<NavLink to={"/create-test"}>
+								<NavLink to={"/create-mock-test"}>
 									<Menu.Item
 										leftSection={
 											<IconLibraryPlus
@@ -319,14 +319,16 @@ function Navbar() {
 									</Menu.Item>
 								</NavLink>
 
-								<Menu.Item
-									onClick={open}
-									leftSection={
-										<IconPhoto style={{ width: rem(14), height: rem(14) }} />
-									}
-								>
-									Learning material
-								</Menu.Item>
+								<NavLink to={"/create-learning-material"}>
+									<Menu.Item
+										onClick={open}
+										leftSection={
+											<IconPhoto style={{ width: rem(14), height: rem(14) }} />
+										}
+									>
+										Learning material
+									</Menu.Item>
+								</NavLink>
 							</Menu.Dropdown>
 						</Menu>
 
