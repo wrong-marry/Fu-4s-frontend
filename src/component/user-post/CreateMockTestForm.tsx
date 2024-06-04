@@ -6,12 +6,13 @@ import {
     Space,
     TextInput,
     Title,
-    Text
+    Text, Modal
 } from "@mantine/core";
 import classes from "../user-profile/update-profile/AuthenticationTitle.module.css";
 import {useEffect, useState} from "react";
 import * as XLSX from 'xlsx'
 import {useNavigate} from "react-router-dom";
+import {useDisclosure} from "@mantine/hooks";
 
 interface Subject {
     code: string;
@@ -46,6 +47,7 @@ export function CreateMockTestForm() {
     const [errorFile, setError] = useState<string | null>(null);
     const [fileData, setFileData] = useState<row[]>([]);
     const [errorAll, setErrorAll] = useState('');
+    const [opened, { open, close }] = useDisclosure(false);
     const navigate = useNavigate();
 
     const isExcelFile = (file: File) => {
@@ -166,7 +168,45 @@ export function CreateMockTestForm() {
 
     }
 
+    const downloadTemplate = () => {
+        const fileName = 'questions.xlsx';
+        const data = [{
+                content: "",
+                answer1: "",
+                answer2: "",
+                answer3: "",
+                answer4: "",
+                correct: "",
+        }];
+
+        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+        const wb: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'test');
+
+        XLSX.writeFile(wb, fileName);
+    }
+
     return <>
+        <Modal opened={opened} onClose={close} title="Import instruction">
+            <Text size="sm">
+                The system only accept excel (.xlsx) files. File must be in the following format:
+                <Space h="sm"></Space>
+                <img src="/src/asset/excelFileFormat.png" alt=""/>
+                <Space h="sm"></Space>
+                <Space h="sm"></Space>
+                <Space h="sm"></Space>
+                <b>Example:</b>
+                <Space h="sm"></Space>
+                <img src="/src/asset/fileFormatExample.png" alt=""/>
+                <Space h="sm"></Space>
+                <Space h="sm"></Space>
+                <Space h="sm"></Space>
+                The above example will add a mock test with one question with the content <i>"What is 5 + 2" </i>
+                with 4 answers: <i>5, 6, 7 and 8</i>.
+                The index of the correct question is 3, which the the answer 7.
+            </Text>
+        </Modal>
+
         <Container size={900} my={40}>
             <Title ta="center" className={classes.title} order={2}>
                 Create new Mock Test
@@ -217,7 +257,8 @@ export function CreateMockTestForm() {
                                 onChange={setFile}
                                 accept={".xlsx"}
                             />
-                            <Text c="dimmed" size="xs">Only accept excel files. Import format instruction <Text td="underline" color="blue" component="a" href="">here</Text></Text>
+                            <Text c="dimmed" size="xs">Only accept excel files. Import format instruction <Text td="underline" color="blue" component="button" onClick={open}>here</Text></Text>
+                            <Text c="dimmed" size="xs">Download template <Text td="underline" color="blue" type="button" component="button" onClick={downloadTemplate}>here</Text></Text>
 
                             <Space h="xs" />
 
