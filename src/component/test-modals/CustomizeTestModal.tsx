@@ -8,9 +8,11 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function CustomizeTestModal() {
+export default function CustomizeTestModal(prop: any) {
   const [numberOfQuestions, setNumberOfQuestions] = useState(1);
+  const navigate = useNavigate();
   const form = useForm({
     initialValues: {
       numberOfQuestions: 1,
@@ -50,7 +52,12 @@ export default function CustomizeTestModal() {
           offLabel="Random"
         />
         <Button
-          onClick={() => {}}
+          onClick={() => {
+            const url = `/test?id=${prop.id}&number-of-questions=${
+              form.values.numberOfQuestions
+            }&mode=${form.values.personalized ? "personalized" : "random"}`;
+            navigate(url);
+          }}
           type="submit"
         >
           Go to test

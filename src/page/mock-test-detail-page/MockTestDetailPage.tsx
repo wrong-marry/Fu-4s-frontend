@@ -30,6 +30,7 @@ export default function MockTestDetailPage(post: any) {
   const [testFormOpened, setTestFormOpened] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [scroll, scrollTo] = useWindowScroll();
+  let questionIndex = 0;
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetchQuestion(post.id);
@@ -37,9 +38,10 @@ export default function MockTestDetailPage(post: any) {
     };
     fetchData();
   }, []);
-  const questionsDisplay = questions.map((question: Question) => (
-    <QuestionDetail key={question.id} {...question} />
-  ));
+  const questionsDisplay = questions.map((question: Question) => {
+    ++questionIndex;
+    return <QuestionDetail questionIndex={questionIndex} key={question.id} question={question} />;
+  });
   return (
     <>
       <Grid display={Flex} justify="center">
@@ -57,8 +59,18 @@ export default function MockTestDetailPage(post: any) {
               <Modal
                 opened={testFormOpened}
                 onClose={() => setTestFormOpened(false)}
-                title={isLoggedIn()?"Customize your test":"BRUH NOT LOGGED IN BRUHH!"}
-              >{isLoggedIn()?<CustomizeTestModal/>:<Text>BRUH NOT LOGGED IN BRUHH!</Text>}</Modal>
+                title={
+                  isLoggedIn()
+                    ? "Customize your test"
+                    : "BRUH NOT LOGGED IN BRUHH!"
+                }
+              >
+                {isLoggedIn() ? (
+                  <CustomizeTestModal id={post.id} />
+                ) : (
+                  <Text>BRUH NOT LOGGED IN BRUHH!</Text>
+                )}
+              </Modal>
               <Button
                 radius="lg"
                 onClick={() => {

@@ -9,6 +9,7 @@ import {
   Badge,
   Button,
   Card,
+  Center,
   Flex,
   Grid,
   Group,
@@ -27,6 +28,8 @@ import LearningMaterialDetail from "../../component/learning-material/LearningMa
 import CustomizeTestModal from "../../component/test-modals/CustomizeTestModal";
 import axios, { AxiosResponse } from "axios";
 import { Post } from "../post/PostPage";
+import TestQuestion from "../../component/question/TestQuestion";
+import { HeroText } from "../../component/hero-text/HeroText";
 
 export default function TakingTestPage() {
   const [searchParam, setSearchParam] = useSearchParams();
@@ -37,6 +40,8 @@ export default function TakingTestPage() {
   const [questions, setQuestions] = useState([]);
   const [scroll, scrollTo] = useWindowScroll();
   const [post, setPost] = useState<Post | null>(null);
+  const [numberOfQuestionChecked, setNumberOfQuestionsChecked] = useState(0);
+  let questionIndex = 0;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,9 +63,22 @@ export default function TakingTestPage() {
     fetchPost();
     fetchData();
   }, []);
-  const questionsDisplay = questions.map((question: Question) => (
-    <QuestionDetail key={question.id} {...question} />
-  ));
+
+  const increaseNumberOfQuestionsChecked = () => {
+    setNumberOfQuestionsChecked(numberOfQuestionChecked + 1);
+  };
+
+  const questionsDisplay = questions.map((question: Question) => {
+    ++questionIndex;
+    return (
+      <TestQuestion
+        key={question.id}
+        question={question}
+        questionIndex={questionIndex}
+        increaseNumberOfQuestionsChecked={increaseNumberOfQuestionsChecked}
+      />
+    );
+  });
   const date = () => {
     if (post != null)
       return format(new Date(post.postTime), "dd/MM/yyyy HH:mm");
@@ -75,9 +93,14 @@ export default function TakingTestPage() {
               Mock Test
             </Badge>
           </Group>
-          <Title order={2} className="text-3xl font-md" ta="center" my={30}>
+          <Title order={2} className="text-3xl font-md" ta="center" mt={30}>
             {post?.title}
           </Title>
+          <Center my={15}>
+            <Text size="xl" fw={900}>
+              {numberOfQuestionChecked} / {numberOfQuestion}
+            </Text>
+          </Center>
           <Grid>
             <Grid.Col span={4}>
               <Badge color="pink" size="lg">
@@ -99,6 +122,7 @@ export default function TakingTestPage() {
           <>{questionsDisplay}</>
         </Grid.Col>
       </Grid>
+      <HeroText />
       <Affix position={{ bottom: 20, right: 20 }}>
         <Transition transition="slide-up" mounted={scroll.y > 0}>
           {(transitionStyles) => (
