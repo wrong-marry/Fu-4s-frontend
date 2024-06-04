@@ -31,6 +31,7 @@ import {UserCredentials, UserCredentialsContext} from "../../store/user-credenti
 import { useDisclosure } from "@mantine/hooks";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
 import { Logout } from "../../util/loader/Auth.tsx";
+
 import NotificationCard from "../notification/NotificationCard.tsx";
 
 const userBtn = (data: LoaderData, handleLogout: () => void) => {
@@ -88,6 +89,7 @@ const userBtn = (data: LoaderData, handleLogout: () => void) => {
               <IconLogout style={{ width: rem(14), height: rem(14) }} />
             }
             onClick={handleLogout}
+
           >
             Logout
           </Menu.Item>
@@ -162,6 +164,7 @@ function Navbar() {
   };
   const btnState =
       data?.error || !data ? guestBtn() : userBtn(data, Logout);
+
   const whichHomepage = "";
   return (
     <>
