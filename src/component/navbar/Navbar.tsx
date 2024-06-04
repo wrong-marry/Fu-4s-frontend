@@ -174,9 +174,9 @@ function Navbar() {
     setColorScheme(computedColorScheme === "dark" ? "light" : "dark");
   };
   const btnState =
-    data?.error || !data ? guestBtn(mode as string) : userBtn(data, logout);
-  const whichHomepage = data?.error || !data ? "/" : "/home";
 
+    data?.error || !data ? guestBtn(mode as string) : userBtn(data, Logout);
+  const whichHomepage = "";
   return (
     <>
       <header className="w-full h-16 flex items-center justify-between sticky top-0 z-20 shadow-sm bg-[--mantine-color-body]">

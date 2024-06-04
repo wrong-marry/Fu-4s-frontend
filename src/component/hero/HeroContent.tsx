@@ -1,7 +1,9 @@
 import { Title, Button, Text } from "@mantine/core";
 import homepageCover from "../../asset/homepage-cover.jpg";
+import { useNavigate } from "react-router-dom";
 
 export default function HeroContent() {
+  const navigate = useNavigate();
   return (
     <div
       className="w-full h-screen bg-cover "
@@ -25,7 +27,7 @@ export default function HeroContent() {
             valuable resources and interactive discussions!
           </Text>
 
-          <Button variant="gradient" size="xl" radius="xl" className="mt-5">
+          <Button onClick={()=>navigate("/home")} variant="gradient" size="xl" radius="xl" className="mt-5">
             Get started
           </Button>
         </div>
