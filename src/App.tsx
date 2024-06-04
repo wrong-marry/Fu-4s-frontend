@@ -37,6 +37,9 @@ import ManageSubjectPage from "./page/manage-subject/ManageSubjectPage.tsx";
 import TakingTestPage from "./page/mock-test-detail-page/TakingTestPage.tsx";
 
 import CreateMockTestPage from "./page/user-post/CreateMockTestPage.tsx";
+import EditMockTestPage from "./page/user-post/EditMockTestPage.tsx";
+import {isValidUser} from "./util/ValidUser.tsx";
+
 import MockTestDetail from "./component/mock-test/MockTestDetail.tsx";
 import ManagePostForStaff from "./page/manage-post-forstaff/ManagePostPage.tsx";
 export const loadingIndicator = (
@@ -188,6 +191,7 @@ const router = createBrowserRouter([
         {
             path: "user",
             children: [
+
                 {
                     index: true,
                     path: "",
@@ -265,7 +269,20 @@ const router = createBrowserRouter([
             </Suspense>
         ),
       },
+      {
+        path: "/edit-mock-test/:id",
+        loader: () => {
+          if (!isLoggedIn()) return redirect("/forbidden");
+          return null;
+        },
+        element: (
+            <Suspense fallback={loadingIndicator}>
+              <EditMockTestPage/>
+            </Suspense>
+        ),
+      }
     ],
+
   },
   {
     path: "/forbidden",
