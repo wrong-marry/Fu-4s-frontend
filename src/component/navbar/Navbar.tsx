@@ -2,7 +2,7 @@ import {
   Button,
   Menu,
   rem,
-  // Avatar,
+  Avatar,
   Group,
   Text,
   useMantineColorScheme,
@@ -10,13 +10,7 @@ import {
 } from "@mantine/core";
 import logo from "../../asset/logo.png";
 import darkLogo from "../../asset/darkLogo.png";
-import {
-  NavLink,
-  useLoaderData,
-  useNavigate,
-  useSearchParams,
-  useSubmit,
-} from "react-router-dom";
+import { NavLink, useLoaderData, useNavigate } from "react-router-dom";
 import {
   IconPhoto,
   IconLibraryPlus,
@@ -29,30 +23,29 @@ import {
 
 import { DarkModeSwitch } from "react-toggle-dark-mode";
 import React, { useContext, useEffect } from "react";
-import { UserCredentialsContext } from "../../store/user-credentials-context";
+import {
+  UserCredentials,
+  UserCredentialsContext,
+} from "../../store/user-credentials-context";
 import { useDisclosure } from "@mantine/hooks";
-// import FolderModal from "../modal/navbar/create/FolderModal";
-// import ClassModal from "../modal/navbar/create/ClassModal";
-// import GeneralSearchBar from "./search/GeneralSearchBar";
-import { toast } from "react-toastify";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
 import FolderModal from "../modal/navbar/create/FolderModal.tsx";
 import ClassModal from "../modal/navbar/create/ClassModal.tsx";
 import { logout } from "../../util/loader/Auth.tsx";
 
-const userBtn = (data: LoaderData, handleLogout: any) => {
+const userBtn = (data: LoaderData, handleLogout: () => void) => {
   return (
     <>
       <Menu shadow="md" width={200}>
         <Menu.Target>
           <Group className="cursor-pointer border-none">
-            {/*<Avatar*/}
-            {/*  variant="filled"*/}
-            {/*  radius="xl"*/}
-            {/*  color="grape"*/}
-            {/*  className="cursor-pointer"*/}
-            {/*  src={data?.avatar}*/}
-            {/*/>*/}
+            <Avatar
+              variant="filled"
+              radius="xl"
+              color="grape"
+              className="cursor-pointer"
+              // src={data?.avatar}
+            />
             <Text className="text-sm font-semibold">
               {data ? data.firstName + " " + data.lastName : "Guest"}
             </Text>
@@ -94,19 +87,17 @@ const userBtn = (data: LoaderData, handleLogout: any) => {
             leftSection={
               <IconLogout style={{ width: rem(14), height: rem(14) }} />
             }
-            onClick={() => {
-              handleLogout();
-            }}
+            onClick={handleLogout}
           >
             Logout
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>
     </>
-  );
+  ) as React.ReactElement;
 };
 
-const guestBtn = (mode: string) => {
+const guestBtn = () => {
   const navigate = useNavigate();
   return (
     <>
@@ -133,7 +124,7 @@ const guestBtn = (mode: string) => {
   );
 };
 
-interface LoaderData {
+export interface LoaderData {
   error?: boolean;
   username?: string;
   firstName?: string;
@@ -142,20 +133,15 @@ interface LoaderData {
 }
 
 function Navbar() {
-  const [opened, { open, close }] = useDisclosure(false);
-  const [classOpened, { open: classOpen, close: classClose }] =
-    useDisclosure(false);
+  const [, { open }] = useDisclosure(false);
 
-  const { assignUserCredentials, clearUserCredentials } = useContext(
-    UserCredentialsContext
-  );
-  const mode = useSearchParams()[0].get("mode");
+  const { assignUserCredentials } = useContext(UserCredentialsContext);
   const data: LoaderData = useLoaderData() as LoaderData;
   useEffect(() => {
     if (data !== null) {
       assignUserCredentials({
         ...data,
-      });
+      } as unknown as UserCredentials);
     }
   }, [data]);
 
@@ -172,10 +158,8 @@ function Navbar() {
   const toggleColorScheme = () => {
     setColorScheme(computedColorScheme === "dark" ? "light" : "dark");
   };
-  const btnState =
-    data?.error || !data ? guestBtn(mode as string) : userBtn(data, logout);
-  const whichHomepage = data?.error || !data ? "/" : "/home";
-
+  const btnState = data?.error || !data ? guestBtn() : userBtn(data, logout);
+  const whichHomepage = "";
   return (
     <>
       <header className="w-full h-16 flex items-center justify-between sticky top-0 z-20 shadow-sm bg-[--mantine-color-body]">
@@ -255,9 +239,6 @@ function Navbar() {
           </Group>
         </div>
       </header>
-
-      <FolderModal opened={opened} close={close} />
-      <ClassModal opened={classOpened} close={classClose} />
     </>
   );
 }
