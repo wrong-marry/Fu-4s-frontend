@@ -1,26 +1,10 @@
 import React, { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
-import {  Modal } from "@mantine/core";
+import { ActionIcon, Modal, rem } from "@mantine/core";
+import { IconPencil } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { Center, Pagination } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import {
-	Avatar,
-	Table,
-	Group,
-	Text,
-	ActionIcon,
-	Menu,
-	rem,
-} from "@mantine/core";
-import {
-	IconPencil,
-	IconMessages,
-	IconNote,
-	IconReportAnalytics,
-	IconTrash,
-	IconDots,
-} from "@tabler/icons-react";
 
 
 
@@ -43,75 +27,48 @@ function TableUser() {
 	 const [currentTab, setCurrentTab] = useState("ALL");
 
 	const [opened, { open, close }] = useDisclosure(false);
+	useEffect(() => {
+		async function fetchData() {
+			try {
+				const token = localStorage.getItem("token");
+				const response = await fetch(
+					`http://localhost:8080/api/v1/admin/getAllUser?pageNum=${activePage}&pageSize=${pageSize}`,
+					{
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+					}
+				);
 
-	 
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
 
- useEffect(() => {
-	
-	const fetchNum = async () => {
-		try {
-			const baseURL = "http://localhost:8080/api/v1/admin";
-			let url = "";
-
-			if (currentTab === "ALL") {
-				url = `${baseURL}/getNumUser`;
-			} else if (currentTab === "Staffs") {
-				url = `${baseURL}/getNumEachRole?userrole=STAFF`;
-			} else if (currentTab === "Admins") {
-				url = `${baseURL}/getNumEachRole?userrole=ADMIN`;
-			} else if (currentTab === "General Users") {
-				url = `${baseURL}/getNumEachRole?userrole=USER`;
+				const data: User[] = await response.json();
+				console.log(data);
+				SetUsers(data);
+				setLoading(false);
+			} catch (error: any) {
+				setError(error.message);
+				setLoading(false);
 			}
-			const response = await fetch(url);
-			const data = await response.json();
-			setNumPage(Math.ceil((data + 1) / pageSize));
-		} catch (error) {
-			console.error("Error fetching post:", error);
 		}
-	};
+		        const fetchNum = async () => {
+							// ${localStorage.getItem('username')}
+							try {
+								const response = await fetch(
+									`http://localhost:8080/api/v1/admin/getNumUser`
+								);
+								const data = await response.json();
+								setNumPage((data + 1) / pageSize);
+							} catch (error) {
+								console.error("Error fetching post:", error);
+							}
+						};
+		fetchNum();			
+		fetchData();
+	}, [activePage]);
 
-	
-	const fetchData = async (url: string) => {
-		try {
-			const token = localStorage.getItem("token");
-			const response = await fetch(url, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
-
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-
-			const data: User[] = await response.json();
-			SetUsers(data);
-			setLoading(false);
-		} catch (error: any) {
-			setError(error.message);
-			setLoading(false);
-		}
-	};
-
-		const baseURL = "http://localhost:8080/api/v1/admin";
-		 let url = "" ;
-
-			if (currentTab === "ALL") {
-				url = `${baseURL}/getAllUser?pageNum=${activePage}&pageSize=${pageSize}`;
-			} else if (currentTab === "Staffs") {
-				url = `${baseURL}/getAllByUserRole?userrole=STAFF&pageNum=${activePage}&pageSize=${pageSize}`;
-			} else if (currentTab === "Admins") {
-				url = `${baseURL}/getAllByUserRole?userrole=ADMIN&pageNum=${activePage}&pageSize=${pageSize}`;
-			} else if (currentTab === "General Users") {
-				url = `${baseURL}/getAllByUserRole?userrole=USER&pageNum=${activePage}&pageSize=${pageSize}`;
-			}
-		fetchData(url);
-		fetchNum();
- }, [activePage, currentTab]);
-
- useEffect(() => {
-		setPage(1);
- }, [currentTab]);
 
 	if (loading) {
 		return <div>Loading...</div>;
@@ -152,69 +109,17 @@ function TableUser() {
 				</span>
 			</td>
 			<td className="font-medium">{user.role}</td>
-			<td className="font-medium"> 03.06.2024</td>
 			<td style={{ textAlign: "center" }}>
-				<Group gap={0} justify="flex-end">
-					<ActionIcon variant="subtle" color="gray"></ActionIcon>
-					<Menu
-						transitionProps={{ transition: "pop" }}
-						withArrow
-						position="bottom-end"
-						withinPortal
-					>
-						<Menu.Target>
-							<ActionIcon variant="subtle" color="gray">
-								<IconDots
-									style={{ width: rem(16), height: rem(16) }}
-									stroke={1.5}
-								/>
-							</ActionIcon>
-						</Menu.Target>
-						<Menu.Dropdown>
-							<Menu.Item
-								leftSection={
-									<IconMessages
-										style={{ width: rem(16), height: rem(16) }}
-										stroke={1.5}
-									/>
-								}
-							>
-								Send direct Notification
-							</Menu.Item>
-							<Menu.Item
-								leftSection={
-									<IconNote
-										style={{ width: rem(16), height: rem(16) }}
-										stroke={1.5}
-									/>
-								}
-							>
-								Add note
-							</Menu.Item>
-							<Menu.Item
-								leftSection={
-									<IconReportAnalytics
-										style={{ width: rem(16), height: rem(16) }}
-										stroke={1.5}
-									/>
-								}
-							>
-								More actions
-							</Menu.Item>
-							<Menu.Item
-								leftSection={
-									<IconTrash
-										style={{ width: rem(16), height: rem(16) }}
-										stroke={1.5}
-									/>
-								}
-								color="red"
-							>
-								Ban account
-							</Menu.Item>
-						</Menu.Dropdown>
-					</Menu>
-				</Group>
+				<ActionIcon
+					variant="gradient"
+					size="lg"
+					radius="xl"
+					aria-label="Gradient action icon"
+					gradient={{ from: "red", to: "cyan", deg: 90 }}
+					onClick={open}
+				>
+					<IconPencil />
+				</ActionIcon>
 			</td>
 		</tr>
 	));
@@ -229,7 +134,7 @@ function TableUser() {
 				<div className="pt-6 bg-white shadow rounded">
 					<div className="px-6 border-b">
 						<div className="flex flex-wrap items-center mb-6">
-							<h3 className="text-xl font-bold">USER MANAGEMENT</h3>
+							<h3 className="text-xl font-bold">POST MANAGEMENT</h3>
 							<a
 								className="ml-auto flex items-center py-2 px-3 text-xs text-white hover:bg-indigo-600 rounded"
 								href="#"
@@ -269,7 +174,7 @@ function TableUser() {
 								href="#"
 								onClick={() => handleTabClick("ALL")}
 							>
-								ALL
+								Pending posts
 							</a>
 							<a
 								className={`inline-block px-4 pb-2 text-sm font-medium ${
@@ -280,29 +185,19 @@ function TableUser() {
 								href="#"
 								onClick={() => handleTabClick("Staffs")}
 							>
-								Staffs
+								Active posts
 							</a>
 							<a
-								className={`inline-block px-4 pb-2 text-sm font-medium ${
-									currentTab === "Admins"
-										? "text-indigo-500 border-b-2 border-indigo-500"
-										: "text-gray-500 border-b-2 border-transparent"
-								}`}
+								className="inline-block px-4 pb-2 text-sm font-medium text-gray-500 border-b-2 border-transparent"
 								href="#"
-								onClick={() => handleTabClick("Admins")}
 							>
-								Admins
+								Hidden posts
 							</a>
 							<a
-								className={`inline-block px-4 pb-2 text-sm font-medium ${
-									currentTab === "General Users"
-										? "text-indigo-500 border-b-2 border-indigo-500"
-										: "text-gray-500 border-b-2 border-transparent"
-								}`}
+								className="inline-block px-4 pb-2 text-sm font-medium text-gray-500 border-b-2 border-transparent"
 								href="#"
-								onClick={() => handleTabClick("General Users")}
 							>
-								General Users
+								All posts
 							</a>
 						</div>
 					</div>
@@ -340,7 +235,7 @@ function TableUser() {
 									</th>
 									<th className="py-4 font-medium">
 										<a className="flex items-center" href="#">
-											<span>Enrolled Date</span>
+											<span>Uploaded Posts</span>
 											<span className="ml-2">
 												<svg
 													width="9"
@@ -382,7 +277,7 @@ function TableUser() {
 									</th>
 									<th className="py-4 font-medium" style={{ width: "5px" }}>
 										<a className="flex items-center" href="#">
-											<span>Uploaded Posts</span>
+											<span>Options</span>
 											<span className="ml-2">
 												<svg
 													width="9"
@@ -399,7 +294,7 @@ function TableUser() {
 							<tbody>{All}</tbody>
 						</table>
 					</div>
-					
+				
 				</div>
 				<Center mt={"lg"}>
 					<Pagination value={activePage} onChange={setPage} total={numPage} />

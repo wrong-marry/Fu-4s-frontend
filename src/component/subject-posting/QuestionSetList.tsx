@@ -6,8 +6,10 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { useNavigate } from "react-router-dom";
 
 interface QuestionSet {
+	id: string;
 	title: string;
 	attempts: number;
 	username: string;
@@ -18,6 +20,7 @@ function QuestionSetList() {
 	const [questionSets, setQuestionSets] = useState<QuestionSet[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		async function fetchData() {
@@ -42,6 +45,10 @@ function QuestionSetList() {
 		fetchData();
 	}, []);
 
+	const handleRowClick = (link: string) => {
+		navigate(link);
+	};
+
 	if (loading) {
 		return <div>Loading...</div>;
 	}
@@ -49,6 +56,10 @@ function QuestionSetList() {
 	if (error) {
 		return <div>Error: {error}</div>;
 	}
+
+const handleQuestionSetClick = (id: string) => {
+	navigate(`/post/${id}`);
+};
 
 	return (
 		<Paper>
@@ -64,8 +75,16 @@ function QuestionSetList() {
 					</TableHead>
 					<TableBody>
 						{questionSets.map((questionSet, index) => (
-							<TableRow key={index}>
-								<TableCell>{questionSet.title}</TableCell>
+							<TableRow>
+								<TableCell
+									key={index}
+									onClick={() => handleQuestionSetClick(questionSet.id)}
+									style={{
+										cursor: "pointer",
+									}}
+								>
+									{questionSet.title}
+								</TableCell>
 								<TableCell>{questionSet.attempts}</TableCell>
 								<TableCell>{questionSet.username}</TableCell>
 								<TableCell>{questionSet.postTime}</TableCell>

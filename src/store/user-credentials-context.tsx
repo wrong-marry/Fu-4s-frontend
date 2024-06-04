@@ -1,4 +1,4 @@
-import { createContext, useReducer } from "react";
+import React, {createContext, useReducer} from "react";
 
 export interface UserCredentials {
   info: {
@@ -11,7 +11,7 @@ export interface UserCredentials {
 }
 
 interface UserCredentialsContextProps extends UserCredentials {
-  assignUserCredentials: (userCredentials: any) => void;
+  assignUserCredentials: (userCredentials: UserCredentials) => void;
   clearUserCredentials: () => void;
 }
 
@@ -75,5 +75,5 @@ export default function UserCredentialsProvider({ children }: any) {
     <UserCredentialsContext.Provider value={contextValues}>
       {children}
     </UserCredentialsContext.Provider>
-  );
+  ) as React.ReactElement;
 }
