@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Grid, Drawer, Burger } from "@mantine/core";
-import {NavbarNested } from "../../component/manageUser/navbar-nested/navbar-nested";
-import DashboardSection from "../../component/manageUser/show-customer";
-import TableUser from "../../component/manageUser/user-list";
 import { useMediaQuery } from "@mantine/hooks";
+import { NavbarNested } from "../../component/staff-post/navbar-nested/navbar-nested";
+import DashboardSection from "../../component/staff-post/show-all-posts";
+import TableUser from "../../component/staff-post/pending-post-list";
 
-export default function ManageUser() {
+export default function ManagePostForStaff() {
 	// Sử dụng useMediaQuery để xác định kích thước màn hình
 	const isSmallScreen = useMediaQuery("(max-width: 1100px)");
 	const isMediumScreen = useMediaQuery("(max-width: 1024px)");
