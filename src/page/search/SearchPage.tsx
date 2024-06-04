@@ -22,7 +22,9 @@ import dayjs from 'dayjs';
 
 const SearchDrawer = (props: {
     searchRequest: SearchRequest,
-    setSearchRequest: React.Dispatch<React.SetStateAction<SearchRequest>>
+    setSearchRequest: React.Dispatch<React.SetStateAction<SearchRequest>>,
+    total: number,
+    displayed: number
 }) => {
     const searchRequest = props.searchRequest;
     const setSearchRequest = props.setSearchRequest;
@@ -55,6 +57,7 @@ const SearchDrawer = (props: {
                     semester: values.semester,
                     postTime: values.postTime,
                     isTest: values.isTest,
+                    updateBoth: true
                 });
                 close();
             })}>
@@ -126,9 +129,9 @@ const SearchDrawer = (props: {
             </form>
         </Drawer>
         <Flex justify={"space-around"} align={"center"}>
-            <Text>Showing 1000 results.</Text>
+            <Text>Showing {props.displayed} out of {props.total} results.</Text>
             <Select
-                onChange={(value) => setSearchRequest({...searchRequest, order: value + "", isTest:null})}
+                onChange={(value) => setSearchRequest({...searchRequest, order: value + ""})}
                 leftSection={<IconAdjustmentsAlt style={{width: rem(18), height: rem(18)}} stroke={1.5}/>}
                 placeholder="Sort by"
                 data={[
@@ -187,6 +190,7 @@ export interface SearchRequest {
     pageSize: number;
     currentPage: number;
     semester: number|null;
+    updateBoth: boolean | null;
 }
 enum SearchOrder {
     USERNAME_ASC, USERNAME_DESC, TITLE_ASC, TITLE_DESC, DATE_ASC, DATE_DESC
@@ -211,6 +215,8 @@ export async function advancedSearch(searchRequest: SearchRequest) {
     }
 }
 function SearchPage() {
+    const [displayedNumber, setDisplayedNumber] = useState(0);
+    const [totalItem, setTotalItem] = useState(0);
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [resMaterialData, setResMaterialData] = useState<ResponseMaterialData>();
@@ -219,16 +225,24 @@ function SearchPage() {
     const [currentTestPage, setCurrentTestPage] = useState<number>(1);
     const advancedFetchData = async (searchReq:SearchRequest) => {
         const data = await advancedSearch(searchReq);
-        if (data?.data?.learningMaterials)
-        setResMaterialData  ({
-            totalMaterial: data?.data?.totalMaterial,
-            learningMaterials: data?.data?.learningMaterials,
-        });
-        if (data?.data?.tests)
-        setResTestData  ({
-            totalTest:data?.data?.totalTest,
-            tests: data?.data?.tests,
-        });
+        setTotalItem(0);
+        setDisplayedNumber(0);
+        if (data?.data?.learningMaterials || searchReq?.updateBoth) {
+            setResMaterialData({
+                totalMaterial: data?.data?.totalMaterial,
+                learningMaterials: data?.data?.learningMaterials,
+            });
+            setDisplayedNumber(prev => prev + (data?.data?.learningMaterials?.length || 0));
+            setTotalItem(totalItem => totalItem + (data?.data?.totalMaterial || 0));
+        }
+        if (data?.data?.tests || searchReq?.updateBoth) {
+            setResTestData({
+                totalTest: data?.data?.totalTest,
+                tests: data?.data?.tests,
+            });
+            setDisplayedNumber(prev => prev + data?.data?.tests?.length);
+            setTotalItem(totalItem => totalItem + data?.data?.totalTest);
+        }
     };
     const [searchRequest, setSearchRequest] = useState({
         username: null,
@@ -243,7 +257,7 @@ function SearchPage() {
     } as SearchRequest);
     useEffect(() => {
         advancedFetchData(searchRequest);
-    }, [searchRequest]);
+    }, [searchRequest, searchParams]);
 
     const numberOfMaterialPages = (resMaterialData?.totalMaterial==0||resMaterialData?.totalMaterial==undefined)
             ?0:(Math.ceil(resMaterialData.totalMaterial/POST_PAGE_SIZE));
@@ -252,16 +266,15 @@ function SearchPage() {
     return (
         <Container my="lg" size={"lg"}>
             <Text ta={"center"} fw={650} fz={25}>Search result</Text>
-            <SearchDrawer searchRequest={searchRequest} setSearchRequest={setSearchRequest} />
+            <SearchDrawer searchRequest={searchRequest} setSearchRequest={setSearchRequest} total={totalItem}
+                          displayed={displayedNumber}/>
             <Text lh={3} ta={"center"}>______</Text>
             {
-                (resTestData==null)?
-                    <></> :
                 (resMaterialData==null)?
                     <></> :
                     <>
                         <Text lh={2} fw={650} fz={25}>Learning material</Text>
-                        {(resMaterialData?.learningMaterials.length === 0) ?
+                        {((resMaterialData?.learningMaterials?.length || 0) === 0) ?
                             <Text c={"dimmed"}>No learning material found</Text>
                             :
                             MyPostList(resMaterialData.learningMaterials, navigate)}
@@ -324,7 +337,7 @@ function SearchPage() {
                    <></> :
                     <>
                         <Text lh={2} fw={650} fz={25}>Mock test</Text>
-                        {(resTestData?.tests.length === 0) ?
+                        {((resTestData?.tests?.length || 0) === 0) ?
                         <Text c={"dimmed"}>No mock tests found</Text>
                         :
                             MyPostList(resTestData.tests, navigate)}
