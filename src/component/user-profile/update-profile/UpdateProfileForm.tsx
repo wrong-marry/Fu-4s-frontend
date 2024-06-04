@@ -29,14 +29,14 @@ export function UpdateProfileForm() {
     },
 
     validate: {
-      email: isEmail("Invalid email")
+      email: isEmail("Invalid email"),
     },
   });
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetchUser();
       setUser(res.data);
-      
+
       form.setFieldValue("email", res.data.email);
       form.setFieldValue("firstName", res.data.firstName);
       form.setFieldValue("lastName", res.data.lastName);
@@ -71,6 +71,7 @@ export function UpdateProfileForm() {
           }
         >
           <TextInput
+            mb={20}
             onChange={(e) => {
               //setUser({ ...user, email: e.target.value });
               form.setFieldValue("email", e.currentTarget.value);
@@ -83,6 +84,7 @@ export function UpdateProfileForm() {
             radius="md"
           />
           <TextInput
+            my={20}
             onChange={(e) => {
               form.setFieldValue("firstName", e.currentTarget.value);
             }}
@@ -93,6 +95,7 @@ export function UpdateProfileForm() {
             required
           />
           <TextInput
+            my={20}
             onChange={(e) => {
               form.setFieldValue("lastName", e.currentTarget.value);
             }}

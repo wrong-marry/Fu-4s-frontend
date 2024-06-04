@@ -11,6 +11,7 @@ interface Post {
 }
 
 export function UserPostTable() {
+
     const username = localStorage.getItem("username");
     const pageSize = 3;
 
@@ -68,6 +69,7 @@ export function UserPostTable() {
                             Active
                         </span>
                         :
+
                         post.status == 'HIDDEN' ?
                             <span className="inline-block py-1 px-2 text-white bg-red-500 rounded-full">
                                 Hidden
