@@ -10,6 +10,8 @@ export function isLoggedIn() {
   const token = getToken();
   return !(username == null || token == null);
 }
+
+
 export function getUsername() {
   return localStorage.getItem("username");
 }

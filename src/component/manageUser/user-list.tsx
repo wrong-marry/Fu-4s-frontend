@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
-import {  Modal } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { Center, Pagination } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
-	Avatar,
-	Table,
 	Group,
-	Text,
 	ActionIcon,
 	Menu,
 	rem,
 } from "@mantine/core";
 import {
-	IconPencil,
 	IconMessages,
 	IconNote,
 	IconReportAnalytics,
@@ -42,7 +37,6 @@ function TableUser() {
 	const navigate = useNavigate();
 	 const [currentTab, setCurrentTab] = useState("ALL");
 
-	const [opened, { open, close }] = useDisclosure(false);
 
 	 
 
@@ -50,6 +44,7 @@ function TableUser() {
 	
 	const fetchNum = async () => {
 		try {
+			const token = localStorage.getItem("token");
 			const baseURL = "http://localhost:8080/api/v1/admin";
 			let url = "";
 
@@ -62,7 +57,11 @@ function TableUser() {
 			} else if (currentTab === "General Users") {
 				url = `${baseURL}/getNumEachRole?userrole=USER`;
 			}
-			const response = await fetch(url);
+			const response = await fetch(url, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
 			const data = await response.json();
 			setNumPage(Math.ceil((data + 1) / pageSize));
 		} catch (error) {
@@ -155,7 +154,6 @@ function TableUser() {
 			<td className="font-medium"> 03.06.2024</td>
 			<td style={{ textAlign: "center" }}>
 				<Group gap={0} justify="flex-end">
-					<ActionIcon variant="subtle" color="gray"></ActionIcon>
 					<Menu
 						transitionProps={{ transition: "pop" }}
 						withArrow
@@ -310,7 +308,7 @@ function TableUser() {
 						<table className="table-auto w-full">
 							<thead>
 								<tr className="text-xs text-gray-500 text-left">
-									<th className="flex items-center pl-6 py-4 font-medium">
+									<th className="items-center pl-6 py-4 font-medium">
 										<a className="flex items-center" href="#">
 											<span>Account </span>
 											<span className="ml-2">
@@ -324,7 +322,7 @@ function TableUser() {
 											</span>
 										</a>
 									</th>
-									<th className="py-4 font-medium">
+									<th className=" py-4 font-medium">
 										<a className="flex items-center" href="#">
 											<span> Email </span>
 											<span className="ml-2">
@@ -352,7 +350,7 @@ function TableUser() {
 											</span>
 										</a>
 									</th>
-									<th className="py-4 font-medium">
+									<th className=" py-4 font-medium">
 										<a className="flex items-center" href="#">
 											<span>Status</span>
 											<span className="ml-2">
@@ -366,7 +364,7 @@ function TableUser() {
 											</span>
 										</a>
 									</th>
-									<th className="py-4 font-medium">
+									<th className=" py-4 font-medium">
 										<a className="flex items-center" href="#">
 											<span>Role</span>
 											<span className="ml-2">
@@ -380,7 +378,10 @@ function TableUser() {
 											</span>
 										</a>
 									</th>
-									<th className="py-4 font-medium" style={{ width: "5px" }}>
+									<th
+										className=" py-4 font-medium"
+										style={{ width: "5px" }}
+									>
 										<a className="flex items-center" href="#">
 											<span>Uploaded Posts</span>
 											<span className="ml-2">
@@ -399,7 +400,6 @@ function TableUser() {
 							<tbody>{All}</tbody>
 						</table>
 					</div>
-					
 				</div>
 				<Center mt={"lg"}>
 					<Pagination value={activePage} onChange={setPage} total={numPage} />

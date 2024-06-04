@@ -9,10 +9,15 @@ const DashboardSection: React.FC = () => {
 		const [numOfAdmin, setNumOfAdmin] = useState(0);
 	 useEffect(() => {
         const fetchNumOfUser = async () => {
-            // ${localStorage.getItem('username')}
+            const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-									`http://localhost:8080/api/v1/admin/getNumUser`
+									`http://localhost:8080/api/v1/admin/getNumUser`,
+									{
+										headers: {
+											Authorization: `Bearer ${token}`,
+										},
+									}
 								);
                 const data = await response.json();
                 setNumOfAccount(data)
@@ -21,10 +26,15 @@ const DashboardSection: React.FC = () => {
             }
         };
 				const fetchNumOfAdminRole = async () => {
-					// ${localStorage.getItem('username')}
+					const token = localStorage.getItem("token");
 					try {
 						const response = await fetch(
-							`http://localhost:8080/api/v1/admin/getNumEachRole?userrole=ADMIN`
+							`http://localhost:8080/api/v1/admin/getNumEachRole?userrole=ADMIN`,
+							{
+								headers: {
+									Authorization: `Bearer ${token}`,
+								},
+							}
 						);
 						const data = await response.json();
 						setNumOfAdmin(data);
@@ -33,10 +43,15 @@ const DashboardSection: React.FC = () => {
 					}
 				};
 					const fetchNumOfStaffRole = async () => {
-						// ${localStorage.getItem('username')}
+						const token = localStorage.getItem("token");
 						try {
 							const response = await fetch(
-								`http://localhost:8080/api/v1/admin/getNumEachRole?userrole=STAFF`
+								`http://localhost:8080/api/v1/admin/getNumEachRole?userrole=STAFF`,
+								{
+									headers: {
+										Authorization: `Bearer ${token}`,
+									},
+								}
 							);
 							const data = await response.json();
 							setNumOfStaff(data);
@@ -45,10 +60,15 @@ const DashboardSection: React.FC = () => {
 						}
 					};
 						const fetchNumOfUserRole = async () => {
-							// ${localStorage.getItem('username')}
+							const token = localStorage.getItem("token");
 							try {
 								const response = await fetch(
-									`http://localhost:8080/api/v1/admin/getNumEachRole?userrole=USER`
+									`http://localhost:8080/api/v1/admin/getNumEachRole?userrole=USER`,
+									{
+										headers: {
+											Authorization: `Bearer ${token}`,
+										},
+									}
 								);
 								const data = await response.json();
 								setNumOfUser(data);
