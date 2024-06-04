@@ -28,14 +28,13 @@ import { getAuthCredentials } from "./util/loader/Auth";
 import StudyPage from "./page/study/StudyPage.tsx";
 import SearchPage from "./page/search/SearchPage.tsx";
 import PostPage from "./page/post/PostPage.tsx";
-import LearningMaterialList from "./component/subject-posting/LearningMaterialList.tsx";
 import LearningMaterialDetail from "./component/learning-material/LearningMaterialDetail.tsx";
 import NotificationList from "./component/notification/NotificationList.tsx";
 import TakingTestPage from "./page/mock-test-detail-page/TakingTestPage.tsx";
 import {UserPostPage} from "./page/user-post/UserPostPage.tsx";
 import {UserLearningMaterialPage} from "./page/user-post/UserLearningMaterialPage.tsx";
-import {UserMockTestTable} from "./component/user-post/UserMockTestTable.tsx";
 import {UserMockTestPage} from "./page/user-post/UserMockTestPage.tsx";
+import CreateMockTestPage from "./page/user-post/CreateMockTestPage.tsx";
 import MockTestDetail from "./component/mock-test/MockTestDetail.tsx";
 import ManagePostForStaff from "./page/manage-post-forstaff/ManagePostPage.tsx";
 export const loadingIndicator = (
@@ -251,6 +250,14 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
+      {
+        path: "create-mock-test",
+        element: (
+            <Suspense fallback={loadingIndicator}>
+              <CreateMockTestPage />
+            </Suspense>
+        ),
+      },
     ],
   },
   {
@@ -261,6 +268,7 @@ const router = createBrowserRouter([
       </Suspense>
     ),
   },
+
 ]);
 
 function App() {
