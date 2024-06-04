@@ -9,12 +9,14 @@ import {
 import Comment from "../../component/comment/CommentTag";
 import {useParams} from "react-router-dom";
 import LearningMaterialDetail from "../../component/learning-material/LearningMaterialDetail";
+import QuestionPage from "../question-page/QuestionPage";
+import MockTestDetailPage from "../mock-test-detail-page/MockTestDetailPage";
 import MockTestDetail from "../../component/mock-test/MockTestDetail";
 import {forEach} from "lodash";
 import {useForm} from "@mantine/form";
 import {format} from "date-fns";
 
-interface Post {
+export interface Post {
   id: number;
   postTime: string;
   title: string;
@@ -83,7 +85,6 @@ const PostPage: React.FC = () => {
   if (!post) {
     return <div>Loading...</div>;
   }
-
 
 
   return <>
