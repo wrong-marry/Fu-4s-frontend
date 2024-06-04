@@ -3,63 +3,71 @@ import  { useEffect, useState } from 'react';
 
 
 const DashboardSection: React.FC = () => {
-	  const [numOfUser, setNumOfUser] = useState(0);
-		const [numOfAccount, setNumOfAccount] = useState(0);
-		const [numOfStaff, setNumOfStaff] = useState(0);
-		const [numOfAdmin, setNumOfAdmin] = useState(0);
+
+	  const [numOfPost, setNumOfPost] = useState(0);
+		const [numOfHidden, setNumOfHidden] = useState(0);
+		const [numOfActive, setNumOfActive] = useState(0);
+		const [numOfPending, setNumOfPending] = useState(0);
+		 const pageSize = 3;
+
 	 useEffect(() => {
-        const fetchNumOfUser = async () => {
+        const fetchNumOfPost = async () => {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-									`http://localhost:8080/api/v1/admin/getNumUser`
+									`http://localhost:8080/api/v1/post/getAllPost?pageSize=${pageSize}`
 								);
                 const data = await response.json();
-                setNumOfAccount(data)
+                setNumOfPost(data.total)
             } catch (error) {
                 console.error("Error fetching post:", error);
             }
         };
-				const fetchNumOfAdminRole = async () => {
+
+				const fetchNumOfActive = async () => {
 					// ${localStorage.getItem('username')}
 					try {
 						const response = await fetch(
-							`http://localhost:8080/api/v1/admin/getNumEachRole?userrole=ADMIN`
+							`http://localhost:8080/api/v1/staff/getNumEachStatus?status=ACTIVE`
 						);
 						const data = await response.json();
-						setNumOfAdmin(data);
+						console.log(data);
+						setNumOfActive(data);
 					} catch (error) {
 						console.error("Error fetching post:", error);
 					}
 				};
-					const fetchNumOfStaffRole = async () => {
+
+					const fetchNumOfHidden = async () => {
 						// ${localStorage.getItem('username')}
 						try {
 							const response = await fetch(
-								`http://localhost:8080/api/v1/admin/getNumEachRole?userrole=STAFF`
+								`http://localhost:8080/api/v1/staff/getNumEachStatus?status=HIDDEN`
 							);
 							const data = await response.json();
-							setNumOfStaff(data);
+							setNumOfHidden(data);
 						} catch (error) {
 							console.error("Error fetching post:", error);
 						}
 					};
-						const fetchNumOfUserRole = async () => {
+
+						const fetchNumOfPending = async () => {
 							// ${localStorage.getItem('username')}
 							try {
 								const response = await fetch(
-									`http://localhost:8080/api/v1/admin/getNumEachRole?userrole=USER`
+									`http://localhost:8080/api/v1/staff/getNumEachStatus?status=PENDING_APPROVE`
 								);
 								const data = await response.json();
-								setNumOfUser(data);
+								setNumOfPending(data);
 							} catch (error) {
 								console.error("Error fetching post:", error);
 							}
 						};
-						fetchNumOfAdminRole(); 
-						fetchNumOfStaffRole();
-						fetchNumOfUserRole(); 
-				fetchNumOfUser();
+
+						fetchNumOfActive(); 
+						fetchNumOfHidden();
+						fetchNumOfPending(); 
+				fetchNumOfPost();
 			},[]) 
 
   return (
@@ -77,7 +85,8 @@ const DashboardSection: React.FC = () => {
 								<div className="flex flex-wrap items-end justify-between -m-2 mb-7">
 									<div className="w-auto p-2">
 										<h3 className="text-sm text-coolGray-500 font-medium">
-											Approved Posts
+
+											Active Posts
 										</h3>
 									</div>
 									<div className="w-auto p-2">
@@ -98,10 +107,11 @@ const DashboardSection: React.FC = () => {
 									</div>
 								</div>
 								<h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
-									{numOfUser}
+
+									{numOfActive}
 								</h2>
 								<p className="text-center max-w-max mx-auto px-2 py-1 text-green-500 font-medium text-xs bg-green-100 rounded-full">
-									approved
+									active
 								</p>
 							</div>
 						</div>
@@ -110,7 +120,8 @@ const DashboardSection: React.FC = () => {
 								<div className="flex flex-wrap items-end justify-between -m-2 mb-7">
 									<div className="w-auto p-2">
 										<h3 className="text-sm text-coolGray-500 font-medium">
-											Rejected Posts
+
+											Hidden Posts
 										</h3>
 									</div>
 									<div className="w-auto p-2">
@@ -131,10 +142,11 @@ const DashboardSection: React.FC = () => {
 									</div>
 								</div>
 								<h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
-									{numOfStaff}
+
+									{numOfHidden}
 								</h2>
 								<p className="text-center max-w-max mx-auto px-2 py-1 text-red-500 font-medium text-xs bg-red-100 rounded-full">
-									rejected
+									hidden
 								</p>
 							</div>
 						</div>
@@ -164,7 +176,8 @@ const DashboardSection: React.FC = () => {
 									</div>
 								</div>
 								<h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
-									{numOfAdmin}
+
+									{numOfPending}
 								</h2>
 								<p className="text-center max-w-max mx-auto px-2 py-1 text-yellow-500 font-medium text-xs bg-yellow-100 rounded-full">
 									waiting ...
@@ -197,7 +210,8 @@ const DashboardSection: React.FC = () => {
 									</div>
 								</div>
 								<h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
-									{numOfAccount}
+
+									{numOfPost}
 								</h2>
 								<p className="text-center max-w-max mx-auto px-2 py-1 text-green-500 font-medium text-xs bg-green-100 rounded-full">
 									all posts

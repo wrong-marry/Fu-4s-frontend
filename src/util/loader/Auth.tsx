@@ -1,6 +1,7 @@
 import {fetchUser} from "../UserFetchUtil.tsx";
 
-export async function logout() {
+
+export async function Logout() {
   localStorage.removeItem("username");
   localStorage.removeItem("token");
   window.location.href="/";

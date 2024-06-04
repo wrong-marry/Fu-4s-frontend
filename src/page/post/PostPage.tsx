@@ -5,11 +5,15 @@ import { Text, Container, Title, Space, Textarea, Button } from "@mantine/core";
 import Comment from "../../component/comment/CommentTag";
 import { useParams } from "react-router-dom";
 import LearningMaterialDetail from "../../component/learning-material/LearningMaterialDetail";
-import { forEach } from "lodash";
-import { useForm } from "@mantine/form";
-import { format } from "date-fns";
 
-interface Post {
+import QuestionPage from "../question-page/QuestionPage";
+import MockTestDetailPage from "../mock-test-detail-page/MockTestDetailPage";
+import MockTestDetail from "../../component/mock-test/MockTestDetail";
+import {forEach} from "lodash";
+import {useForm} from "@mantine/form";
+import {format} from "date-fns";
+
+export interface Post {
   id: number;
   postTime: string;
   title: string;
@@ -64,9 +68,9 @@ const PostPage: React.FC = () => {
   const fetchComments = async () => {
     try {
       const response: AxiosResponse<CommentData[]> = await axios.get(
-        `http://localhost:8080/api/v1/comments/post/${id}` +
-          (isStaff && "?isStaff=true")
-      );
+
+          `http://localhost:8080/api/v1/comments/post/${id}` + (isStaff?"?isStaff=true":"")
+      )
       setComments(response.data);
     } catch (error) {
       console.error("Error fetching comment:", error);
@@ -81,28 +85,19 @@ const PostPage: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  return (
-    <>
-      {!post.test && <LearningMaterialDetail />}
-      <Space h={"md"} />
-      <Container>
-        <Title order={2}>Comment section</Title>
-        {comments == null || comments?.length == 0 ? (
-          <Text>No comments</Text>
-        ) : (
-          <></>
-        )}
-        {forEach(comments)?.map((c) => {
-          return (
-            <Comment
-              key={c.id}
-              id={c.id}
-              username={c.username}
-              content={c.content}
-              date={c.date}
-              isMine={c.account == localStorage.getItem("username")}
-              account={c.account}
-              status={c.status}
+
+  return <>
+    {!post.test && <LearningMaterialDetail />}
+			{post.test && <MockTestDetail />}
+    <Space h={"md"}/>
+    <Container>
+      <Title order={2}>Comment section</Title>
+      {(comments == null || comments?.length == 0) ? <Text>No comments</Text> : <></>}
+      {forEach(comments)?.map(
+          c => {
+            return <Comment key={c.id} id={c.id} username={c.username} content={c.content} date={c.date}
+                            isMine={c.account == localStorage.getItem("username")}
+                            account={c.account} status={c.status}
             />
           );
         })}

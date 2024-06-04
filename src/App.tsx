@@ -28,14 +28,17 @@ import { getAuthCredentials } from "./util/loader/Auth";
 import StudyPage from "./page/study/StudyPage.tsx";
 import SearchPage from "./page/search/SearchPage.tsx";
 import PostPage from "./page/post/PostPage.tsx";
-import LearningMaterialList from "./component/subject-posting/LearningMaterialList.tsx";
 import LearningMaterialDetail from "./component/learning-material/LearningMaterialDetail.tsx";
 import NotificationList from "./component/notification/NotificationList.tsx";
 import { UserPostPage } from "./page/user-post/UserPostPage.tsx";
 import { UserLearningMaterialPage } from "./page/user-post/UserLearningMaterialPage.tsx";
-import { UserMockTestTable } from "./component/user-post/UserMockTestTable.tsx";
 import { UserMockTestPage } from "./page/user-post/UserMockTestPage.tsx";
 import ManageSubjectPage from "./page/manage-subject/ManageSubjectPage.tsx";
+import TakingTestPage from "./page/mock-test-detail-page/TakingTestPage.tsx";
+
+import CreateMockTestPage from "./page/user-post/CreateMockTestPage.tsx";
+import MockTestDetail from "./component/mock-test/MockTestDetail.tsx";
+import ManagePostForStaff from "./page/manage-post-forstaff/ManagePostPage.tsx";
 export const loadingIndicator = (
   <Box pos={"relative"} h={"100vh"} w={"100vw"}>
     <LoadingOverlay
@@ -80,6 +83,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "test",
+            element: (
+              <Suspense fallback={loadingIndicator}>
+                <TakingTestPage />
+              </Suspense>
+            ),
+      },
+      {
         path: "learning-material/:id",
         element: (
           <Suspense fallback={loadingIndicator}>
@@ -93,7 +104,7 @@ const router = createBrowserRouter([
           <Suspense fallback={loadingIndicator}>
             <NotificationList />
           </Suspense>
-        ),
+        )
       },
       {
         path: "study",
@@ -107,6 +118,10 @@ const router = createBrowserRouter([
         path: "manage-user",
         element: <ManageUser />,
       },
+        {
+            path: "staff-manage-post",
+            element: <ManagePostForStaff />,
+        },
       {
         path: "manage-subject",
         element: <ManageSubjectPage />,
@@ -170,75 +185,84 @@ const router = createBrowserRouter([
           },
         ],
       },
-      {
-        path: "user",
-        children: [
-          {
-            index: true,
-            path: "",
-            loader: async () => redirect("/user/profile"),
-          },
-          {
-            path: "profile",
-            element: (
-              <Suspense fallback={loadingIndicator}>
-                <UserProfilePage />
-              </Suspense>
-            ),
-            loader: () => {
-              if (!isLoggedIn()) return redirect("/forbidden");
-              return null;
-            },
-          },
-          {
-            path: "post",
+        {
+            path: "user",
             children: [
-              {
-                path: "",
-                element: (
-                  <Suspense fallback={loadingIndicator}>
-                    <UserPostPage />
-                  </Suspense>
-                ),
-                loader: () => {
-                  if (!isLoggedIn()) return redirect("/forbidden");
-                  return null;
+                {
+                    index: true,
+                    path: "",
+                    loader: async () => redirect("/user/profile"),
                 },
-              },
-              {
-                path: "mock-test",
-                element: (
-                  <Suspense fallback={loadingIndicator}>
-                    <UserMockTestPage />
-                  </Suspense>
-                ),
-                loader: () => {
-                  if (!isLoggedIn()) return redirect("/forbidden");
-                  return null;
+                {
+                    path: "profile",
+                    element: (
+                        <Suspense fallback={loadingIndicator}>
+                            <UserProfilePage/>
+                        </Suspense>
+                    ),
+                    loader: () => {
+                        if (!isLoggedIn()) return redirect("/forbidden");
+                        return null;
+                    },
                 },
-              },
-              {
-                path: "learning-material",
-                element: (
-                  <Suspense fallback={loadingIndicator}>
-                    <UserLearningMaterialPage />
-                  </Suspense>
-                ),
-                loader: () => {
-                  if (!isLoggedIn()) return redirect("/forbidden");
-                  return null;
+                {
+                    path: "post",
+                    children: [
+                        {
+                            path: "",
+                            element: (
+                                <Suspense fallback={loadingIndicator}>
+                                    <UserPostPage/>
+                                </Suspense>
+                            ),
+                            loader: () => {
+                                if (!isLoggedIn()) return redirect("/forbidden");
+                                return null;
+                            },
+                        },
+                        {
+                            path: "mock-test",
+                            element: (
+                                <Suspense fallback={loadingIndicator}>
+                                    <UserMockTestPage/>
+                                </Suspense>
+                            ),
+                            loader: () => {
+                                if (!isLoggedIn()) return redirect("/forbidden");
+                                return null;
+                            },
+                        },
+                        {
+                            path: "learning-material",
+                            element: (
+                                <Suspense fallback={loadingIndicator}>
+                                    <UserLearningMaterialPage/>
+                                </Suspense>
+                            ),
+                            loader: () => {
+                                if (!isLoggedIn()) return redirect("/forbidden");
+                                return null;
+                            },
+                        },
+                    ],
                 },
-              },
             ],
-          },
-        ],
-      },
+        },
       {
+
         path: "update-profile",
         element: (
           <Suspense fallback={loadingIndicator}>
             <UpdateProfilePage />
           </Suspense>
+        ),
+      },
+      {
+        path: "create-mock-test",
+        element: (
+            <Suspense fallback={loadingIndicator}>
+              <CreateMockTestPage />
+            </Suspense>
         ),
       },
     ],
@@ -251,6 +275,7 @@ const router = createBrowserRouter([
       </Suspense>
     ),
   },
+
 ]);
 
 function App() {

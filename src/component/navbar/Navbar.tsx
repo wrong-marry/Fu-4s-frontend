@@ -29,9 +29,10 @@ import {
 } from "../../store/user-credentials-context";
 import { useDisclosure } from "@mantine/hooks";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
-import FolderModal from "../modal/navbar/create/FolderModal.tsx";
-import ClassModal from "../modal/navbar/create/ClassModal.tsx";
-import { logout } from "../../util/loader/Auth.tsx";
+
+import { Logout } from "../../util/loader/Auth.tsx";
+
+import NotificationCard from "../notification/NotificationCard.tsx";
 
 const userBtn = (data: LoaderData, handleLogout: () => void) => {
   return (
@@ -51,6 +52,7 @@ const userBtn = (data: LoaderData, handleLogout: () => void) => {
             </Text>
           </Group>
         </Menu.Target>
+
         <Menu.Dropdown>
           <Menu.Label>Menu</Menu.Label>
           <NavLink to={"/user"}>
@@ -88,6 +90,7 @@ const userBtn = (data: LoaderData, handleLogout: () => void) => {
               <IconLogout style={{ width: rem(14), height: rem(14) }} />
             }
             onClick={handleLogout}
+
           >
             Logout
           </Menu.Item>
@@ -158,7 +161,10 @@ function Navbar() {
   const toggleColorScheme = () => {
     setColorScheme(computedColorScheme === "dark" ? "light" : "dark");
   };
-  const btnState = data?.error || !data ? guestBtn() : userBtn(data, logout);
+
+  const btnState =
+      data?.error || !data ? guestBtn() : userBtn(data, Logout);
+
   const whichHomepage = "";
   return (
     <>
@@ -213,7 +219,7 @@ function Navbar() {
 
               <Menu.Dropdown>
                 <Menu.Label>Create</Menu.Label>
-                <NavLink to={"/create-test"}>
+                <NavLink to={"/create-mock-test"}>
                   <Menu.Item
                     leftSection={
                       <IconLibraryPlus
@@ -225,14 +231,19 @@ function Navbar() {
                   </Menu.Item>
                 </NavLink>
 
-                <Menu.Item
-                  onClick={open}
-                  leftSection={
-                    <IconPhoto style={{ width: rem(14), height: rem(14) }} />
-                  }
-                >
-                  Learning material
-                </Menu.Item>
+                <NavLink to={"/create-learning-material"}>
+                  <Menu.Item
+                      leftSection={
+                        <IconPhoto
+                            style={{ width: rem(14), height: rem(14) }}
+                        />
+                      }
+                  >
+                    Learning material
+                  </Menu.Item>
+                </NavLink>
+
+
               </Menu.Dropdown>
             </Menu>
             <Group>{btnState}</Group>
