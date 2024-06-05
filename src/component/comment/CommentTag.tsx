@@ -6,7 +6,7 @@ import {
     CardSection,
     Container,
     Flex,
-    Group,
+    Group, Modal,
     Space,
     Stack,
     Text,
@@ -18,8 +18,10 @@ import {format} from "date-fns";
 import axios, {AxiosResponse} from "axios";
 import React, {useState} from "react";
 import {useForm} from "@mantine/form";
+import {useDisclosure} from "@mantine/hooks";
 
 export default function Comment(props: CommentData) {
+    const [opened, {open, close}] = useDisclosure(false);
     const username = props.username;
     const [content, setContent] = useState(props.content);
     const time = props.date;
@@ -46,7 +48,7 @@ export default function Comment(props: CommentData) {
                 {isMine ?
                     <>
                         <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
-                        <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={() => deleteComment(id)}>Delete</Anchor>
+                        <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={open}>Delete</Anchor>
                     </> : <>
                         <Anchor fz={"sm"} mx={"sm"}>Reply</Anchor>
                         {
@@ -158,7 +160,7 @@ export default function Comment(props: CommentData) {
                     {isMine ?
                         <>
                             <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
-                            <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={() => deleteComment(id)}>Delete</Anchor>
+                            <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={open}>Delete</Anchor>
                         </> : <Anchor fz={"sm"} mx={"sm"}>Reply</Anchor>}
                 </Group>
             </Stack>
@@ -167,6 +169,19 @@ export default function Comment(props: CommentData) {
 
     return (<>
         <Container w={"100%"}>
+            <Modal opened={opened} onClose={close} title="Confirm deletion" centered>
+                Delete comment?
+                <Group justify={"flex-end"}>
+                    <Button size={"xs"} mb={"xs"} color={"gray"}
+                            onClick={close}>Cancel</Button>
+                    <Button ms={"md"} size={"xs"} mb={"xs"}
+                            onClick={() => {
+                                deleteComment(id);
+                                close();
+                            }}
+                    >Delete</Button>
+                </Group>
+            </Modal>
             <Group m={"md"} align={"flex-start"}>
 
                 <Avatar variant="filled" radius="xl" size="md" mt={"sm"}/>
