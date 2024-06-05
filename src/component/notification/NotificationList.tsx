@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import { Tabs } from "@mantine/core";
+
 import {
   ScrollArea,
   Paper,
@@ -28,9 +31,10 @@ interface Notification {
 function NotificationList() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("all");
   const navigate = useNavigate();
   const username = "user1";
-  const pageSize = 3;
+  const pageSize = 6;
 
   const [activePage, setPage] = useState(1);
   const [numPage, setNumPage] = useState(1);
@@ -72,28 +76,30 @@ function NotificationList() {
   const markAsUnread = async (id: string) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/notification/${id}/markAsUnread`,
+        `http://localhost:8080/api/v1/notification/${id}/unseen`,
         {
-          method: "PATCH",
+          method: "PUT",
         }
       );
 
       if (response.ok) {
-        // Xử lý phản hồi nếu thành công
-        setNotifications((prevNotifications) =>
-          prevNotifications.map((noti) =>
-            noti.id === id ? { ...noti, seen: false } : noti
-          )
-        );
+        const data = await response.json();
+        if (data.message === "Notification marked as unseen successfully") {
+          setNotifications((prevNotifications) =>
+            prevNotifications.map((noti) =>
+              noti.id === id ? { ...noti, seen: false } : noti
+            )
+          );
+        } else {
+          console.error("Error marking notification as unread:", data.message);
+        }
       } else {
-        // Xử lý lỗi nếu phản hồi không thành công
         console.error(
           "Error marking notification as unread:",
           response.statusText
         );
       }
     } catch (error) {
-      // Xử lý lỗi nếu có lỗi trong quá trình gửi yêu cầu
       console.error("Error marking notification as unread:", error);
     }
   };
@@ -101,28 +107,27 @@ function NotificationList() {
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
 
   const handleMarkAllAsRead = async () => {
-    setConfirmModalOpen(false); // Close the modal first
     try {
+      setConfirmModalOpen(false);
       await fetch(`http://localhost:8080/api/v1/notification/markAllAsRead`, {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username }),
       });
-
       setNotifications((prevNotifications) =>
         prevNotifications.map((noti) => ({ ...noti, seen: true }))
       );
+      toast.success("All notifications marked as read");
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
+      toast.error("Failed to mark all notifications as read");
     }
   };
 
-  // const handleNotificationClick = (link: string) => {
-  //   navigate(link);
-  // };
-
+  const handleNotificationClick = (link: string) => {
+    navigate(link);
+  };
 
   if (loading) {
     return <LoadingOverlay visible />;
@@ -181,9 +186,10 @@ function NotificationList() {
                     (e.currentTarget.style.backgroundColor = "transparent")
                   }
                 >
-                  <Box onClick={() => handleNotificationClick(notification)}>
+                  <Box onClick={() => handleNotificationClick(notification.id)}>
                     <Text
-                      w={notification.seen ? "normal" : "bold"} // Conditionally render text weight
+                      // w={notification.seen ? "normal" : "bold"}
+                      fw={notification.seen ? "" : "700"}
                       onMouseEnter={(e) =>
                         (e.currentTarget.style.textDecoration = "underline")
                       }
