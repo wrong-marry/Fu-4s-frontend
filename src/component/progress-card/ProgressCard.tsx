@@ -23,11 +23,13 @@ export function ProgressCardColored(props: any) {
           section: classes.progressSection,
         }}
       />
-      <Button mt={10} fz="xs">
+      <Button mt={10} fz="xs" size="compact-md" radius="xl">
         Submit
       </Button>
       <Button
+        size="compact-md"
         fz="xs"
+        radius="xl"
         onClick={() => {
           const quotes = [
             "“An investment in knowledge pays the best interest.”",
