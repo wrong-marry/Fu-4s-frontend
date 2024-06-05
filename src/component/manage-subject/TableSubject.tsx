@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { ActionIcon, TextInput, Button, Select, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  TextInput,
+  Button,
+  Select,
+  Text,
+  Menu,
+  Group,
+} from "@mantine/core";
 import {
   IconPencil,
-  IconTrash,
+  IconDots,
   IconPlus,
   IconSearch,
   IconSortAscending,
@@ -11,8 +19,8 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import EditSubjectModal from "./EditSubjectModal";
 import CreateSubjectModal from "./CreateSubjectModal";
-import DeleteSubjectModal from "./DeleteSubjectModal";
 import { notifications } from "@mantine/notifications";
+import DeactiveSubjectModal from "./DeactiveSubjectModal";
 
 interface Subject {
   code: string;
@@ -28,7 +36,9 @@ function TableSubject() {
   const [search, setSearch] = useState("");
   const [semesterFilter, setSemesterFilter] = useState<string | null>("All");
   const [currentSubject, setCurrentSubject] = useState<Subject | null>(null);
-  const [subjectToDelete, setSubjectToDelete] = useState<Subject | null>(null);
+  const [subjectToDeactive, setSubjectToDeactive] = useState<Subject | null>(
+    null
+  );
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
@@ -41,8 +51,8 @@ function TableSubject() {
     { open: openCreateSubjectModal, close: closeCreateSubjectModal },
   ] = useDisclosure(false);
   const [
-    deleteModalOpened,
-    { open: openDeleteSubjectModal, close: closeDeleteSubjectModal },
+    deactiveModalOpened,
+    { open: openDeactiveSubjectModal, close: closeDeactiveSubjectModal },
   ] = useDisclosure(false);
 
   useEffect(() => {
@@ -122,17 +132,17 @@ function TableSubject() {
     openEditSubjectModal();
   };
 
-  const handleDeleteClick = (subject: Subject) => {
-    setSubjectToDelete(subject);
-    openDeleteSubjectModal();
+  const handleDeactiveClick = (subject: Subject) => {
+    setSubjectToDeactive(subject);
+    openDeactiveSubjectModal();
   };
 
-  const confirmDelete = async () => {
-    if (subjectToDelete) {
+  const confirmDeactive = async () => {
+    if (subjectToDeactive) {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:8080/api/v1/admin/deleteSubject?subjectCode=${subjectToDelete.code}`,
+          `http://localhost:8080/api/v1/admin/deactiveSubject?subjectCode=${subjectToDeactive.code}`,
           {
             method: "DELETE",
             headers: {
@@ -143,13 +153,15 @@ function TableSubject() {
 
         if (response.ok) {
           setSubjects(
-            subjects.filter((subject) => subject.code !== subjectToDelete.code)
+            subjects.filter(
+              (subject) => subject.code !== subjectToDeactive.code
+            )
           );
-          closeDeleteSubjectModal();
+          closeDeactiveSubjectModal();
 
           notifications.show({
-            title: "Subject deleted",
-            message: `${subjectToDelete.name}" has been deleted!`,
+            title: "Subject deactived",
+            message: `${subjectToDeactive.name}" has been deactived!`,
             color: "blue",
           });
         } else {
@@ -220,27 +232,27 @@ function TableSubject() {
       <td className="py-5 px-6 font-medium">{subject.code}</td>
       <td className="font-medium">{subject.name}</td>
       <td className="font-medium">{subject.semester}</td>
-
       <td style={{ textAlign: "center" }}>
-        <ActionIcon
-          variant="outline"
-          size="lg"
-          radius="xl"
-          onClick={() => handleEditClick(subject)}
+        <Menu
+          transitionProps={{ transition: "pop" }}
+          withArrow
+          position="bottom-end"
+          withinPortal
         >
-          <IconPencil />
-        </ActionIcon>
-      </td>
-      <td style={{ textAlign: "center" }}>
-        <ActionIcon
-          variant="outline"
-          size="lg"
-          radius="xl"
-          color="red"
-          onClick={() => handleDeleteClick(subject)}
-        >
-          <IconTrash />
-        </ActionIcon>
+          <Menu.Target>
+            <ActionIcon variant="subtle" color="gray">
+              <IconDots />
+            </ActionIcon>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item onClick={() => handleEditClick(subject)}>
+              Edit Subject
+            </Menu.Item>
+            <Menu.Item onClick={() => handleDeactiveClick(subject)}>
+              Deactive Subject
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
       </td>
     </tr>
   ));
@@ -328,7 +340,7 @@ function TableSubject() {
                       </span>
                     )}
                   </th>
-                  <th className="py-4 font-medium" style={{ width: "5px" }}>
+                  <th className="py-4 font-medium">
                     <span>Options</span>
                   </th>
                 </tr>
@@ -350,10 +362,10 @@ function TableSubject() {
             subject={currentSubject || { code: "", name: "", semester: 1 }}
             onInputChange={handleInputChange}
           />
-          <DeleteSubjectModal
-            opened={deleteModalOpened}
-            onClose={closeDeleteSubjectModal}
-            onConfirm={confirmDelete}
+          <DeactiveSubjectModal
+            opened={deactiveModalOpened}
+            onClose={closeDeactiveSubjectModal}
+            onConfirm={confirmDeactive}
           />
         </div>
       </div>
