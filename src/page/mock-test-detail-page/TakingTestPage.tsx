@@ -3,7 +3,7 @@ import QuestionDetail, {
   Question,
 } from "../../component/question/QuestionDetail";
 import { fetchQuestion, fetchRandomQuestion } from "../../util/QuestionUtil";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Affix,
   Badge,
@@ -33,6 +33,7 @@ import TestQuestion from "../../component/question/TestQuestion";
 import { HeroText } from "../../component/hero-text/HeroText";
 import { ProgressCardColored } from "../../component/progress-card/ProgressCard";
 import { notifications } from "@mantine/notifications";
+import { IconArrowDown } from "@tabler/icons-react";
 
 export default function TakingTestPage() {
   const [searchParam, setSearchParam] = useSearchParams();
@@ -44,6 +45,7 @@ export default function TakingTestPage() {
   const [scroll, scrollTo] = useWindowScroll();
   const [post, setPost] = useState<Post | null>(null);
   const [numberOfQuestionChecked, setNumberOfQuestionsChecked] = useState(0);
+  const bottom = useRef<HTMLElement | null>(null);
   let questionIndex = 0;
 
   useEffect(() => {
@@ -126,6 +128,7 @@ export default function TakingTestPage() {
         </Grid.Col>
       </Grid>
       <HeroText />
+      <section ref={bottom}></section>
       <Affix position={{ bottom: 20, right: 20 }}>
         <Transition transition="slide-up" mounted={scroll.y > 0}>
           {(transitionStyles) => (
@@ -141,7 +144,7 @@ export default function TakingTestPage() {
           )}
         </Transition>
       </Affix>
-      <Affix position={{ top: 150 , right:20}}>
+      <Affix position={{ top: 150, right: 20 }}>
         <ProgressCardColored
           numberOfQuestion={numberOfQuestion}
           numberOfQuestionChecked={numberOfQuestionChecked}

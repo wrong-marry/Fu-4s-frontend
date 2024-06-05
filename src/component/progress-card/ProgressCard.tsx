@@ -23,9 +23,10 @@ export function ProgressCardColored(props: any) {
           section: classes.progressSection,
         }}
       />
+      <Button mt={10} fz="xs">
+        Submit
+      </Button>
       <Button
-        mt={15}
-        variant="primary"
         fz="xs"
         onClick={() => {
           const quotes = [
@@ -35,9 +36,8 @@ export function ProgressCardColored(props: any) {
             "“Failure is the opportunity to begin again more intelligently.”",
             "“Teachers open the door, but you must enter by yourself”",
             "“Learning is the only thing the mind never exhausts, never fears, and never regrets.”",
-            
           ];
-          const randomQuote = quotes[Math.floor(Math.random()*quotes.length)]
+          const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
           notifications.show({
             title: randomQuote,
             message: `Keep going! You have done ${
