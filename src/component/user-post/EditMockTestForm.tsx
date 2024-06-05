@@ -274,6 +274,7 @@ export function EditMockTestForm() {
                                 searchable
                                 required
                                 radius="md"
+                                disabled
                             />
 
                             <Space h="md" />
