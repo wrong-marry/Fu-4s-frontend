@@ -31,17 +31,19 @@ import PostPage from "./page/post/PostPage.tsx";
 import LearningMaterialDetail from "./component/learning-material/LearningMaterialDetail.tsx";
 import NotificationList from "./component/notification/NotificationList.tsx";
 import { UserPostPage } from "./page/user-post/UserPostPage.tsx";
-import { UserLearningMaterialPage } from "./page/user-post/UserLearningMaterialPage.tsx";
-import { UserMockTestPage } from "./page/user-post/UserMockTestPage.tsx";
+import { UserLearningMaterialPage } from "./page/user-post/learning-material/UserLearningMaterialPage.tsx";
+import { UserMockTestPage } from "./page/user-post/mock-test/UserMockTestPage.tsx";
 import ManageSubjectPage from "./page/manage-subject/ManageSubjectPage.tsx";
 import TakingTestPage from "./page/mock-test-detail-page/TakingTestPage.tsx";
 
-import CreateMockTestPage from "./page/user-post/CreateMockTestPage.tsx";
-import EditMockTestPage from "./page/user-post/EditMockTestPage.tsx";
+import CreateMockTestPage from "./page/user-post/mock-test/CreateMockTestPage.tsx";
+import EditMockTestPage from "./page/user-post/mock-test/EditMockTestPage.tsx";
 import {isValidUser} from "./util/ValidUser.tsx";
 
 import MockTestDetail from "./component/mock-test/MockTestDetail.tsx";
 import ManagePostForStaff from "./page/manage-post-forstaff/ManagePostPage.tsx";
+import {AddLearningMaterialPage} from "./page/user-post/learning-material/AddLearningMaterialPage.tsx";
+import {EditLearningMaterialPage} from "./page/user-post/learning-material/EditLearningMaterialPage.tsx";
 export const loadingIndicator = (
   <Box pos={"relative"} h={"100vh"} w={"100vw"}>
     <LoadingOverlay
@@ -280,7 +282,23 @@ const router = createBrowserRouter([
               <EditMockTestPage/>
             </Suspense>
         ),
-      }
+      },
+      {
+        path: "create-learning-material",
+        element: (
+            <Suspense fallback={loadingIndicator}>
+                <AddLearningMaterialPage/>
+            </Suspense>
+        ),
+      },
+      {
+        path: "edit-learning-material/:id",
+        element: (
+            <Suspense fallback={loadingIndicator}>
+                <EditLearningMaterialPage />
+            </Suspense>
+        ),
+      },
     ],
 
   },
