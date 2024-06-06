@@ -15,12 +15,12 @@ import {
 
 import {CommentData} from "../../page/post/PostPage";
 import {format} from "date-fns";
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import React, {useState} from "react";
 import {useForm} from "@mantine/form";
 import {useDisclosure} from "@mantine/hooks";
 
-export default function Comment(props: CommentData) {
+export const Comment = (props: CommentData) => {
     const [opened, {open, close}] = useDisclosure(false);
     const username = props.username;
     const [content, setContent] = useState(props.content);
@@ -30,7 +30,11 @@ export default function Comment(props: CommentData) {
     const [status, setStatus] = useState(props.status);
 
     const [contentStack, setContentStack] = useState(
-        <Stack gap={3}>
+        defaultContentStack(content)
+    );
+
+    function defaultContentStack(newContent: string) {
+        return (<Stack gap={3}>
             <Card p={"sm"} withBorder radius={20}>
                 <CardSection inheritPadding py="md" pb={"xs"}>
                     <Flex>
@@ -40,7 +44,7 @@ export default function Comment(props: CommentData) {
                     </Flex>
                 </CardSection>
                 <CardSection inheritPadding py="md" pt={"xs"}>
-                    <Text lh={"xs"} px={"md"}>{content}</Text>
+                    <Text lh={"xs"} px={"md"}>{newContent}</Text>
                 </CardSection>
             </Card>
             <Group mt={0} mx={"md"} lh={"xs"}>
@@ -66,9 +70,8 @@ export default function Comment(props: CommentData) {
                         }
                     </>}
             </Group>
-        </Stack> as React.ReactElement
-    );
-
+        </Stack>) as React.ReactElement;
+    }
     const deleteComment = async (id: number) => {
         try {
             const response = await axios.delete(
@@ -124,22 +127,24 @@ export default function Comment(props: CommentData) {
                     <CardSection inheritPadding py="xs" pt={0}>
                         <form onSubmit={form.onSubmit(async (values) => {
                             console.log(values);
-                            try {
-                                const response: AxiosResponse<string> = await axios.put(
+                            axios.put(
                                     `http://localhost:8080/api/v1/comments/update/${id}`,
                                     values,
                                     {
                                         headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
                                     }
                                 )
-                                if (response.status == 200) {
-                                    console.log("Updated, new content: " + values.content);
-                                    setContent(values.content);
-                                    setContentStack(contentStack);
-                                }
-                            } catch (error) {
-                                console.error("Error posting comment:", error);
-                            }
+                                .then((response: AxiosResponse<string>) => {
+                                    if (response.status === 200) {
+                                        setContent(values.content);
+                                        console.log("Updated, form value: " + values.content + ", new content: " + content);
+                                        setContentStack(defaultContentStack(values.content));
+                                    }
+                                })
+                                .catch((error: AxiosError) => {
+                                        console.error("Error updating comment:", error);
+                                    }
+                                );
                         })}>
                             <Textarea size={"md"} my={"sm"} mt={0} placeholder={"Type in your comment"} autosize
                                       minRows={2}
@@ -149,7 +154,7 @@ export default function Comment(props: CommentData) {
                             ></Textarea>
                             <Group justify={"flex-end"}>
                                 <Button size={"xs"} mb={"xs"} color={"gray"}
-                                        onClick={() => setContentStack(contentStack)}>Cancel</Button>
+                                        onClick={() => setContentStack(defaultContentStack(content))}>Cancel</Button>
                                 <Button ms={"md"} size={"xs"} mb={"xs"} type={"submit"}>Save</Button>
                             </Group>
                         </form>

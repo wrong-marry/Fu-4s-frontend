@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios, { AxiosResponse } from "axios";
 import { Text, Container, Title, Space, Textarea, Button } from "@mantine/core";
 
-import Comment from "../../component/comment/CommentTag";
+import {Comment} from "../../component/comment/CommentTag";
 import { useParams } from "react-router-dom";
 import LearningMaterialDetail from "../../component/learning-material/LearningMaterialDetail";
 
