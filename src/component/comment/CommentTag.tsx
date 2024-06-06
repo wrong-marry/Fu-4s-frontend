@@ -16,7 +16,7 @@ import {
 import {CommentData} from "../../page/post/PostPage";
 import {format} from "date-fns";
 import axios, {AxiosError, AxiosResponse} from "axios";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useForm} from "@mantine/form";
 import {useDisclosure} from "@mantine/hooks";
 
@@ -28,7 +28,11 @@ export const Comment = (props: CommentData) => {
     const isMine: boolean = props.isMine;
     const id = props.id;
     const [status, setStatus] = useState(props.status);
-
+    const [hideText, setHideText] = useState(props.status == "ACTIVE" ? "Hide" : "Unhide");
+    useEffect(() => {
+        setHideText(status == "ACTIVE" ? "Hide" : "Unhide");
+        console.log("Hide text set to: " + hideText);
+    }, [status]);
     const [contentStack, setContentStack] = useState(
         defaultContentStack(content)
     );
@@ -58,15 +62,18 @@ export const Comment = (props: CommentData) => {
                         {
                             ["STAFF", "ADMIN"].includes((localStorage.getItem("role") + "")) &&
                             <Anchor fz={"sm"} mx={"sm"}
-                                    onClick={async () => {
-                                        const response = await axios.put(`http://localhost:8080/api/v1/comments/status/${id}`,
+                                    onClick={() => {
+                                        const response = axios.put(`http://localhost:8080/api/v1/comments/status/${id}`,
                                             {
                                                 headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
                                             }
                                         );
-                                        if (response.status == 200) setStatus(status == "ACTIVE" ? "Hide" : "Unhide");
+                                        response.then(value => {
+                                            if (value.status == 200) setStatus(status => (status == "ACTIVE") ? "HIDDEN" : "ACTIVE");
+                                            console.log(value.data.message);
+                                        })
                                     }}
-                            >{status == "ACTIVE" ? "Hide" : "Unhide"}</Anchor>
+                            >{hideText}</Anchor>
                         }
                     </>}
             </Group>
@@ -162,11 +169,8 @@ export const Comment = (props: CommentData) => {
                 </Card>
                 <Group mt={0} mx={"md"} lh={"xs"}>
                     <Anchor fz={"sm"} mx={"sm"} mt={0}>Love</Anchor>
-                    {isMine ?
-                        <>
-                            <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
-                            <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={open}>Delete</Anchor>
-                        </> : <Anchor fz={"sm"} mx={"sm"}>Reply</Anchor>}
+                    <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
+                    <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={open}>Delete</Anchor>
                 </Group>
             </Stack>
         );

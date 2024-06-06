@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios, { AxiosResponse } from "axios";
-import { Text, Container, Title, Space, Textarea, Button } from "@mantine/core";
+import {Text, Container, Title, Space, Textarea, Button, Anchor} from "@mantine/core";
 
 import {Comment} from "../../component/comment/CommentTag";
 import { useParams } from "react-router-dom";
 import LearningMaterialDetail from "../../component/learning-material/LearningMaterialDetail";
 
 import MockTestDetailPage from "../mock-test-detail-page/MockTestDetailPage";
-import {forEach} from "lodash";
+import {forEach, now} from "lodash";
 import {useForm} from "@mantine/form";
-import {format} from "date-fns";
 
 export interface Post {
   id: number;
@@ -37,7 +36,6 @@ const PostPage: React.FC = () => {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
-      date: format(Date.now(), "yyyy-MM-dd'T'HH:mm:ss.SSS+SS:SS"),
       username: localStorage.getItem("username"),
       content: "",
     },
@@ -74,6 +72,19 @@ const PostPage: React.FC = () => {
       console.error("Error fetching comment:", error);
     }
   };
+  const fetchMore = async () => {
+    try {
+      const api = `http://localhost:8080/api/v1/comments/post/${id}` + (isStaff ? `?isStaff=true&` : `?`) +
+          `offset=` + (comments?.length || 0);
+      const response: AxiosResponse<CommentData[]> = await axios.get(api);
+      console.log(response.data);
+      setComments(comment =>
+          comment?.concat(response.data) || []
+      );
+    } catch (error) {
+      console.error("Error fetching comment:", error);
+    }
+  };
   useEffect(() => {
     fetchPost();
     fetchComments();
@@ -97,9 +108,9 @@ const PostPage: React.FC = () => {
                             isMine={c.account == localStorage.getItem("username")}
                             account={c.account} status={c.status}
             />
-
         })}
-        <form
+      {!((comments?.length || 0) % 10) ? <Anchor onClick={fetchMore}>Load more comments</Anchor> : <></>}
+      <form
           onSubmit={form.onSubmit(async (values) => {
             console.log(values);
             try {
@@ -113,7 +124,15 @@ const PostPage: React.FC = () => {
                 }
               );
               if (response.status == 200) {
-                await fetchComments();
+                setComments(comments => comments?.concat([{
+                  status: "ACTIVE",
+                  content: values.content,
+                  date: new Date(),
+                  username: "Me",
+                  account: localStorage.getItem("username") || "",
+                  isMine: true,
+                  id: -1
+                }]) || []);
                 form.reset();
               }
             } catch (error) {
