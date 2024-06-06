@@ -1,7 +1,7 @@
 import {
-    Button, Container, FileInput, Grid, Paper, Select, Space, TextInput, Title, Text, Modal, Center
+    Button, Container, FileInput, Grid, Paper, Select, Space, TextInput, Title, Text, Modal, Center, Divider
 } from "@mantine/core";
-import classes from "../user-profile/update-profile/AuthenticationTitle.module.css";
+import classes from "../../user-profile/update-profile/AuthenticationTitle.module.css";
 import {useEffect, useState} from "react";
 import * as XLSX from 'xlsx'
 import {useNavigate, useParams} from "react-router-dom";
@@ -75,7 +75,10 @@ export function EditMockTestForm() {
         const worksheet = workbook.Sheets[sheetName];
 
         const json: row[] = XLSX.utils.sheet_to_json(worksheet);
-
+        if(json.length == 0) {
+            setError("Invalid file! Must have at least 1 question!");
+            return;
+        }
         setFileData(json);
     };
 
@@ -125,7 +128,6 @@ export function EditMockTestForm() {
 
     const handleEdit = () => {
         if (file == null || !isExcelFile(file) || title == "" || subject == "") {
-            console.log(title);
             setErrorAll("All fields are required");
             return;
         }
@@ -134,6 +136,11 @@ export function EditMockTestForm() {
         let questions: Question[] = [];
         for (var row of fileData) {
             let answers: Answer[] = [];
+
+            if(parseInt(row.correct) > 4 || parseInt(row.correct) < 1) {
+                setError("Invalid file format! Please read the instruction!");
+                return;
+            }
 
             if(!row.answer1) {
                 console.log(row.answer1);
@@ -223,6 +230,24 @@ export function EditMockTestForm() {
         XLSX.writeFile(wb, fileName);
     }
 
+    const downloadTemplate = () => {
+        const fileName = 'questions.xlsx';
+        const data = [{
+            content: "",
+            answer1: "",
+            answer2: "",
+            answer3: "",
+            answer4: "",
+            correct: "",
+        }];
+
+        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+        const wb: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'test');
+
+        XLSX.writeFile(wb, fileName);
+    }
+
     const handleRemove = () => {
         fetch(`http://localhost:8080/api/v1/questionSet/remove?id=${id}&username=${localStorage.getItem('username')}`, {
             method: "DELETE"
@@ -234,14 +259,22 @@ export function EditMockTestForm() {
     return <>
         <Modal opened={opened} onClose={close} title="Import instruction">
             <Text size="sm">
-                The system only accept excel (.xlsx) files. File must be in the following format:
+                <Divider my="md" />
+                The system only accept excel (.xlsx) files. File must <b>strictly</b> be in the following format:
                 <Space h="sm"></Space>
                 <img src="/src/asset/excelFileFormat.png" alt=""/>
                 <Space h="sm"></Space>
                 <Space h="sm"></Space>
+                <b>Strictly</b> means it must in the <b>exact</b> same format with the picture (the same column name and no extra columns).
                 <Space h="sm"></Space>
+
+                Please <Text td="underline" color="blue" component="button" type="button" onClick={downloadTemplate}>download the template</Text> for easier use.
+                <Space h="sm"></Space>
+                <Space h="sm"></Space>
+                <Divider my="md" />
                 <b>Example:</b>
                 <Space h="sm"></Space>
+
                 <img src="/src/asset/fileFormatExample.png" alt=""/>
                 <Space h="sm"></Space>
                 <Space h="sm"></Space>

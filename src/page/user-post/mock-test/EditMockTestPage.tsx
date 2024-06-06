@@ -1,6 +1,6 @@
-import {EditMockTestForm} from "../../component/user-post/EditMockTestForm.tsx";
+import {EditMockTestForm} from "../../../component/user-post/mock-test/EditMockTestForm.tsx";
 import {useNavigate, useParams} from "react-router-dom";
-import {isValidUser} from "../../util/ValidUser.tsx";
+import {isValidUser} from "../../../util/ValidUser.tsx";
 
 export default function EditMockTestPage() {
     const { id } = useParams<{ id: string }>();

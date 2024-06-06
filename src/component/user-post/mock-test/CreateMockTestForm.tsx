@@ -6,9 +6,9 @@ import {
     Space,
     TextInput,
     Title,
-    Text, Modal
+    Text, Modal, Divider
 } from "@mantine/core";
-import classes from "../user-profile/update-profile/AuthenticationTitle.module.css";
+import classes from "../../user-profile/update-profile/AuthenticationTitle.module.css";
 import {useEffect, useState} from "react";
 import * as XLSX from 'xlsx'
 import {useNavigate} from "react-router-dom";
@@ -71,6 +71,10 @@ export function CreateMockTestForm() {
         const worksheet = workbook.Sheets[sheetName];
 
         const json : row[] = XLSX.utils.sheet_to_json(worksheet);
+        if(json.length == 0) {
+            setError("Invalid file! Must have at least 1 question!");
+            return;
+        }
         setFileData(json);
     };
 
@@ -111,43 +115,65 @@ export function CreateMockTestForm() {
     );
 
     const handleAdd = () => {
-        if(file == null || !isExcelFile(file) || title == "" || subject == "") {
+        if (file == null || !isExcelFile(file) || title == "" || subject == "") {
             setErrorAll("All fields are required");
             return;
         }
 
         setError(null);
         let questions: Question[] = [];
-        for(var row of fileData) {
-            let answers : Answer[] = [];
+        for (var row of fileData) {
+            let answers: Answer[] = [];
 
-            let answer : Answer = {
-                content: row.answer1,
-                correct: row.correct == "1"
+            if(parseInt(row.correct) > 4 || parseInt(row.correct) < 1) {
+                setError("Invalid file format! Please read the instruction!");
+                return;
+            }
+
+            if(!row.answer1) {
+                console.log(row.answer1);
+                setError("Invalid file format! Please read the instruction!");
+                return;
+            }
+            let answer: Answer = {
+                content: row.answer1, correct: row.correct == "1"
             };
             answers.push(answer);
-
+            console.log(row.answer2);
+            if(!row.answer2) {
+                setError("Invalid file format! Please read the instruction!");
+                return;
+            }
             answer = {
-                content: row.answer2,
-                correct: row.correct == "2"
+                content: row.answer2, correct: row.correct == "2"
             };
             answers.push(answer);
 
+            if(!row.answer3) {
+                setError("Invalid file format! Please read the instruction!");
+                return;
+            }
             answer = {
-                content: row.answer2,
-                correct: row.correct == "3"
+                content: row.answer3, correct: row.correct == "3"
             };
             answers.push(answer);
 
+            if(!row.answer4) {
+                setError("Invalid file format! Please read the instruction!");
+                return;
+            }
             answer = {
-                content: row.answer2,
-                correct: row.correct == "4"
+                content: row.answer4, correct: row.correct == "4"
             };
             answers.push(answer);
 
-            let question : Question = {
-                content: row.content,
-                answers: answers
+            if(!row.content) {
+                console.log(1);
+                setError("Invalid file format! Please read the instruction!");
+                return;
+            }
+            let question: Question = {
+                content: row.content, answers: answers
             }
 
             questions.push(question);
@@ -189,14 +215,22 @@ export function CreateMockTestForm() {
     return <>
         <Modal opened={opened} onClose={close} title="Import instruction">
             <Text size="sm">
-                The system only accept excel (.xlsx) files. File must be in the following format:
+                <Divider my="md" />
+                The system only accept excel (.xlsx) files. File must <b>strictly</b> be in the following format:
                 <Space h="sm"></Space>
                 <img src="/src/asset/excelFileFormat.png" alt=""/>
                 <Space h="sm"></Space>
                 <Space h="sm"></Space>
+                <b>Strictly</b> means it must in the <b>exact</b> same format with the picture (the same column name and no extra columns).
                 <Space h="sm"></Space>
+
+                Please <Text td="underline" color="blue" component="button" type="button" onClick={downloadTemplate}>download the template</Text> for easier use.
+                <Space h="sm"></Space>
+                <Space h="sm"></Space>
+                <Divider my="md" />
                 <b>Example:</b>
                 <Space h="sm"></Space>
+
                 <img src="/src/asset/fileFormatExample.png" alt=""/>
                 <Space h="sm"></Space>
                 <Space h="sm"></Space>
