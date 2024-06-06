@@ -2,7 +2,7 @@ import { Title, Text, Button, Container, Grid, GridCol } from "@mantine/core";
 import classes from "./HeroText.module.css";
 import { Dots } from "./Dots";
 
-export function HeroText() {
+export function HeroText(props:any) {
   return (
     <Container className={classes.wrapper} size={1400}>
       <Dots className={classes.dots} style={{ left: 0, top: 0 }} />
@@ -27,7 +27,7 @@ export function HeroText() {
         </Container>
 
         <div className={classes.controls}>
-          <Button className={classes.control} size="lg">
+          <Button onClick={props.handleSubmit} className={classes.control} size="lg">
             Submit
           </Button>
         </div>

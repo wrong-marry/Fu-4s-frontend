@@ -15,13 +15,15 @@ import {
   Group,
   Modal,
   Notification,
+  Paper,
+  RingProgress,
   Text,
   Title,
   Transition,
   rem,
 } from "@mantine/core";
 import { useWindowScroll } from "@mantine/hooks";
-import { IconArrowUp } from "@tabler/icons-react";
+import { IconArrowUp, IconCheck } from "@tabler/icons-react";
 import { format } from "date-fns";
 import QuizIcon from "@mui/icons-material/Quiz";
 import { isLoggedIn } from "../../util/loader/Auth";
@@ -34,7 +36,8 @@ import { HeroText } from "../../component/hero-text/HeroText";
 import { ProgressCardColored } from "../../component/progress-card/ProgressCard";
 import { notifications } from "@mantine/notifications";
 import { IconArrowDown } from "@tabler/icons-react";
-
+import { green } from "@mui/material/colors";
+import TestScore from "../../component/test-mark/TestScore";
 export default function TakingTestPage() {
   const [searchParam, setSearchParam] = useSearchParams();
   const id = searchParam.get("id");
@@ -46,6 +49,9 @@ export default function TakingTestPage() {
   const [post, setPost] = useState<Post | null>(null);
   const [numberOfQuestionChecked, setNumberOfQuestionsChecked] = useState(0);
   const bottom = useRef<HTMLElement | null>(null);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [reviewing, setReviewing] = useState(false);
+
   let questionIndex = 0;
 
   useEffect(() => {
@@ -72,17 +78,26 @@ export default function TakingTestPage() {
   const increaseNumberOfQuestionsChecked = () => {
     setNumberOfQuestionsChecked(numberOfQuestionChecked + 1);
   };
+
   const decreaseNumberOfQuestionsChecked = () => {
     setNumberOfQuestionsChecked(numberOfQuestionChecked - 1);
+  };
+
+  const modifyNumberOfCorrectAnswers = (isAdd: boolean) => {
+    isAdd
+      ? setCorrectAnswers(correctAnswers + 1)
+      : setCorrectAnswers(correctAnswers - 1);
   };
 
   const questionsDisplay = questions.map((question: Question) => {
     ++questionIndex;
     return (
       <TestQuestion
+        reviewing={reviewing}
         key={question.id}
         question={question}
         questionIndex={questionIndex}
+        modifyNumberOfCorrectAnswers={modifyNumberOfCorrectAnswers}
         increaseNumberOfQuestionsChecked={increaseNumberOfQuestionsChecked}
         decreaseNumberOfQuestionsChecked={decreaseNumberOfQuestionsChecked}
       />
@@ -93,6 +108,12 @@ export default function TakingTestPage() {
       return format(new Date(post.postTime), "dd/MM/yyyy HH:mm");
     else return "";
   };
+
+  const handleSubmit = () => {
+    setReviewing(true);
+    scrollTo({ y: 0 });
+  };
+
   return (
     <>
       <Grid display={Flex} justify="center">
@@ -123,11 +144,53 @@ export default function TakingTestPage() {
               </Group>
             </Grid.Col>
           </Grid>
+          <Grid display={reviewing ? "block" : "none"}>
+            <Grid.Col span={6}>
+              <Paper withBorder radius="lg" p="lg" my="md" shadow="lg">
+                <Group>
+                  <RingProgress
+                    size={80}
+                    thickness={8}
+                    sections={[
+                      {
+                        value:
+                          (correctAnswers * 100) / Number(numberOfQuestion),
+                        color: "green",
+                      },
+                    ]}
+                    rootColor="red"
+                    label={
+                      <Center>
+                        <IconCheck
+                          style={{ width: rem(20), height: rem(20) }}
+                          stroke={1.5}
+                        />
+                      </Center>
+                    }
+                  />
 
+                  <div>
+                    <Text c="dimmed" size="xs" tt="uppercase" fw={700}>
+                      Number of correct answers
+                    </Text>
+                    <Text fw={700} size="xl">
+                      {correctAnswers} / {numberOfQuestion}
+                    </Text>
+                  </div>
+                </Group>
+              </Paper>
+            </Grid.Col>
+            <Grid.Col my="md" span={6}>
+              <TestScore
+                correctAnswers={correctAnswers}
+                numberOfQuestion={numberOfQuestion}
+              />
+            </Grid.Col>
+          </Grid>
           <>{questionsDisplay}</>
         </Grid.Col>
       </Grid>
-      <HeroText />
+      <HeroText handleSubmit={handleSubmit} />
       <section ref={bottom}></section>
       <Affix position={{ bottom: 20, right: 20 }}>
         <Transition transition="slide-up" mounted={scroll.y > 0}>
@@ -146,6 +209,7 @@ export default function TakingTestPage() {
       </Affix>
       <Affix position={{ top: 150, right: 20 }}>
         <ProgressCardColored
+          handleSubmit={handleSubmit}
           numberOfQuestion={numberOfQuestion}
           numberOfQuestionChecked={numberOfQuestionChecked}
         />

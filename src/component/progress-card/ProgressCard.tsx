@@ -23,7 +23,7 @@ export function ProgressCardColored(props: any) {
           section: classes.progressSection,
         }}
       />
-      <Button mt={10} fz="xs" size="compact-md" radius="xl">
+      <Button onClick={props.handleSubmit} mt={10} fz="xs" size="compact-md" radius="xl">
         Submit
       </Button>
       <Button
