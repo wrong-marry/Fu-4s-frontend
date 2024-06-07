@@ -19,7 +19,7 @@ import {
 } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { Center, Pagination } from "@mantine/core";
-import { IconDots } from "@tabler/icons-react";
+import { IconDots, IconTrash, IconNote } from "@tabler/icons-react";
 interface Notification {
   id: string;
   time: string;
@@ -90,18 +90,63 @@ function NotificationList() {
               noti.id === id ? { ...noti, seen: false } : noti
             )
           );
-        } else {
-          console.error("Error marking notification as unread:", data.message);
         }
-      } else {
-        console.error(
-          "Error marking notification as unread:",
-          response.statusText
-        );
       }
     } catch (error) {
       console.error("Error marking notification as unread:", error);
     }
+  };
+
+  const deleteNoti = (id: string) => {
+    const notificationToDelete = notifications.find((noti) => noti.id === id);
+    if (!notificationToDelete) return;
+    const originalIndex = notifications.findIndex((noti) => noti.id === id);
+    setNotifications((prevNotifications) =>
+      prevNotifications.filter((noti) => noti.id !== id)
+    );
+    let shouldDelete = true;
+    const toastId = toast(
+      <div>
+        <span>Notification removed.</span>
+        <button
+          style={{
+            marginLeft: "10px",
+            fontWeight: "bold",
+            textDecoration: "underline",
+            border: "none",
+            background: "none",
+            cursor: "pointer",
+            color: "#007bff",
+          }}
+          onClick={() => {
+            shouldDelete = false;
+            setNotifications((prevNotifications) => {
+              const newNotifications = [...prevNotifications];
+              newNotifications.splice(originalIndex, 0, notificationToDelete);
+              return newNotifications;
+            });
+            toast.dismiss(toastId);
+          }}
+        >
+          Undo
+        </button>
+      </div>,
+      { autoClose: 3000, pauseOnHover: false }
+    );
+    setTimeout(async () => {
+      if (shouldDelete) {
+        try {
+          const response = await fetch(
+            `http://localhost:8080/api/v1/notification/${id}`,
+            {
+              method: "DELETE",
+            }
+          );
+        } catch (error) {
+          console.error("Error deleting notification:", error);
+        }
+      }
+    }, 3000);
   };
 
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
@@ -207,15 +252,25 @@ function NotificationList() {
                       {new Date(notification.time).toLocaleString()}
                     </Text>
                   </Box>
-                  <Menu position="left" withArrow trigger="hover">
+                  <Menu withArrow position="bottom-end" withinPortal>
                     <Menu.Target>
                       <ActionIcon color="gray" variant="light">
                         <IconDots size={16} />
                       </ActionIcon>
                     </Menu.Target>
                     <Menu.Dropdown>
-                      <Menu.Item onClick={() => markAsUnread(notification.id)}>
+                      <Menu.Item
+                        onClick={() => markAsUnread(notification.id)}
+                        leftSection={<IconNote />}
+                      >
                         Mark as unread
+                      </Menu.Item>
+                      <Menu.Item
+                        onClick={() => deleteNoti(notification.id)}
+                        leftSection={<IconTrash />}
+                        color="red"
+                      >
+                        Delete notification
                       </Menu.Item>
                     </Menu.Dropdown>
                   </Menu>
