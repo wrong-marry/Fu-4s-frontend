@@ -1,24 +1,24 @@
-// DeactiveModal.tsx
+// DisableModal.tsx
 import React from "react";
 import { Modal, Button, Text, Center } from "@mantine/core";
 
-interface DeactiveModalProps {
+interface DisableModalProps {
   opened: boolean;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-const DeactiveSubjectModal: React.FC<DeactiveModalProps> = ({
+const DisableSubjectModal: React.FC<DisableModalProps> = ({
   opened,
   onClose,
   onConfirm,
 }) => {
   return (
-    <Modal opened={opened} onClose={onClose} title="Confirm Deactive">
-      <Text>Are you sure you want to deactive this subject?</Text>
+    <Modal opened={opened} onClose={onClose} title="Confirm Disable">
+      <Text>Are you sure you want to disable this subject?</Text>
       <Center mt={"lg"}>
         <Button color="red" onClick={onConfirm}>
-          Deactive
+          Disable
         </Button>
         <Button ml="sm" onClick={onClose}>
           Cancel
@@ -28,4 +28,4 @@ const DeactiveSubjectModal: React.FC<DeactiveModalProps> = ({
   );
 };
 
-export default DeactiveSubjectModal;
+export default DisableSubjectModal;

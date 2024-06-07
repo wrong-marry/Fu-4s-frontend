@@ -1,18 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { ActionIcon, TextInput, Button, Select, Menu } from "@mantine/core";
 import {
-  ActionIcon,
-  TextInput,
-  Button,
-  Select,
-  Text,
-  Menu,
-  Group,
-} from "@mantine/core";
-import {
-  IconPencil,
   IconDots,
-  IconPlus,
-  IconSearch,
   IconSortAscending,
   IconSortDescending,
 } from "@tabler/icons-react";
@@ -20,12 +9,14 @@ import { useDisclosure } from "@mantine/hooks";
 import EditSubjectModal from "./EditSubjectModal";
 import CreateSubjectModal from "./CreateSubjectModal";
 import { notifications } from "@mantine/notifications";
-import DeactiveSubjectModal from "./DeactiveSubjectModal";
+import DisableSubjectModal from "./DisableSubjectModal";
+import ActivateSubjectModal from "./ActivateSubjectModal";
 
 interface Subject {
   code: string;
   name: string;
   semester: number;
+  isActivate: boolean;
 }
 
 function TableSubject() {
@@ -36,7 +27,10 @@ function TableSubject() {
   const [search, setSearch] = useState("");
   const [semesterFilter, setSemesterFilter] = useState<string | null>("All");
   const [currentSubject, setCurrentSubject] = useState<Subject | null>(null);
-  const [subjectToDeactive, setSubjectToDeactive] = useState<Subject | null>(
+  const [subjectToDisable, setSubjectToDisable] = useState<Subject | null>(
+    null
+  );
+  const [subjectToActivate, setSubjectToActivate] = useState<Subject | null>(
     null
   );
   const [sortBy, setSortBy] = useState<string | null>(null);
@@ -51,8 +45,12 @@ function TableSubject() {
     { open: openCreateSubjectModal, close: closeCreateSubjectModal },
   ] = useDisclosure(false);
   const [
-    deactiveModalOpened,
-    { open: openDeactiveSubjectModal, close: closeDeactiveSubjectModal },
+    disableModalOpened,
+    { open: openDisableSubjectModal, close: closeDisableSubjectModal },
+  ] = useDisclosure(false);
+  const [
+    activeModalOpened,
+    { open: openActivateSubjectModal, close: closeActivateSubjectModal },
   ] = useDisclosure(false);
 
   useEffect(() => {
@@ -132,50 +130,116 @@ function TableSubject() {
     openEditSubjectModal();
   };
 
-  const handleDeactiveClick = (subject: Subject) => {
-    setSubjectToDeactive(subject);
-    openDeactiveSubjectModal();
+  const handleDisableClick = (subject: Subject) => {
+    setSubjectToDisable(subject);
+    openDisableSubjectModal();
   };
 
-  const confirmDeactive = async () => {
-    if (subjectToDeactive) {
+  const handleActivateClick = (subject: Subject) => {
+    setSubjectToActivate(subject);
+    openActivateSubjectModal();
+  };
+
+  const confirmDisable = async () => {
+    if (subjectToDisable) {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:8080/api/v1/admin/deactiveSubject?subjectCode=${subjectToDeactive.code}`,
+          `http://localhost:8080/api/v1/admin/disableSubject?subjectCode=${subjectToDisable.code}`,
           {
-            method: "DELETE",
+            method: "PUT",
             headers: {
               Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
             },
           }
         );
 
         if (response.ok) {
-          setSubjects(
-            subjects.filter(
-              (subject) => subject.code !== subjectToDeactive.code
+          setSubjects((prevSubjects) =>
+            prevSubjects.map((subject) =>
+              subject.code === subjectToDisable.code
+                ? { ...subject, isActivate: false }
+                : subject
             )
           );
-          closeDeactiveSubjectModal();
-
+          closeDisableSubjectModal();
           notifications.show({
-            title: "Subject deactived",
-            message: `${subjectToDeactive.name}" has been deactived!`,
+            title: "Subject disabled",
+            message: `"${subjectToDisable.name}" has been disabled!`,
             color: "blue",
           });
         } else {
-          // Xảy ra lỗi khi xóa subject
-          console.error("Error deleting subject:", await response.json());
+          const errorData = await response.json();
+          console.error("Error deactivating subject:", errorData);
+          notifications.show({
+            title: "Error deactivating subject",
+            message: `An error occurred while deactivating "${subjectToDisable.name}": ${errorData.message}`,
+            color: "red",
+          });
         }
       } catch (error) {
-        console.error("Error deleting subject:", error);
+        console.error("Error deactivating subject:", error);
+        notifications.show({
+          title: "Error deactivating subject",
+          message: `An unknown error occurred while deactivating "${subjectToDisable.name}"`,
+          color: "red",
+        });
+      }
+    }
+  };
+
+  const confirmActivate = async () => {
+    if (subjectToActivate) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `http://localhost:8080/api/v1/admin/activeSubject?subjectCode=${subjectToActivate.code}`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          setSubjects((prevSubjects) =>
+            prevSubjects.map((subject) =>
+              subject.code === subjectToActivate.code
+                ? { ...subject, isActivate: true }
+                : subject
+            )
+          );
+          closeActivateSubjectModal();
+          notifications.show({
+            title: "Subject activated",
+            message: `"${subjectToActivate.name}" has been activated!`,
+            color: "blue",
+          });
+        } else {
+          const errorData = await response.json();
+          console.error("Error activating subject:", errorData);
+          notifications.show({
+            title: "Error activating subject",
+            message: `An error occurred while activating "${subjectToActivate.name}": ${errorData.message}`,
+            color: "red",
+          });
+        }
+      } catch (error) {
+        console.error("Error activating subject:", error);
+        notifications.show({
+          title: "Error activating subject",
+          message: `An unknown error occurred while activating "${subjectToActivate.name}"`,
+          color: "red",
+        });
       }
     }
   };
 
   const handleCreateClick = () => {
-    setCurrentSubject({ code: "", name: "", semester: 1 });
+    setCurrentSubject({ code: "", name: "", semester: 1, isActivate: true });
     openCreateSubjectModal();
   };
 
@@ -232,13 +296,17 @@ function TableSubject() {
       <td className="py-5 px-6 font-medium">{subject.code}</td>
       <td className="font-medium">{subject.name}</td>
       <td className="font-medium">{subject.semester}</td>
-      <td style={{ textAlign: "center" }}>
-        <Menu
-          transitionProps={{ transition: "pop" }}
-          withArrow
-          position="bottom-end"
-          withinPortal
+      <td className="font-medium">
+        <span
+          style={{
+            color: subject.isActivate ? "green" : "pink",
+          }}
         >
+          {subject.isActivate ? "Activate" : "Disabled"}
+        </span>
+      </td>
+      <td style={{ textAlign: "center" }}>
+        <Menu transitionProps={{ transition: "pop" }} withArrow>
           <Menu.Target>
             <ActionIcon variant="subtle" color="gray">
               <IconDots />
@@ -248,9 +316,16 @@ function TableSubject() {
             <Menu.Item onClick={() => handleEditClick(subject)}>
               Edit Subject
             </Menu.Item>
-            <Menu.Item onClick={() => handleDeactiveClick(subject)}>
-              Deactive Subject
-            </Menu.Item>
+
+            {subject.isActivate ? (
+              <Menu.Item onClick={() => handleDisableClick(subject)}>
+                Disable Subject
+              </Menu.Item>
+            ) : (
+              <Menu.Item onClick={() => handleActivateClick(subject)}>
+                Activate Subject
+              </Menu.Item>
+            )}
           </Menu.Dropdown>
         </Menu>
       </td>
@@ -341,6 +416,9 @@ function TableSubject() {
                     )}
                   </th>
                   <th className="py-4 font-medium">
+                    <span>Status</span>
+                  </th>
+                  <th className="py-4 font-medium">
                     <span>Options</span>
                   </th>
                 </tr>
@@ -352,20 +430,39 @@ function TableSubject() {
             opened={editModalOpened}
             onClose={closeEditSubjectModal}
             onSave={handleSaveClick}
-            subject={currentSubject || { code: "", name: "", semester: 1 }}
+            subject={
+              currentSubject || {
+                code: "",
+                name: "",
+                semester: 1,
+                isActivate: true,
+              }
+            }
             onInputChange={handleInputChange}
           />
           <CreateSubjectModal
             opened={createModalOpened}
             onClose={closeCreateSubjectModal}
             onSave={handleSaveClick}
-            subject={currentSubject || { code: "", name: "", semester: 1 }}
+            subject={
+              currentSubject || {
+                code: "",
+                name: "",
+                semester: 1,
+                isActivate: true,
+              }
+            }
             onInputChange={handleInputChange}
           />
-          <DeactiveSubjectModal
-            opened={deactiveModalOpened}
-            onClose={closeDeactiveSubjectModal}
-            onConfirm={confirmDeactive}
+          <DisableSubjectModal
+            opened={disableModalOpened}
+            onClose={closeDisableSubjectModal}
+            onConfirm={confirmDisable}
+          />
+          <ActivateSubjectModal
+            opened={activeModalOpened}
+            onClose={closeActivateSubjectModal}
+            onConfirm={confirmActivate}
           />
         </div>
       </div>
