@@ -14,6 +14,9 @@ import {
 import classes from "../../user-profile/update-profile/AuthenticationTitle.module.css";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
 
 export function AddLearningMaterialForm() {
     const navigate = useNavigate();
@@ -24,6 +27,22 @@ export function AddLearningMaterialForm() {
     const [files, setFiles] = useState<File[]>([]);
 
     const [error, setError] = useState<string>("");
+
+    var toolbarOptions = [
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'header': 1 }, { 'header': 2 }],
+        [{ 'align': [] }],
+        [{ 'color': [] }],
+        ['blockquote', 'code-block'],
+        [{ 'direction': 'rtl' }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+        ['clean'],
+    ];
+    const module = {
+        toolbar: toolbarOptions,
+    };
 
     const handleAdd = () => {
 
@@ -72,7 +91,6 @@ export function AddLearningMaterialForm() {
             </ListItem>
 
     })
-    console.log(files[0])
     return <>
         <Container size={900} my={40}>
             <Title ta="center" className={classes.title} order={2}>
@@ -89,23 +107,22 @@ export function AddLearningMaterialForm() {
                         radius="md"
                     />
 
-                    <Space h="lg" />
-                    <Space h="md" />
+                    <Space h="lg"/>
+                    <Space h="md"/>
 
-                    <Textarea
-                        placeholder="Type something..."
-                        label="Content"
-                        description="Your material content"
-                        onChange={(event) => setContent(event.currentTarget.value)}
-                        autosize
-                        required
-                        minRows={12}
-                        radius="md"
-                    />
+                    <label className="m_8fdc1311 mantine-InputWrapper-label mantine-TextInput-label"
+                           data-required="true" htmlFor="mantine-sjauq2siu" id="mantine-sjauq2siu-label">Content<span
+                        className="m_78a94662 mantine-InputWrapper-required mantine-TextInput-required"
+                        aria-hidden="true"> *</span></label>
+                    <p className="m_fe47ce59 mantine-InputWrapper-description mantine-TextInput-description"
+                       id="mantine-sjauq2siu-description">Your material content</p>
+                    <Space h="xs"/>
+                    <ReactQuill modules={module} theme="snow" onChange={setContent} value={content} style={{height: "60vh"}}/>
 
-                    <Space h="lg" />
-                    <Space h="md" />
+                    <Space h="lg"/>
+                    <Space h="md"/>
 
+                    <Space h="lg"/><Space h="lg"/>
                     <Grid>
                         <Grid.Col span={5}>
                             <FileInput
@@ -122,7 +139,7 @@ export function AddLearningMaterialForm() {
                         </Grid.Col>
                     </Grid>
 
-                    <Space h="xs" />
+                    <Space h="xs"/>
 
                     <List
                         icon={
@@ -135,12 +152,12 @@ export function AddLearningMaterialForm() {
                         {listData}
                     </List>
 
-                    <Space h="lg" />
+                    <Space h="lg"/>
 
-                    <Grid >
+                    <Grid>
                         <Grid.Col span={2} offset={8}>
                             <Center>
-                                <Button variant="default" size="md" onClick={() => navigate("/user/post")}  ml="lg">
+                                <Button variant="default" size="md" onClick={() => navigate("/home")} ml="lg">
                                     Back
                                 </Button>
                             </Center>
