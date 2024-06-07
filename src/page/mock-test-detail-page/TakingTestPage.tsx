@@ -190,7 +190,9 @@ export default function TakingTestPage() {
           <>{questionsDisplay}</>
         </Grid.Col>
       </Grid>
+      <Group display={reviewing?"none":"block"}>
       <HeroText handleSubmit={handleSubmit} />
+      </Group>
       <section ref={bottom}></section>
       <Affix position={{ bottom: 20, right: 20 }}>
         <Transition transition="slide-up" mounted={scroll.y > 0}>
@@ -207,7 +209,7 @@ export default function TakingTestPage() {
           )}
         </Transition>
       </Affix>
-      <Affix position={{ top: 150, right: 20 }}>
+      <Affix display={reviewing?"none":"block"} position={{ top: 150, right: 20 }}>
         <ProgressCardColored
           handleSubmit={handleSubmit}
           numberOfQuestion={numberOfQuestion}

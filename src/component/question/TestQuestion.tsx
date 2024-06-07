@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ClearIcon from '@mui/icons-material/Clear';
 import {
   Radio,
   Group,
@@ -9,6 +10,7 @@ import {
   Grid,
   Flex,
   Button,
+  CheckIcon,
 } from "@mantine/core";
 import classes from "./Demo.module.css";
 import { color } from "@mui/system";
@@ -74,6 +76,10 @@ export default function TestQuestion(props: any) {
     }
   };
 
+  const incorrectText = () => {
+    return checked?"Oopsssie! Your answer was incorrect, try harder!":"There was a chance to answer this correctly but you made it 100% wrong by not answering -.-"
+  }
+
   const cards = props.question.answers.map((answer: Answer) => {
     const answerState = (isCard: boolean) => {
       if (!props.reviewing) return isCard ? classes.checkedAnswer : "blue";
@@ -91,8 +97,8 @@ export default function TestQuestion(props: any) {
         value={answer.content}
         key={answer.id}
         checked={
-          checked &&
-          (value === answer.content || (props.reviewing && answer.correct))
+          (value === answer.content && checked) ||
+          (props.reviewing && answer.correct)
         }
       >
         <Group wrap="nowrap" align="flex-start">
@@ -110,6 +116,9 @@ export default function TestQuestion(props: any) {
       <Radio.Group value={value}>
         <Text size="md">
           {props.questionIndex}. {props.question.content}
+        </Text>
+        <Text display={props.reviewing?"block":"none"} c={questionIsCorrect?"green":"red"} >
+          {questionIsCorrect?"Good job! Your answer was correct":incorrectText()}
         </Text>
         <Stack pt="md" gap="xs">
           {cards}
