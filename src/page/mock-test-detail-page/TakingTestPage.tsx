@@ -13,6 +13,7 @@ import {
   Flex,
   Grid,
   Group,
+  Image,
   Modal,
   Notification,
   Paper,
@@ -36,7 +37,7 @@ import { HeroText } from "../../component/hero-text/HeroText";
 import { ProgressCardColored } from "../../component/progress-card/ProgressCard";
 import { notifications } from "@mantine/notifications";
 import { IconArrowDown } from "@tabler/icons-react";
-import { green } from "@mui/material/colors";
+import { blue, green } from "@mui/material/colors";
 import TestScore from "../../component/test-mark/TestScore";
 export default function TakingTestPage() {
   const [searchParam, setSearchParam] = useSearchParams();
@@ -51,6 +52,8 @@ export default function TakingTestPage() {
   const bottom = useRef<HTMLElement | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [reviewing, setReviewing] = useState(false);
+  const [submitFormOpened, setSubmitFormOpened] = useState(false);
+  const [congratulationOpened, setCongratulationOpened] = useState(false);
 
   let questionIndex = 0;
 
@@ -110,19 +113,109 @@ export default function TakingTestPage() {
   };
 
   const handleSubmit = () => {
+    setSubmitFormOpened(false);
+    setCongratulationOpened(true);
     setReviewing(true);
     scrollTo({ y: 0 });
   };
 
   return (
     <>
+      <Modal
+        transitionProps={{ transition: "slide-up", duration: 1000 }}
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 2,
+        }}
+        opened={submitFormOpened}
+        onClose={() => setSubmitFormOpened(false)}
+        title="Test submission"
+        centered
+        size="lg"
+      >
+        <Title order={5}>
+          You have finished{" "}
+          <Text c="blue" span inherit>
+            {numberOfQuestionChecked}
+          </Text>{" "}
+          out of {numberOfQuestion}
+        </Title>
+        <Text>
+          Do you want to{" "}
+          <Text c="red" span inherit>
+            go back and continue doing the test
+          </Text>{" "}
+          or{" "}
+          <Text c="blue" span inherit>
+            submit the test
+          </Text>{" "}
+        </Text>
+        <Flex mt="md" gap="xs" justify="flex-end">
+          <Button bg="red" onClick={() => setSubmitFormOpened(false)}>
+            Continue
+          </Button>
+          <Button onClick={handleSubmit}>Submit</Button>
+        </Flex>
+      </Modal>
+
+      <Modal
+        transitionProps={{ transition: "rotate-left", duration: 1000 }}
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 6,
+        }}
+        opened={congratulationOpened}
+        onClose={() => setCongratulationOpened(false)}
+        centered
+        size="lg"
+        withCloseButton={false}
+        radius="md"
+      >
+        <Title order={3}> Congratulations!</Title>
+        <Flex my="lg" justify="center">
+          <iframe
+            className="rounded-lg"
+            allow="fullscreen"
+            frameBorder="0"
+            height="320"
+            src="https://giphy.com/embed/gyfKwCIVXrM17qIVsY/video"
+            width="480"
+          ></iframe>
+        </Flex>
+
+        <Text my="md">
+          Well done! You have finished the test. Your result is stored in your{" "}
+          <Text c="pink" span inherit>
+            Test History
+          </Text>
+          . Now you can click the{" "}
+          <Text c="blue" span inherit>
+            Continue
+          </Text>{" "}
+          button to view your result and review the questions{" "}
+        </Text>
+        <Flex justify="flex-end">
+          <Button
+            radius="md"
+            onClick={() => setCongratulationOpened(false)}
+            right="xs"
+          >
+            Continue
+          </Button>
+        </Flex>
+      </Modal>
+
       <Grid display={Flex} justify="center">
         <Grid.Col span={{ base: 12, md: 8 }}>
-          <Group justify="center">
-            <Badge mt={15} variant="filled" size="lg">
+          <Flex justify="center" direction="column" align="center">
+            
+            <Badge my={15} variant="filled" size="lg">
               Mock Test
             </Badge>
-          </Group>
+            <Button display={reviewing?"block":"none"} bg="red" radius="xl" onClick={() => navigate(`/post/${id}`)}>
+              Go back to question set
+            </Button>
+          </Flex>
           <Title order={2} className="text-3xl font-md" ta="center" my={30}>
             {post?.title}
           </Title>
@@ -190,8 +283,8 @@ export default function TakingTestPage() {
           <>{questionsDisplay}</>
         </Grid.Col>
       </Grid>
-      <Group display={reviewing?"none":"block"}>
-      <HeroText handleSubmit={handleSubmit} />
+      <Group display={reviewing ? "none" : "block"}>
+        <HeroText handleSubmit={() => setSubmitFormOpened(true)} />
       </Group>
       <section ref={bottom}></section>
       <Affix position={{ bottom: 20, right: 20 }}>
@@ -209,9 +302,12 @@ export default function TakingTestPage() {
           )}
         </Transition>
       </Affix>
-      <Affix display={reviewing?"none":"block"} position={{ top: 150, right: 20 }}>
+      <Affix
+        display={reviewing ? "none" : "block"}
+        position={{ top: 150, right: 20 }}
+      >
         <ProgressCardColored
-          handleSubmit={handleSubmit}
+          handleSubmit={() => setSubmitFormOpened(true)}
           numberOfQuestion={numberOfQuestion}
           numberOfQuestionChecked={numberOfQuestionChecked}
         />
