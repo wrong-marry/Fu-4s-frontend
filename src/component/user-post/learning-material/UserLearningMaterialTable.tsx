@@ -12,7 +12,7 @@ interface Post {
 export function UserLearningMaterialTable() {
 
     const username = localStorage.getItem("username");
-    const pageSize = 2;
+    const pageSize = 5;
 
     const [activePage, setPage] = useState(3);
     const [numPage, setNumPage] = useState(1);
@@ -49,11 +49,12 @@ export function UserLearningMaterialTable() {
         fetchPost();
     }, [activePage])
 
+    let num = pageSize * activePage - pageSize;
     const rows =
         posts.map(post => (
             <tr className="text-xs bg-gray-50" key={post.id}>
                 <td className="flex items-center py-5 px-6 font-medium">
-                    <p>{post.id}</p>
+                    <p>{++num}</p>
                 </td>
 
                 <td className="font-medium">
@@ -84,7 +85,7 @@ export function UserLearningMaterialTable() {
 
                 <td style={{textAlign: "center"}}>
                     <span className="inline-block py-1 px-2 text-white bg-gray-600 rounded-full">
-                            <a href={"/edit-mock-test/" + post.id}>Edit</a>
+                            <a href={"/edit-learning-material/" + post.id}>Edit</a>
                     </span>
                 </td>
             </tr>

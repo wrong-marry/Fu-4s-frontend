@@ -13,7 +13,7 @@ interface Post {
 export function UserMockTestTable() {
 
     const username = localStorage.getItem("username");
-    const pageSize = 2;
+    const pageSize = 5;
 
     const [activePage, setPage] = useState(1);
     const [numPage, setNumPage] = useState(1);
@@ -50,11 +50,12 @@ export function UserMockTestTable() {
         fetchPost();
     }, [activePage])
 
+    let num = pageSize * activePage - pageSize;
     const rows =
         posts.map(post => (
             <tr className="text-xs bg-gray-50" key={post.id}>
                 <td className="flex items-center py-5 px-6 font-medium">
-                    <p>{post.id}</p>
+                    <p>{++num}</p>
                 </td>
 
                 <td className="font-medium">
