@@ -1,4 +1,5 @@
 import {
+    Accordion, ActionIcon,
     Anchor,
     Avatar,
     Button,
@@ -19,6 +20,7 @@ import axios, {AxiosError, AxiosResponse} from "axios";
 import React, {useEffect, useState} from "react";
 import {useForm} from "@mantine/form";
 import {useDisclosure} from "@mantine/hooks";
+import {CommentButtonSwitch} from "../button-switch/CommentButtonSwitch.tsx";
 
 export const Comment = (props: CommentData) => {
     const [opened, {open, close}] = useDisclosure(false);
@@ -30,14 +32,15 @@ export const Comment = (props: CommentData) => {
     const childrenNumber = props.childrenNumber;
     const [status, setStatus] = useState(props.status);
     const [hideText, setHideText] = useState(props.status == "ACTIVE" ? "Hide" : "Unhide");
+    const [children, setChildren] = useState<CommentData[]>();
     useEffect(() => {
         setHideText(status == "ACTIVE" ? "Hide" : "Unhide");
         console.log("Hide text set to: " + hideText);
     }, [status]);
+
     const [contentStack, setContentStack] = useState(
         defaultContentStack(content)
     );
-
     function defaultContentStack(newContent: string) {
         return (<Stack gap={3}>
             <Card p={"sm"} withBorder radius={20} maw={"800"}>
@@ -56,8 +59,9 @@ export const Comment = (props: CommentData) => {
                     </Text>
                 </CardSection>
             </Card>
+
             <Group mt={0} mx={"md"} lh={"xs"}>
-                <Anchor fz={"sm"} mx={"sm"} mt={0}>Reply</Anchor>
+                <Anchor fz={"sm"} mx={"sm"} mt={0}>{childrenNumber ? "View replies..." : "Reply"}</Anchor>
                 {isMine ?
                     <>
                         <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
@@ -172,7 +176,7 @@ export const Comment = (props: CommentData) => {
                     </CardSection>
                 </Card>
                 <Group mt={0} mx={"md"} lh={"xs"}>
-                    <Anchor fz={"sm"} mx={"sm"} mt={0}>Reply</Anchor>
+                    <Anchor fz={"sm"} mx={"sm"} mt={0}>{childrenNumber ? "View replies..." : "Reply"}</Anchor>
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={open}>Delete</Anchor>
                 </Group>
@@ -180,6 +184,12 @@ export const Comment = (props: CommentData) => {
         );
     }
 
+    function getChildren() {
+        const response = axios.get(`http://localhost:8080/api/v1/comments/children/comment-${id}`);
+        response.then(data => {
+            setChildren([...data.data] as CommentData[]);
+        }).catch(error => console.log(error))
+    }
     return (
         <Container w={"100%"}>
             <Modal opened={opened} onClose={close} title="Confirm deletion" centered>
@@ -196,9 +206,24 @@ export const Comment = (props: CommentData) => {
                 </Group>
             </Modal>
             <Group m={"md"} align={"flex-start"}>
-
                 <Avatar variant="filled" radius="xl" size="md" mt={"sm"}/>
                 {contentStack}
+                {childrenNumber > 0 ?
+                    <ActionIcon><CommentButtonSwitch checked={(children?.length ?? 0) > 0}
+                                                     onChange={(checked) => {
+                                                         if (checked) {
+                                                             getChildren();
+                                                         } else setChildren([]);
+                                                     }}
+                                                     size={20}/></ActionIcon> : <></>}
             </Group>
+            <Container ms={"md"}>
+                {children?.map((item) => (
+                    <Comment id={item.id} date={item.date} account={item.account}
+                             username={item.username} content={item.content}
+                             status={item.status} isMine={item.account == localStorage.getItem("username")}
+                             childrenNumber={item.childrenNumber} key={item.id}></Comment>
+                ))}
+            </Container>
         </Container>)
 }
