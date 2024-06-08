@@ -6,27 +6,49 @@ import {
     Grid, List, ListItem,
     Paper,
     Space,
-    Textarea,
     TextInput, ThemeIcon,
     Title,
-    Text
+    Text, Select
 } from "@mantine/core";
 import classes from "../../user-profile/update-profile/AuthenticationTitle.module.css";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
+interface Subject {
+    code: string;
+    name: string;
+    semester: number;
+}
 
 export function AddLearningMaterialForm() {
     const navigate = useNavigate();
-    const maxSize = 10 * 1024 * 1024;
+        const maxSize = 2 * 1024 * 1024 * 1024;
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [files, setFiles] = useState<File[]>([]);
+    const [subject, setSubject] = useState<string | null>();
+    const [subjectList, setSubjectList] = useState<Subject[]>([]);
 
     const [error, setError] = useState<string>("");
+
+    useEffect(() =>{
+        const fetchSubject = async () => {
+            try {
+                const response = await fetch(
+                    `http://localhost:8080/api/v1/subject/getAll`
+                );
+                const data = await response.json();
+                setSubjectList(data);
+            } catch (error) {
+                console.error("Error fetching post:", error);
+            }
+        };
+
+        fetchSubject();
+    }, [])
 
     var toolbarOptions = [
         ['bold', 'italic', 'underline', 'strike'],
@@ -45,7 +67,18 @@ export function AddLearningMaterialForm() {
     };
 
     const handleAdd = () => {
+        const formData = new FormData();
+        files.forEach((file: File) => {
+            formData.append("files", file);
+        });
 
+        fetch(`http://localhost:8080/api/v1/learningMaterial/addNew?title=${title}&content=${content}&username=${localStorage.getItem("username")}&subjectCode=${subject}`,
+            {
+                method: "POST",
+                body: formData
+            }).then(() => {
+                navigate('/user/post');
+        })
     }
 
     const handleDownloadFile = (file: File) => {
@@ -85,6 +118,14 @@ export function AddLearningMaterialForm() {
         setFiles(fs);
     }
 
+    const dataSubject = subjectList.map((subject) => (
+            {
+                value: subject.code,
+                label: subject.code + " - " + subject.name + " - Semester: " + subject.semester,
+            }
+        )
+    );
+
     const listData = files.length == 0 ? <ListItem><i>no files yet</i></ListItem> : files.map((file, index) => {
         return <ListItem key={index} mb="xs">
                 <Text onClick={() => handleDownloadFile(file)} td="underline" color="blue" type="button" component="button">{file.name}</Text>
@@ -103,6 +144,23 @@ export function AddLearningMaterialForm() {
                         description="Your material title"
                         placeholder="Enter title"
                         onChange={(event) => setTitle(event.currentTarget.value)}
+                        required
+                        radius="md"
+                    />
+
+                    <Space h="lg"/>
+                    <Space h="md"/>
+
+                    <Select
+                        label="Subject"
+                        description="Your material subject"
+
+                        value={subject}
+                        onChange={setSubject}
+
+                        data={dataSubject}
+
+                        searchable
                         required
                         radius="md"
                     />
