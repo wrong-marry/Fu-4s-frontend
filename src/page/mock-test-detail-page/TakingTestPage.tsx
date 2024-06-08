@@ -76,7 +76,14 @@ export default function TakingTestPage() {
     };
     fetchPost();
     fetchData();
+    personalized();
   }, []);
+
+  const personalized = () => {
+      if (mode === "personalized") return true;
+      else if (mode === "random") return false;
+      else throw new Response("Wrong mode", {status:404});
+  };
 
   const increaseNumberOfQuestionsChecked = () => {
     setNumberOfQuestionsChecked(numberOfQuestionChecked + 1);
@@ -112,11 +119,22 @@ export default function TakingTestPage() {
     else return "";
   };
 
+  const saveTestResult = async () => {
+    await axios.post(
+      `http://localhost:8080/api/v1/test-result/save?score=${
+        (correctAnswers * 10) / Number(numberOfQuestion)
+      }&username=${localStorage.getItem(
+        "username"
+      )}&questionSetId=${id}&isPersonalized=${personalized()}`
+    );
+  };
+
   const handleSubmit = () => {
     setSubmitFormOpened(false);
     setCongratulationOpened(true);
     setReviewing(true);
     scrollTo({ y: 0 });
+    saveTestResult();
   };
 
   return (
@@ -208,11 +226,15 @@ export default function TakingTestPage() {
       <Grid display={Flex} justify="center">
         <Grid.Col span={{ base: 12, md: 8 }}>
           <Flex justify="center" direction="column" align="center">
-            
             <Badge my={15} variant="filled" size="lg">
               Mock Test
             </Badge>
-            <Button display={reviewing?"block":"none"} bg="red" radius="xl" onClick={() => navigate(`/post/${id}`)}>
+            <Button
+              display={reviewing ? "block" : "none"}
+              bg="red"
+              radius="xl"
+              onClick={() => navigate(`/post/${id}`)}
+            >
               Go back to question set
             </Button>
           </Flex>
@@ -275,6 +297,8 @@ export default function TakingTestPage() {
             </Grid.Col>
             <Grid.Col my="md" span={6}>
               <TestScore
+                questionSetId={id}
+                personalized={personalized}
                 correctAnswers={correctAnswers}
                 numberOfQuestion={numberOfQuestion}
               />

@@ -44,7 +44,6 @@ export default function TestQuestion(props: any) {
     const newValue = selectedValue;
     const oldValue = value;
     setValue(newValue);
-    console.log(questionIsCorrect);
     //marking purpose
     if (!checked) {
       // if question isn't checked and the picked answer is correct
