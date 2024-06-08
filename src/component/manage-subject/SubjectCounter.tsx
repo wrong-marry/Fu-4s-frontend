@@ -1,13 +1,4 @@
 import { useEffect, useState } from "react";
-import {
-  Container,
-  Grid,
-  Card,
-  Text,
-  Center,
-  Badge,
-  Group,
-} from "@mantine/core";
 
 const SubjectCounter: React.FC = () => {
   const [allSubject, setAllSubject] = useState(0);

@@ -227,6 +227,32 @@ function TableSubject() {
     openCreateSubjectModal();
   };
 
+  const handleUpdateClick = async () => {
+    if (currentSubject) {
+      try {
+        const token = localStorage.getItem("token");
+        await fetch(`http://localhost:8080/api/v1/admin/updateSubject`, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(currentSubject),
+        });
+
+        setSubjects((prevSubjects) =>
+          prevSubjects.map((subject) =>
+            subject.code === currentSubject.code ? currentSubject : subject
+          )
+        );
+
+        closeEditSubjectModal();
+      } catch (error) {
+        console.error("Error saving subject:", error);
+      }
+    }
+  };
+
   const handleSaveClick = async () => {
     if (currentSubject) {
       try {
@@ -414,7 +440,7 @@ function TableSubject() {
           <EditSubjectModal
             opened={editModalOpened}
             onClose={closeEditSubjectModal}
-            onSave={handleSaveClick}
+            onSave={handleUpdateClick}
             subject={
               currentSubject || {
                 code: "",
