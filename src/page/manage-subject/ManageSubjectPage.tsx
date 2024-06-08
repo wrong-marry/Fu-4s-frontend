@@ -3,6 +3,7 @@ import { Grid, Drawer, Burger } from "@mantine/core";
 import { NavbarNested } from "../../component/manageUser/navbar-nested/navbar-nested";
 import { useMediaQuery } from "@mantine/hooks";
 import TableSubject from "../../component/manage-subject/TableSubject";
+import SubjectCounter from "../../component/manage-subject/SubjectCounter";
 
 export default function ManageSubjectPage() {
   const isSmallScreen = useMediaQuery("(max-width: 1100px)");
@@ -24,6 +25,7 @@ export default function ManageSubjectPage() {
           )}
         </Grid.Col>
         <Grid.Col span={isSmallScreen ? 12 : isMediumScreen ? 9 : 9}>
+          <SubjectCounter />
           <TableSubject />
         </Grid.Col>
       </Grid>
