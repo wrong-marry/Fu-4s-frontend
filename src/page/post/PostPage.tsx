@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import LearningMaterialDetail from "../../component/learning-material/LearningMaterialDetail";
 
 import MockTestDetailPage from "../mock-test-detail-page/MockTestDetailPage";
-import {forEach, now} from "lodash";
+import {forEach} from "lodash";
 import {useForm} from "@mantine/form";
 
 export interface Post {
@@ -28,6 +28,7 @@ export interface CommentData {
   content: string;
   status: string;
   isMine: boolean;
+  childrenNumber: number;
 }
 
 const PostPage: React.FC = () => {
@@ -75,7 +76,7 @@ const PostPage: React.FC = () => {
   const fetchMore = async () => {
     try {
       const api = `http://localhost:8080/api/v1/comments/post/${id}` + (isStaff ? `?isStaff=true&` : `?`) +
-          `offset=` + (comments?.length || 0);
+          `offset=` + (comments?.length ?? 0);
       const response: AxiosResponse<CommentData[]> = await axios.get(api);
       console.log(response.data);
       setComments(comment =>
@@ -106,10 +107,12 @@ const PostPage: React.FC = () => {
           c => {
             return <Comment key={c.id} id={c.id} username={c.username} content={c.content} date={c.date}
                             isMine={c.account == localStorage.getItem("username")}
-                            account={c.account} status={c.status}
+                            account={c.account} status={c.status} childrenNumber={c.childrenNumber}
             />
         })}
-      {!((comments?.length || 0) % 10) ? <Anchor onClick={fetchMore}>Load more comments</Anchor> : <></>}
+      {/*Check if there is more comment to fetch*/}
+      {!((comments?.length ?? 0) % 10 || (comments?.length ?? 0) == 0) ?
+          <Anchor onClick={fetchMore}>Load more comments</Anchor> : <></>}
       <form
           onSubmit={form.onSubmit(async (values) => {
             console.log(values);
@@ -131,7 +134,8 @@ const PostPage: React.FC = () => {
                   username: "Me",
                   account: localStorage.getItem("username") || "",
                   isMine: true,
-                  id: -1
+                  id: -1,
+                  childrenNumber: 0
                 }]) || []);
                 form.reset();
               }

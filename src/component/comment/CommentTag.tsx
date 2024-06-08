@@ -10,7 +10,7 @@ import {
     Space,
     Stack,
     Text,
-    Textarea
+    Textarea, TypographyStylesProvider
 } from "@mantine/core"
 
 import {CommentData} from "../../page/post/PostPage";
@@ -27,6 +27,7 @@ export const Comment = (props: CommentData) => {
     const time = props.date;
     const isMine: boolean = props.isMine;
     const id = props.id;
+    const childrenNumber = props.childrenNumber;
     const [status, setStatus] = useState(props.status);
     const [hideText, setHideText] = useState(props.status == "ACTIVE" ? "Hide" : "Unhide");
     useEffect(() => {
@@ -39,7 +40,7 @@ export const Comment = (props: CommentData) => {
 
     function defaultContentStack(newContent: string) {
         return (<Stack gap={3}>
-            <Card p={"sm"} withBorder radius={20}>
+            <Card p={"sm"} withBorder radius={20} maw={"800"}>
                 <CardSection inheritPadding py="md" pb={"xs"}>
                     <Flex>
                         <Text fw={650} lh={"xs"} px={"md"}>{username}</Text>
@@ -48,17 +49,20 @@ export const Comment = (props: CommentData) => {
                     </Flex>
                 </CardSection>
                 <CardSection inheritPadding py="md" pt={"xs"}>
-                    <Text lh={"xs"} px={"md"}>{newContent}</Text>
+                    <Text w={"100%"} lh={"xs"} px={"md"} component="div">
+                        <TypographyStylesProvider style={{wordWrap: "break-word",}}>
+                            {newContent}
+                        </TypographyStylesProvider>
+                    </Text>
                 </CardSection>
             </Card>
             <Group mt={0} mx={"md"} lh={"xs"}>
-                <Anchor fz={"sm"} mx={"sm"} mt={0}>Love</Anchor>
+                <Anchor fz={"sm"} mx={"sm"} mt={0}>Reply</Anchor>
                 {isMine ?
                     <>
                         <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
                         <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={open}>Delete</Anchor>
                     </> : <>
-                        <Anchor fz={"sm"} mx={"sm"}>Reply</Anchor>
                         {
                             ["STAFF", "ADMIN"].includes((localStorage.getItem("role") + "")) &&
                             <Anchor fz={"sm"} mx={"sm"}
@@ -168,7 +172,7 @@ export const Comment = (props: CommentData) => {
                     </CardSection>
                 </Card>
                 <Group mt={0} mx={"md"} lh={"xs"}>
-                    <Anchor fz={"sm"} mx={"sm"} mt={0}>Love</Anchor>
+                    <Anchor fz={"sm"} mx={"sm"} mt={0}>Reply</Anchor>
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={open}>Delete</Anchor>
                 </Group>
@@ -176,7 +180,7 @@ export const Comment = (props: CommentData) => {
         );
     }
 
-    return (<>
+    return (
         <Container w={"100%"}>
             <Modal opened={opened} onClose={close} title="Confirm deletion" centered>
                 Delete comment?
@@ -196,6 +200,5 @@ export const Comment = (props: CommentData) => {
                 <Avatar variant="filled" radius="xl" size="md" mt={"sm"}/>
                 {contentStack}
             </Group>
-        </Container>
-    </>)
+        </Container>)
 }
