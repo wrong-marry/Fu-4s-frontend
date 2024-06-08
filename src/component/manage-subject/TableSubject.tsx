@@ -16,7 +16,7 @@ interface Subject {
   code: string;
   name: string;
   semester: number;
-  isActivate: boolean;
+  active: boolean;
 }
 
 function TableSubject() {
@@ -159,7 +159,7 @@ function TableSubject() {
           setSubjects((prevSubjects) =>
             prevSubjects.map((subject) =>
               subject.code === subjectToDisable.code
-                ? { ...subject, isActivate: false }
+                ? { ...subject, active: false }
                 : subject
             )
           );
@@ -168,14 +168,6 @@ function TableSubject() {
             title: "Subject disabled",
             message: `"${subjectToDisable.name}" has been disabled!`,
             color: "blue",
-          });
-        } else {
-          const errorData = await response.json();
-          console.error("Error deactivating subject:", errorData);
-          notifications.show({
-            title: "Error deactivating subject",
-            message: `An error occurred while deactivating "${subjectToDisable.name}": ${errorData.message}`,
-            color: "red",
           });
         }
       } catch (error) {
@@ -208,7 +200,7 @@ function TableSubject() {
           setSubjects((prevSubjects) =>
             prevSubjects.map((subject) =>
               subject.code === subjectToActivate.code
-                ? { ...subject, isActivate: true }
+                ? { ...subject, active: true }
                 : subject
             )
           );
@@ -217,14 +209,6 @@ function TableSubject() {
             title: "Subject activated",
             message: `"${subjectToActivate.name}" has been activated!`,
             color: "blue",
-          });
-        } else {
-          const errorData = await response.json();
-          console.error("Error activating subject:", errorData);
-          notifications.show({
-            title: "Error activating subject",
-            message: `An error occurred while activating "${subjectToActivate.name}": ${errorData.message}`,
-            color: "red",
           });
         }
       } catch (error) {
@@ -239,7 +223,7 @@ function TableSubject() {
   };
 
   const handleCreateClick = () => {
-    setCurrentSubject({ code: "", name: "", semester: 1, isActivate: true });
+    setCurrentSubject({ code: "", name: "", semester: 1, active: true });
     openCreateSubjectModal();
   };
 
@@ -298,11 +282,11 @@ function TableSubject() {
       <td className="font-medium">{subject.semester}</td>
       <td className="font-medium">
         <span
-          style={{
-            color: subject.isActivate ? "green" : "pink",
-          }}
+          className={`inline-block py-1 px-2 text-white rounded-full ${
+            subject.active ? "bg-green-500" : "bg-red-500"
+          }`}
         >
-          {subject.isActivate ? "Activate" : "Disabled"}
+          {subject.active ? "Active" : "Disabled"}
         </span>
       </td>
       <td style={{ textAlign: "center" }}>
@@ -317,7 +301,7 @@ function TableSubject() {
               Edit Subject
             </Menu.Item>
 
-            {subject.isActivate ? (
+            {subject.active ? (
               <Menu.Item onClick={() => handleDisableClick(subject)}>
                 Disable Subject
               </Menu.Item>
@@ -340,17 +324,18 @@ function TableSubject() {
             <div className="flex flex-wrap items-center mb-6">
               <h3 className="text-xl font-bold">SUBJECT MANAGEMENT</h3>
               <div className="ml-auto flex items-center">
-                <TextInput
-                  placeholder="Search Subject"
-                  value={search}
-                  onChange={(e) => setSearch(e.currentTarget.value)}
-                  style={{ marginRight: "1rem" }}
-                />
+                <span>Semester: </span>
                 <Select
                   placeholder="Filter by semester"
                   data={["All", "1", "2", "3", "4", "5", "6", "7", "8", "9"]}
                   value={semesterFilter}
                   onChange={(value) => setSemesterFilter(value)}
+                  style={{ marginRight: "1rem" }}
+                />
+                <TextInput
+                  placeholder="Search Subject"
+                  value={search}
+                  onChange={(e) => setSearch(e.currentTarget.value)}
                   style={{ marginRight: "1rem" }}
                 />
                 <Button
@@ -435,7 +420,7 @@ function TableSubject() {
                 code: "",
                 name: "",
                 semester: 1,
-                isActivate: true,
+                active: true,
               }
             }
             onInputChange={handleInputChange}
@@ -449,7 +434,7 @@ function TableSubject() {
                 code: "",
                 name: "",
                 semester: 1,
-                isActivate: true,
+                active: true,
               }
             }
             onInputChange={handleInputChange}
