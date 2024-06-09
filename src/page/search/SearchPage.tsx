@@ -109,7 +109,6 @@ const SearchDrawer = (props: {
                     }
                     description="Pick a subject code"
                     key={form.key('subjectCode')}
-                    {...form.getInputProps('subjectCode')}
                 />
 
                 <TextInput
@@ -218,7 +217,7 @@ export interface SearchRequest {
     updateBoth: boolean | null;
 }
 enum SearchOrder {
-    USERNAME_ASC, USERNAME_DESC, TITLE_ASC, TITLE_DESC, DATE_ASC, DATE_DESC
+    TITLE_ASC, TITLE_DESC, DATE_ASC, DATE_DESC
 }
 export async function advancedSearch(searchRequest: SearchRequest) {
     try {

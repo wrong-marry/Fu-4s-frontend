@@ -43,6 +43,13 @@ export const Comment = (props: CommentData) => {
     const [contentStack, setContentStack] = useState(
         defaultContentStack(content)
     );
+
+    function getChildren() {
+        const response = axios.get(`http://localhost:8080/api/v1/comments/children/comment-${id}`);
+        response.then(data => {
+            setChildren([...data.data] as CommentData[]);
+        }).catch(error => console.log(error))
+    }
     function defaultContentStack(newContent: string) {
         return (<Stack gap={3}>
             <Card p={"sm"} withBorder radius={20} maw={"800"}>
@@ -63,7 +70,10 @@ export const Comment = (props: CommentData) => {
             </Card>
 
             <Group mt={0} mx={"md"} lh={"xs"}>
-                <Anchor fz={"sm"} mx={"sm"} mt={0} onClick={openChildren}
+                <Anchor fz={"sm"} mx={"sm"} mt={0} onClick={() => {
+                    getChildren();
+                    openChildren();
+                }}
                 >{childrenNumber ? "View replies..." : "Reply"}</Anchor>
                 {isMine ?
                     <>
@@ -190,7 +200,11 @@ export const Comment = (props: CommentData) => {
                 </Card>
                 <Group mt={0} mx={"md"} lh={"xs"}>
                     <Anchor fz={"sm"} mx={"sm"} mt={0}
-                            onClick={openChildren}>{childrenNumber ? "View replies..." : "Reply"}</Anchor>
+                            onClick={() => {
+                                getChildren();
+                                openChildren();
+                            }
+                            }>{childrenNumber ? "View replies..." : "Reply"}</Anchor>
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={open}>Delete</Anchor>
                 </Group>
@@ -198,12 +212,6 @@ export const Comment = (props: CommentData) => {
         );
     }
 
-    function getChildren() {
-        const response = axios.get(`http://localhost:8080/api/v1/comments/children/comment-${id}`);
-        response.then(data => {
-            setChildren([...data.data] as CommentData[]);
-        }).catch(error => console.log(error))
-    }
     return (
         <Container w={"100%"}>
             <Modal opened={opened} onClose={close} title="Confirm deletion" centered>
@@ -244,7 +252,7 @@ export const Comment = (props: CommentData) => {
                         onSubmit={replyForm.onSubmit(async (values) => {
                             console.log(values);
                             try {
-                                const response: AxiosResponse<string> = await axios.post(
+                                const response: AxiosResponse<{ message: string, id: number }> = await axios.post(
                                     `http://localhost:8080/api/v1/comments/upload/comment-${id}`,
                                     values,
                                     {
@@ -261,7 +269,7 @@ export const Comment = (props: CommentData) => {
                                         username: "Me",
                                         account: localStorage.getItem("username") || "",
                                         isMine: true,
-                                        id: -1,
+                                        id: response.data?.id ?? -1,
                                         childrenNumber: 0
                                     }]) || []);
                                     replyForm.reset();

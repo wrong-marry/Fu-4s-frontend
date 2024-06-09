@@ -117,7 +117,7 @@ const PostPage: React.FC = () => {
           onSubmit={form.onSubmit(async (values) => {
             console.log(values);
             try {
-              const response: AxiosResponse<string> = await axios.post(
+              const response: AxiosResponse<{ message: string, id: number }> = await axios.post(
                 `http://localhost:8080/api/v1/comments/upload/post-${id}`,
                 values,
                 {
@@ -134,7 +134,7 @@ const PostPage: React.FC = () => {
                   username: "Me",
                   account: localStorage.getItem("username") || "",
                   isMine: true,
-                  id: -1,
+                  id: response.data?.id ?? -1,
                   childrenNumber: 0
                 }]) || []);
                 form.reset();
