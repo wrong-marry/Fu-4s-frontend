@@ -215,7 +215,7 @@ export function AddLearningMaterialForm() {
                     <Grid>
                         <Grid.Col span={2} offset={8}>
                             <Center>
-                                <Button variant="default" size="md" onClick={() => navigate("/home")} ml="lg">
+                                <Button color="black" variant="outline" onClick={() => navigate("/home")} ml="lg">
                                     Back
                                 </Button>
                             </Center>
@@ -223,7 +223,7 @@ export function AddLearningMaterialForm() {
 
                         <Grid.Col span={2}>
                             <Center>
-                                <Button onClick={handleAdd} color="blue" size="md">
+                                <Button onClick={handleAdd} color="blue">
                                     Create
                                 </Button>
                             </Center>

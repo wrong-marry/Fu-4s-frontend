@@ -296,9 +296,18 @@ export function CreateMockTestForm() {
 
                             <Space h="xs" />
 
-                            <Button onClick={handleAdd}  mt="xl" >
-                                Add Mock Test
-                            </Button>
+                            <Grid>
+                                <Grid.Col span={6}>
+                                    <Button color="black" variant="outline" onClick={() => navigate("/home")} mt="md">
+                                        Back
+                                    </Button>
+                                </Grid.Col>
+                                <Grid.Col span={6}>
+                                    <Button onClick={handleAdd}  mt="md" >
+                                        Create
+                                    </Button>
+                                </Grid.Col>
+                            </Grid>
 
                             <Text size="xs" color="red">{errorAll}</Text>
                         </Grid.Col>

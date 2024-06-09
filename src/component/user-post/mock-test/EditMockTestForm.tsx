@@ -370,16 +370,22 @@ export function EditMockTestForm() {
                             <Space h="xs"/>
 
                             <Grid>
-                                <Grid.Col span={6}>
-                                    <Button onClick={() => setRemovePopup(true)} mt="sm" color="red">
+                                <Grid.Col span={4}>
+                                    <Button color="black" variant="outline" onClick={() => navigate("/home")} mt="md">
+                                        Back
+                                    </Button>
+                                </Grid.Col>
+
+                                <Grid.Col span={4}>
+                                    <Button onClick={() => setRemovePopup(true)} mt="md" color="red">
                                         Remove
                                     </Button>
                                 </Grid.Col>
 
-                                <Grid.Col span={6}>
+                                <Grid.Col span={4}>
                                     <Center>
-                                        <Button onClick={handleEdit} mt="sm">
-                                            Edit Mock Test
+                                        <Button onClick={handleEdit} mt="md">
+                                            Edit
                                         </Button>
                                     </Center>
                                 </Grid.Col>
