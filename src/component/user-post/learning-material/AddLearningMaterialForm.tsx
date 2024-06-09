@@ -33,6 +33,7 @@ export function AddLearningMaterialForm() {
     const [subjectList, setSubjectList] = useState<Subject[]>([]);
 
     const [error, setError] = useState<string>("");
+    const [errorAll, setErrorAll] = useState<string>("");
 
     useEffect(() =>{
         const fetchSubject = async () => {
@@ -67,6 +68,11 @@ export function AddLearningMaterialForm() {
     };
 
     const handleAdd = () => {
+        if(files.length == 0 || title == "" || content == "" || subject == null) {
+            setErrorAll("All fields required!");
+            return;
+        }
+
         const formData = new FormData();
         files.forEach((file: File) => {
             formData.append("files", file);
@@ -227,8 +233,12 @@ export function AddLearningMaterialForm() {
                                     Create
                                 </Button>
                             </Center>
+                            <Text size="xs" color="red">{errorAll}</Text>
                         </Grid.Col>
+
                     </Grid>
+
+
                 </form>
             </Paper>
         </Container>

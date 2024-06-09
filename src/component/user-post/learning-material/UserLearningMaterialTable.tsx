@@ -14,7 +14,7 @@ export function UserLearningMaterialTable() {
     const username = localStorage.getItem("username");
     const pageSize = 5;
 
-    const [activePage, setPage] = useState(3);
+    const [activePage, setPage] = useState(1);
     const [numPage, setNumPage] = useState(1);
     const [posts, setPost] = useState<Post[]>([]);
 
