@@ -7,13 +7,12 @@ interface Post {
     status: string;
     subjectCode: string;
     postTime: string;
-    attempts: number;
 }
 
-export function UserMockTestTable() {
+export function UserLearningMaterialTable() {
 
     const username = localStorage.getItem("username");
-    const pageSize = 2;
+    const pageSize = 5;
 
     const [activePage, setPage] = useState(1);
     const [numPage, setNumPage] = useState(1);
@@ -24,7 +23,7 @@ export function UserMockTestTable() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/questionSet/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
+                    `http://localhost:8080/api/v1/learningMaterial/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
                 );
                 const data = await response.json();
                 setPost(data)
@@ -37,7 +36,7 @@ export function UserMockTestTable() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/questionSet/getNum?username=${username}`
+                    `http://localhost:8080/api/v1/learningMaterial/getNum?username=${username}`
                 );
                 const data = await response.json();
                 setNumPage((data + 1) / pageSize)
@@ -50,11 +49,12 @@ export function UserMockTestTable() {
         fetchPost();
     }, [activePage])
 
+    let num = pageSize * activePage - pageSize;
     const rows =
         posts.map(post => (
             <tr className="text-xs bg-gray-50" key={post.id}>
                 <td className="flex items-center py-5 px-6 font-medium">
-                    <p>{post.id}</p>
+                    <p>{++num}</p>
                 </td>
 
                 <td className="font-medium">
@@ -83,13 +83,9 @@ export function UserMockTestTable() {
 
                 <td>{post.subjectCode}</td>
 
-                <td>
-                    {post.attempts}
-                </td>
-
                 <td style={{textAlign: "center"}}>
                     <span className="inline-block py-1 px-2 text-white bg-gray-600 rounded-full">
-                            <a href={"/edit-mock-test/" + post.id}>Edit</a>
+                            <a href={"/edit-learning-material/" + post.id}>Edit</a>
                     </span>
                 </td>
             </tr>
@@ -112,13 +108,13 @@ export function UserMockTestTable() {
                                 All
                             </a>
                             <a
-                                className="inline-block px-4 pb-2 text-sm font-medium text-indigo-500 border-b-2 border-indigo-500"
+                                className="inline-block px-4 pb-2 text-sm font-medium text-gray-500 border-b-2 border-transparent"
                                 href="/user/post/mock-test"
                             >
                                 Mock Tests
                             </a>
                             <a
-                                className="inline-block px-4 pb-2 text-sm font-medium text-gray-500 border-b-2 border-transparent"
+                                className="inline-block px-4 pb-2 text-sm font-medium text-indigo-500 border-b-2 border-indigo-500"
                                 href="/user/post/learning-material"
                             >
                                 Learning Materials
@@ -155,11 +151,7 @@ export function UserMockTestTable() {
                                         <span>Subject</span>
                                     </a>
                                 </th>
-                                <th className="py-4 font-medium">
-                                    <a className="flex items-center" href="#">
-                                        <span>Attempts</span>
-                                    </a>
-                                </th>
+
                                 <th className="py-4 font-medium" style={{width: "5px"}}>
                                     <a className="flex items-center" href="#">
                                         <span>Options</span>
