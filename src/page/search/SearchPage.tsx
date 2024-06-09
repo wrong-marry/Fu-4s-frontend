@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 import axios from "axios";
 import React, {useEffect, useState} from "react";
-import {Container, Flex, TextInput, Pagination, Center} from '@mantine/core';
+import {Container, Flex, TextInput, Pagination, Center, Box} from '@mantine/core';
 import {Avatar, Badge, Card, Group, Stack, Text} from "@mantine/core";
 import {Carousel} from "@mantine/carousel";
 import classes from "../../component/home/Carousel.module.css";
@@ -173,7 +173,7 @@ const SearchDrawer = (props: {
                         ] },
                 ]}
             />
-            <Text ta={"center"}>
+            <Box ta={"center"}>
                 <Text  opacity={0.6} fz={12} >
                     Did not find the post?
                 </Text>
@@ -182,7 +182,7 @@ const SearchDrawer = (props: {
                         Advanced search
                     </Button>
                 </div>
-            </Text>
+            </Box>
         </Flex>
     </>) as React.ReactElement;
 }

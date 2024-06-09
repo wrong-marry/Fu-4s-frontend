@@ -44,7 +44,6 @@ export const SEARCH_LOAD_SIZE = 4;
 const fetchSearchResultData = async (keywords: string) => {
   try {
     const res = await axios.get(`http://localhost:8080/api/v1/search?keyword=${keywords}&pageSize=`+SEARCH_LOAD_SIZE);
-
     return res.data;
   } catch (error) {
     console.error(error)
@@ -75,8 +74,11 @@ const GeneralSearchBar = () => {
     setResData(limitedData);
   };
 
-  const handleInputChange = () => {
-    if (form.values.keywords.length === 0) {
+  const handleInputChange = (e: React.KeyboardEvent) => {
+    if (e && e.key == "Enter") {
+      search(form.values.keywords);
+      combobox.closeDropdown();
+    } else if (form.values.keywords.length === 0) {
       combobox.closeDropdown();
     } else {
       fetchData();
@@ -150,7 +152,7 @@ const GeneralSearchBar = () => {
                 <IconArrowRight style={{ width: rem(18), height: rem(18) }} stroke={1.5} />
               </ActionIcon>
             }
-            onKeyUp={() => handleInputChange()}
+            onKeyUp={(key) => handleInputChange(key)}
             {...form.getInputProps("keywords")}
           />
         </Combobox.Target>
