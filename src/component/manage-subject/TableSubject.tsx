@@ -252,36 +252,33 @@ function TableSubject() {
       }
     }
   };
-
   const handleSaveClick = async () => {
     if (currentSubject) {
       try {
         const token = localStorage.getItem("token");
-        const method = currentSubject.code ? "PUT" : "POST";
-        const url = currentSubject.code
-          ? `http://localhost:8080/api/v1/admin/updateSubject`
-          : `http://localhost:8080/api/v1/admin/createSubject`;
+        const response = await fetch(
+          `http://localhost:8080/api/v1/admin/createSubject`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(currentSubject),
+          }
+        );
 
-        await fetch(url, {
-          method: method,
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(currentSubject),
-        });
+        const responseMessage = await response.text();
 
-        if (method === "POST") {
-          setSubjects([...subjects, currentSubject]);
-        } else {
-          setSubjects(
-            subjects.map((subject) =>
-              subject.code === currentSubject.code ? currentSubject : subject
-            )
-          );
+        if (response.ok) {
+          setSubjects((prevSubjects) => [...prevSubjects, currentSubject]);
+          notifications.show({
+            title: "Subject created",
+            message: responseMessage,
+            color: "green",
+          });
         }
 
-        closeEditSubjectModal();
         closeCreateSubjectModal();
       } catch (error) {
         console.error("Error saving subject:", error);
