@@ -1,13 +1,13 @@
 import {
-    Accordion, ActionIcon,
+    ActionIcon,
     Anchor,
     Avatar,
     Button,
     Card,
-    CardSection,
+    CardSection, Collapse,
     Container,
     Flex,
-    Group, Modal,
+    Group, Modal, rem,
     Space,
     Stack,
     Text,
@@ -21,8 +21,10 @@ import React, {useEffect, useState} from "react";
 import {useForm} from "@mantine/form";
 import {useDisclosure} from "@mantine/hooks";
 import {CommentButtonSwitch} from "../button-switch/CommentButtonSwitch.tsx";
+import {IconMessageReply} from "@tabler/icons-react";
 
 export const Comment = (props: CommentData) => {
+    const [childrenOpened, {open: openChildren, close: closeChildren}] = useDisclosure(false);
     const [opened, {open, close}] = useDisclosure(false);
     const username = props.username;
     const [content, setContent] = useState(props.content);
@@ -61,7 +63,8 @@ export const Comment = (props: CommentData) => {
             </Card>
 
             <Group mt={0} mx={"md"} lh={"xs"}>
-                <Anchor fz={"sm"} mx={"sm"} mt={0}>{childrenNumber ? "View replies..." : "Reply"}</Anchor>
+                <Anchor fz={"sm"} mx={"sm"} mt={0} onClick={openChildren}
+                >{childrenNumber ? "View replies..." : "Reply"}</Anchor>
                 {isMine ?
                     <>
                         <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
@@ -126,6 +129,16 @@ export const Comment = (props: CommentData) => {
             content: (value: string) => (/^\S/.test(value) ? null : 'Invalid content'),
         },
     });
+    const replyForm = useForm({
+        mode: 'uncontrolled',
+        initialValues: {
+            username: localStorage.getItem("username"),
+            'content': "@" + props.account,
+        },
+        validate: {
+            content: (value: string) => (/^\S/.test(value) ? null : 'Invalid content'),
+        },
+    });
 
     function updateComment() {
         setContentStack(
@@ -176,7 +189,8 @@ export const Comment = (props: CommentData) => {
                     </CardSection>
                 </Card>
                 <Group mt={0} mx={"md"} lh={"xs"}>
-                    <Anchor fz={"sm"} mx={"sm"} mt={0}>{childrenNumber ? "View replies..." : "Reply"}</Anchor>
+                    <Anchor fz={"sm"} mx={"sm"} mt={0}
+                            onClick={openChildren}>{childrenNumber ? "View replies..." : "Reply"}</Anchor>
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={open}>Delete</Anchor>
                 </Group>
@@ -209,21 +223,71 @@ export const Comment = (props: CommentData) => {
                 <Avatar variant="filled" radius="xl" size="md" mt={"sm"}/>
                 {contentStack}
                 {childrenNumber > 0 ?
-                    <ActionIcon><CommentButtonSwitch checked={(children?.length ?? 0) > 0}
+                    <ActionIcon><CommentButtonSwitch checked={childrenOpened}
                                                      onChange={(checked) => {
                                                          if (checked) {
                                                              getChildren();
-                                                         } else setChildren([]);
+                                                             openChildren();
+                                                         } else closeChildren();
                                                      }}
                                                      size={20}/></ActionIcon> : <></>}
             </Group>
             <Container ms={"md"}>
-                {children?.map((item) => (
-                    <Comment id={item.id} date={item.date} account={item.account}
-                             username={item.username} content={item.content}
-                             status={item.status} isMine={item.account == localStorage.getItem("username")}
-                             childrenNumber={item.childrenNumber} key={item.id}></Comment>
-                ))}
+                <Collapse in={childrenOpened}>
+                    {children?.map((item) => (
+                        <Comment id={item.id} date={item.date} account={item.account}
+                                 username={item.username} content={item.content}
+                                 status={item.status} isMine={item.account == localStorage.getItem("username")}
+                                 childrenNumber={item.childrenNumber} key={item.id}></Comment>
+                    ))}
+                    <form
+                        onSubmit={replyForm.onSubmit(async (values) => {
+                            console.log(values);
+                            try {
+                                const response: AxiosResponse<string> = await axios.post(
+                                    `http://localhost:8080/api/v1/comments/upload/comment-${id}`,
+                                    values,
+                                    {
+                                        headers: {
+                                            Authorization: "Bearer " + localStorage.getItem("token"),
+                                        },
+                                    }
+                                );
+                                if (response.status == 200) {
+                                    setChildren(comments => comments?.concat([{
+                                        status: "ACTIVE",
+                                        content: values.content,
+                                        date: new Date(),
+                                        username: "Me",
+                                        account: localStorage.getItem("username") || "",
+                                        isMine: true,
+                                        id: -1,
+                                        childrenNumber: 0
+                                    }]) || []);
+                                    replyForm.reset();
+                                }
+                            } catch (error) {
+                                console.error("Error posting comment:", error);
+                            }
+                        })}
+                    >
+                        <Textarea
+                            radius={"xl"}
+                            size={"md"}
+                            my={"md"}
+                            placeholder={"Reply"}
+                            autosize
+                            maxRows={4}
+                            key={replyForm.key("content")}
+                            {...replyForm.getInputProps("content")}
+                            rightSection={
+                                <ActionIcon size={32} radius="xl" variant="filled" type={"submit"}>
+                                    <IconMessageReply style={{width: rem(18), height: rem(18)}} stroke={1.5}/>
+                                </ActionIcon>
+                            }
+                        ></Textarea>
+                    </form>
+                </Collapse>
             </Container>
         </Container>)
 }
