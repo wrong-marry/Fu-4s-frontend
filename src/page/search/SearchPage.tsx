@@ -19,6 +19,7 @@ import { Drawer, Button } from '@mantine/core';
 import {DateInput} from "@mantine/dates";
 import {useForm} from "@mantine/form";
 import dayjs from 'dayjs';
+import {Subject} from '../../component/manage-subject/TableSubject';
 
 const SearchDrawer = (props: {
     searchRequest: SearchRequest,
@@ -42,6 +43,33 @@ const SearchDrawer = (props: {
         validate: {
         },
     });
+    const [subjects, setSubjects] = useState<Subject[]>([]);
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await fetch(
+                    `http://localhost:8080/api/v1/subject/getAll`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data: Subject[] = await response.json();
+                setSubjects(data);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        fetchData();
+    }, []);
     return (<>
         <Drawer
             size={"xs"}
@@ -75,12 +103,9 @@ const SearchDrawer = (props: {
                     mt="md"
                     label="Subject"
                     data={
-                        [
-                            {value: 'SWP391' as string, label:'SWP391'},
-                            {value: 'MAD101' as string, label:'MAD101'},
-                            {value: 'PRJ301' as string, label:'PRJ301'},
-                            {value: 'DBI202' as string, label:'DBI202'},
-                        ]
+                        subjects.map(subject => {
+                            return {value: subject.code, label: subject.code};
+                        })
                     }
                     description="Pick a subject code"
                     key={form.key('subjectCode')}
@@ -159,7 +184,7 @@ const SearchDrawer = (props: {
                 </div>
             </Text>
         </Flex>
-    </>)
+    </>) as React.ReactElement;
 }
 
 export interface Post {

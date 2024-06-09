@@ -14,7 +14,7 @@ import CreateSubjectModal from "./CreateSubjectModal";
 import DeleteSubjectModal from "./DeleteSubjectModal";
 import { notifications } from "@mantine/notifications";
 
-interface Subject {
+export interface Subject {
   code: string;
   name: string;
   semester: number;
