@@ -8,13 +8,14 @@ import {
     Space,
     TextInput, ThemeIcon,
     Title,
-    Text, Select
+    Text, Select, Modal
 } from "@mantine/core";
 import classes from "../../user-profile/update-profile/AuthenticationTitle.module.css";
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import {useDisclosure} from "@mantine/hooks";
 
 interface Subject {
     code: string;
@@ -22,15 +23,27 @@ interface Subject {
     semester: number;
 }
 
+interface Material {
+    title: string,
+    subjectCode: string,
+    content: string,
+    filenames: string[]
+}
+
 export function EditLearningMaterialForm() {
     const navigate = useNavigate();
     const maxSize = 2 * 1024 * 1024 * 1024;
 
+    const {id} = useParams<{ id: string }>();
+    const [material, setMaterial] = useState<Material>(null);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [files, setFiles] = useState<File[]>([]);
     const [subject, setSubject] = useState<string | null>();
     const [subjectList, setSubjectList] = useState<Subject[]>([]);
+
+    const [opened, {open, close}] = useDisclosure(false);
+    const [removePopup, setRemovePopup] = useState(false);
 
     const [error, setError] = useState<string>("");
 
@@ -50,15 +63,19 @@ export function EditLearningMaterialForm() {
         const fetchMaterial = async () => {
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/learningMaterial/getAll`
+                    `http://localhost:8080/api/v1/learningMaterial/getById?id=${id}`
                 );
                 const data = await response.json();
-                setSubjectList(data);
+                setMaterial(data);
+                setSubject(data.subjectCode);
+                setTitle(data.title);
+                setContent(data.content);
             } catch (error) {
                 console.error("Error fetching post:", error);
             }
         };
-
+        //console.log(22)
+        fetchMaterial();
         fetchSubject();
     }, [])
 
@@ -78,22 +95,11 @@ export function EditLearningMaterialForm() {
         toolbar: toolbarOptions,
     };
 
-    const handleAdd = () => {
-        const formData = new FormData();
-        files.forEach((file: File) => {
-            formData.append("files", file);
-        });
+    const handleEdit = () => {
 
-        fetch(`http://localhost:8080/api/v1/learningMaterial/addNew?title=${title}&content=${content}&username=${localStorage.getItem("username")}&subjectCode=${subject}`,
-            {
-                method: "POST",
-                body: formData
-            }).then(() => {
-            navigate('/user/post');
-        })
     }
 
-    const handleDownloadFile = (file: File) => {
+    const handleDownloadNewFile = (file: File) => {
         const url = window.URL.createObjectURL(
             new Blob([file]),
         );
@@ -102,6 +108,27 @@ export function EditLearningMaterialForm() {
         link.setAttribute(
             'download',
             file.name,
+        );
+
+        document.body.appendChild(link);
+        link.click();
+
+        // @ts-ignore
+        link.parentNode.removeChild(link);
+    }
+
+    const handleDownloadOldFile = async (filename: string) => {
+        const response = await fetch(`http://localhost:8080/api/v1/learningMaterial/getFile?id=${id}&filename=${filename}`);
+        const file = await response.blob();
+
+        const url = window.URL.createObjectURL(
+            new Blob([file]),
+        );
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute(
+            'download',
+            filename,
         );
 
         document.body.appendChild(link);
@@ -130,6 +157,14 @@ export function EditLearningMaterialForm() {
         setFiles(fs);
     }
 
+    const handleRemove = () => {
+        fetch(`http://localhost:8080/api/v1/learningMaterial/remove?id=${id}&username=${localStorage.getItem('username')}`, {
+            method: "DELETE"
+        }).then(() => {
+            navigate(`/user/post`);
+        })
+    }
+
     const dataSubject = subjectList.map((subject) => (
             {
                 value: subject.code,
@@ -138,13 +173,45 @@ export function EditLearningMaterialForm() {
         )
     );
 
-    const listData = files.length == 0 ? <ListItem><i>no files yet</i></ListItem> : files.map((file, index) => {
+    if(material == null) return;
+
+    let listData;
+    if(files.length > 0) listData = files.length == 0 ? <ListItem><i>no files yet</i></ListItem> : files.map((file, index) => {
+                                        return <ListItem key={index} mb="xs">
+                                            <Text onClick={() => handleDownloadNewFile(file)} td="underline" color="blue" type="button" component="button">{file.name}</Text>
+                                        </ListItem>
+
+    })
+    else listData = material.filenames.length == 0 ? <ListItem><i>no files yet</i></ListItem> : material.filenames.map((file, index) => {
         return <ListItem key={index} mb="xs">
-            <Text onClick={() => handleDownloadFile(file)} td="underline" color="blue" type="button" component="button">{file.name}</Text>
+            <Text onClick={() => handleDownloadOldFile(file)} td="underline" color="blue" type="button" component="button">{file}</Text>
         </ListItem>
 
     })
     return <>
+        <Modal opened={removePopup} onClose={() => setRemovePopup(false)} title="Are you sure">
+            <Text size="md">
+                Are you sure you want to remove this question? The action cannot be undone
+            </Text>
+            <Grid >
+                <Grid.Col span={3} offset={5}>
+                    <Center>
+                        <Button variant="default" onClick={() => setRemovePopup(false)} mt="sm">
+                            Cancel
+                        </Button>
+                    </Center>
+                </Grid.Col>
+
+                <Grid.Col span={4}>
+                    <Center>
+                        <Button onClick={handleRemove} mt="sm" color="red">
+                            Remove
+                        </Button>
+                    </Center>
+                </Grid.Col>
+            </Grid>
+        </Modal>
+
         <Container size={900} my={40}>
             <Title ta="center" className={classes.title} order={2}>
                 Edit Learning Material
@@ -152,6 +219,7 @@ export function EditLearningMaterialForm() {
             <Paper withBorder shadow="md" p={30} mt={30} radius="md">
                 <form>
                     <TextInput
+                        value={title}
                         label="Title"
                         description="Your material title"
                         placeholder="Enter title"
@@ -174,6 +242,7 @@ export function EditLearningMaterialForm() {
 
                         searchable
                         required
+                        disabled
                         radius="md"
                     />
 
@@ -187,7 +256,7 @@ export function EditLearningMaterialForm() {
                     <p className="m_fe47ce59 mantine-InputWrapper-description mantine-TextInput-description"
                        id="mantine-sjauq2siu-description">Your material content</p>
                     <Space h="xs"/>
-                    <ReactQuill modules={module} theme="snow" onChange={setContent} value={content} style={{height: "60vh"}}/>
+                    <ReactQuill defaultValue={content} modules={module} theme="snow" onChange={setContent} value={content} style={{height: "60vh"}}/>
 
                     <Space h="lg"/>
                     <Space h="md"/>
@@ -225,9 +294,9 @@ export function EditLearningMaterialForm() {
                     <Space h="lg"/>
 
                     <Grid>
-                        <Grid.Col span={2} offset={8}>
+                        <Grid.Col span={2} offset={6}>
                             <Center>
-                                <Button variant="default" size="md" onClick={() => navigate("/home")} ml="lg">
+                                <Button variant="outline" color="black" onClick={() => navigate("/home")} ml="lg">
                                     Back
                                 </Button>
                             </Center>
@@ -235,8 +304,16 @@ export function EditLearningMaterialForm() {
 
                         <Grid.Col span={2}>
                             <Center>
-                                <Button onClick={handleAdd} color="blue" size="md">
-                                    Create
+                                <Button color="red" onClick={() => setRemovePopup(true)} ml="lg">
+                                    Remove
+                                </Button>
+                            </Center>
+                        </Grid.Col>
+
+                        <Grid.Col span={2}>
+                            <Center>
+                                <Button onClick={handleEdit} color="blue">
+                                    Edit
                                 </Button>
                             </Center>
                         </Grid.Col>
