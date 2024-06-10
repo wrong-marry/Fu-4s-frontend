@@ -71,8 +71,10 @@ export const Comment = (props: CommentData) => {
 
             <Group mt={0} mx={"md"} lh={"xs"}>
                 <Anchor fz={"sm"} mx={"sm"} mt={0} onClick={() => {
-                    getChildren();
-                    openChildren();
+                    if (!childrenOpened) {
+                        getChildren();
+                        openChildren();
+                    } else closeChildren();
                 }}
                 >{childrenNumber ? "View replies..." : "Reply"}</Anchor>
                 {isMine ?
@@ -125,6 +127,7 @@ export const Comment = (props: CommentData) => {
                     </Card>
                 );
                 console.log(response);
+                closeChildren();
             }
         } catch (e) {
             console.log(e)
@@ -201,8 +204,10 @@ export const Comment = (props: CommentData) => {
                 <Group mt={0} mx={"md"} lh={"xs"}>
                     <Anchor fz={"sm"} mx={"sm"} mt={0}
                             onClick={() => {
-                                getChildren();
-                                openChildren();
+                                if (!childrenOpened) {
+                                    getChildren();
+                                    openChildren();
+                                } else closeChildren();
                             }
                             }>{childrenNumber ? "View replies..." : "Reply"}</Anchor>
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
@@ -231,7 +236,7 @@ export const Comment = (props: CommentData) => {
                 <Avatar variant="filled" radius="xl" size="md" mt={"sm"}/>
                 {contentStack}
                 {childrenNumber > 0 ?
-                    <ActionIcon><CommentButtonSwitch checked={childrenOpened}
+                    <ActionIcon color={childrenOpened ? "red" : "teal"}><CommentButtonSwitch checked={childrenOpened}
                                                      onChange={(checked) => {
                                                          if (checked) {
                                                              getChildren();
