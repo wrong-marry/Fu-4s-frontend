@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Grid, Drawer, Burger } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { NavbarNested } from "../../component/staff-post/navbar-nested/navbar-nested";
-import DashboardSection from "../../component/staff-post/show-all-posts";
-import TableUser from "../../component/staff-post/pending-post-list";
+import DashboardSection from "../../component/staff-post/post-manage/show-all-posts.tsx";
+import TablePost from "../../component/staff-post/post-manage/pending-post-list.tsx";
 
 export default function ManagePostForStaff() {
 	// Sử dụng useMediaQuery để xác định kích thước màn hình
@@ -27,7 +27,7 @@ export default function ManagePostForStaff() {
 				</Grid.Col>
 				<Grid.Col span={isSmallScreen ? 12 : isMediumScreen ? 9 : 9}>
 					<DashboardSection />
-					<TableUser />
+					<TablePost />
 				</Grid.Col>
 			</Grid>
 

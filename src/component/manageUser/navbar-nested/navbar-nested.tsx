@@ -1,47 +1,43 @@
-import { Group, Code, ScrollArea, rem } from "@mantine/core";
+import { Code, Group, ScrollArea } from "@mantine/core";
 import {
-	IconNotes,
-	IconCalendarStats,
 	IconGauge,
-	IconPresentationAnalytics,
-	IconFileAnalytics,
-	IconAdjustments,
 	IconLock,
+	IconPresentationAnalytics,
 } from "@tabler/icons-react";
 import { UserButton } from "../user-button/UserButton.tsx";
 import { LinksGroup } from "../navbar-linksgroup/NavbarLinksGroup.tsx";
 import classes from "./NavbarNested.module.css";
+import { useNavigate } from "react-router-dom";
 
 const mockdata = [
-	{ label: "Dashboard", icon: IconGauge },
 	{
-		label: "Market news",
-		icon: IconNotes,
+		label: "Dashboard",
+		icon: IconGauge,
 		initiallyOpened: true,
 		links: [
-			{ label: "Overview", link: "/" },
-			{ label: "Forecasts", link: "/" },
-			{ label: "Outlook", link: "/" },
-			{ label: "Real time", link: "/" },
+			{ label: "Overview", link: "/" }, // cho xem cac hoat dong cua cac trang khac manage va staff
+			{ label: "Calendar", link: "/admin/calendar" },
+			{ label: "Manage Users", link: "/" },
+			{ label: "Manage Subjects", link: "/" },
 		],
 	},
 	{
-		label: "Releases",
-		icon: IconCalendarStats,
+		label: "Manage Staffs",
+		icon: IconGauge,
 		links: [
-			{ label: "Upcoming releases", link: "/" },
-			{ label: "Previous releases", link: "/" },
-			{ label: "Releases schedule", link: "/" },
+			{ label: "Staff Monitoring", link: "/" },
+			{ label: "Pending Posts", link: "/" },
+			{ label: "Pending Comments", link: "/" },
 		],
 	},
 	{ label: "Analytics", icon: IconPresentationAnalytics },
-	{ label: "Contracts", icon: IconFileAnalytics },
-	{ label: "Settings", icon: IconAdjustments },
+
 	{
-		label: "Security",
+		label: "Settings",
 		icon: IconLock,
 		links: [
 			{ label: "Enable 2FA", link: "/" },
+			{ label: "Settings", link: "/" },
 			{ label: "Change password", link: "/" },
 			{ label: "Recovery codes", link: "/" },
 		],
@@ -50,7 +46,7 @@ const mockdata = [
 
 export function NavbarNested() {
 	const links = mockdata.map((item) => (
-		<LinksGroup {...item} key={item.label} />
+		<LinksGroup {...item} key={item.label}  />
 	));
 
 	return (
