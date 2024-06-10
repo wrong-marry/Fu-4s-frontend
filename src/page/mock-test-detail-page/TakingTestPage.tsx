@@ -129,12 +129,17 @@ export default function TakingTestPage() {
     );
   };
 
+  const increaseAttempts = async () => {
+    await axios.put(`http://localhost:8080/api/v1/questionSet/increase-attempts?id=${id}`);
+  }
+
   const handleSubmit = () => {
     setSubmitFormOpened(false);
     setCongratulationOpened(true);
     setReviewing(true);
     scrollTo({ y: 0 });
     saveTestResult();
+    increaseAttempts();
   };
 
   return (
