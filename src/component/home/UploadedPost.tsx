@@ -1,27 +1,19 @@
 import { Carousel } from "@mantine/carousel";
 import { Card, Text, Badge, Group, Stack, Avatar } from "@mantine/core";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import classes from "./Carousel.module.css";
 import { useNavigate } from "react-router-dom";
+import {Post} from "./RecentPost"
+
 function UploadedPost() {
-    interface Post {
-        id: number;
-        title: string;
-        result: number;
-        date: Date;
-        username: string;
-        test: boolean;
-        subjectCode: string;
-        // Add other properties as needed
-    }
 
     const [uploadedPost, setUploadedPost] = useState<Post[]>([]);
     const navigate = useNavigate();
     const username = localStorage.getItem("username");
     useEffect(() => {
         axios
-            .get(`http://localhost:8080/api/v1/getUploadedPost/${username}`)
+            .get(`http://localhost:8080/api/v1/post/getAllByUsername?username=${username}&pageSize=6&pageNum=1`)
             .then((res) => {
                 const sortedList =
                     res && res.data
@@ -44,28 +36,16 @@ function UploadedPost() {
             });
     }, []);
 
-    const handleClickUpdateTime = async (testId: any) => {
-        await axios.put(
-            `http://localhost:8080/api/v1/test/update-time-test/${testId}`
-        );
-        alert("Update successful!");
-    };
-
-    const handleClickIncreaseView = async (testId: any) => {
-        await axios.put(
-            `http://localhost:8080/api/v1/test/increase-view?test-id=${testId}`
-        );
-    };
     return (
         <>
             {uploadedPost.length === 0 ? (
                 <Text c={"dimmed"}>No completed tests available :(</Text>
             ) : (
                 <Carousel
-                    slideSize={"33.333333%"}
+                    slideSize={"25%"}
                     height={"150px"}
                     align={"start"}
-                    slideGap="lg"
+                    slideGap="md"
                     controlsOffset="xs"
                     controlSize={30}
                     dragFree
@@ -74,6 +54,8 @@ function UploadedPost() {
                     {uploadedPost?.map((test, index) => (
                         <Carousel.Slide key={index}>
                             <Card
+                                miw={"300px"}
+                                maw={"300px"}
                                 shadow="sm"
                                 radius="md"
                                 padding={"lg"}
@@ -83,21 +65,48 @@ function UploadedPost() {
                             >
                                 <Stack
                                     onClick={() => {
-                                        handleClickUpdateTime(test.id);
-                                        handleClickIncreaseView(test.id);
-                                        navigate(`/test/set/${test.id}`);
+                                        navigate(`/post/${test.id}`);
                                     }}
                                     className="cursor-pointer justify-between h-full"
                                 >
                                     <Stack gap={2}>
-                                        <Text fw={500}>{test.title}</Text>
-                                        <Badge color="indigo">
-                                            Unknown number of Questions
-                                        </Badge>
+                                        <Text fw={360} truncate="end">{test.title}</Text>
+                                        <Text fw={200} fz={12}>{test.postTime.toString().substring(0, 10)}</Text>
+                                        {test.test ? (
+                                            <Badge color="indigo">Mock Test</Badge>
+                                        ) : (
+                                            <Badge color="pink">Learning Material</Badge>
+                                        )}
                                     </Stack>
-                                    <Group gap={"xs"}>
-                                        <Avatar variant="filled" radius="xl" size="sm" />
-                                        <Text size="sm">{test.username}</Text>
+                                    <Group align="stretch" gap="sm" style={{marginBottom: '10px'}}>
+                                        <Avatar
+                                            variant="filled"
+                                            radius="xl"
+                                            size="sm"
+                                            style={{
+                                                height: '110%',
+                                                borderRadius: '50%',
+                                                objectFit: 'cover',
+                                                width: '10%'
+                                            }}
+                                        />
+                                        <Text size="sm">Me</Text>
+                                        <Stack gap={2}>
+                                            <Badge
+                                                color="blue"
+                                                style={{
+                                                    display: 'inline-block',
+                                                    padding: '1px 8px',
+                                                    borderRadius: '999px',
+                                                    fontSize: '12px',
+                                                    fontWeight: '500',
+                                                    textTransform: 'uppercase',
+                                                    width: '100%'
+                                                }}
+                                            >
+                                                {test.subjectCode}
+                                            </Badge>
+                                        </Stack>
                                     </Group>
                                 </Stack>
                             </Card>
@@ -106,7 +115,7 @@ function UploadedPost() {
                 </Carousel>
             )}
         </>
-    );
+    ) as React.ReactElement;
 }
 
 export default UploadedPost;

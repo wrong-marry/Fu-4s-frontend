@@ -1,24 +1,23 @@
 import { Carousel } from "@mantine/carousel";
 import { Card, Text, Badge, Group, Stack, Avatar } from "@mantine/core";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 
-function RecentPost() {
-    interface Post {
-        id: number;
-        title: string;
-        result: number;
-        postTime: Date;
-        username: string;
-        test: boolean;
-        subjectCode: string;
-        // Add other properties as needed
-    }
 
+export interface Post {
+    id: number;
+    title: string;
+    result: number;
+    postTime: Date;
+    username: string;
+    test: boolean;
+    subjectCode: string;
+    // Add other properties as needed
+}
+function RecentPost() {
     const [recentPost, setRecentPost] = useState<Post[]>([]);
     const navigate = useNavigate();
-    const username = localStorage.getItem("username");
 
     useEffect(() => {
         axios
@@ -123,7 +122,7 @@ function RecentPost() {
                 </Carousel>
             )}
         </>
-    );
+    ) as React.ReactElement;
 }
 
 export default RecentPost;
