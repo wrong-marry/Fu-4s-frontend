@@ -15,7 +15,7 @@ import {
   Title,
   List,
   ListItem,
-  ThemeIcon,
+  Button,
 } from "@mantine/core";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -171,6 +171,11 @@ const LearningMaterialDetail: React.FC = () => {
                 />
               </Text>
 
+              <Divider my="sm" variant="dotted" />
+              <Text size="l" fw={800} m="20">
+                Attachments
+              </Text>
+
               <div className="images-container">
                 {imageList.map((image, idx) => (
                   <div
@@ -182,6 +187,21 @@ const LearningMaterialDetail: React.FC = () => {
                   </div>
                 ))}
               </div>
+
+              <Box m="20">
+                <List>
+                  {fileList.map((file, index) => (
+                    <ListItem key={index} mb="xs">
+                      <Button
+                        leftSection={<IconFile size={14} />} // leftSection thành leftIcon trong Chakra UI
+                        onClick={() => handleDownloadOldFile(file)}
+                      >
+                        {file}
+                      </Button>
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
 
               <Lightbox
                 plugins={[Captions, Download, Fullscreen, Zoom, Thumbnails]}

@@ -4,14 +4,35 @@
   gap: 1rem;
   margin: auto 20px;
 }
+
 .image {
+  position: relative;
   width: 100%;
   height: 7rem;
   cursor: pointer;
+  outline: 2px solid rgba(146, 142, 142, 0.8);
+  border-radius: 8px;
 }
+
 .image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.image::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Màu tối với độ mờ 50% */
   border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image:hover::after {
+  opacity: 1;
 }
