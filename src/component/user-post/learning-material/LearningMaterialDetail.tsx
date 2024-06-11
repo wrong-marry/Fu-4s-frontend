@@ -21,6 +21,18 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { format } from "date-fns";
 import { useParams } from "react-router-dom";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import "./styles.css";
+import {
+  Captions,
+  Download,
+  Fullscreen,
+  Thumbnails,
+  Zoom,
+} from "yet-another-react-lightbox/plugins";
+import "yet-another-react-lightbox/plugins/captions.css";
+import "yet-another-react-lightbox/plugins/thumbnails.css";
 
 interface Post {
   id: number;
@@ -34,11 +46,18 @@ interface Post {
   filenames: string[];
 }
 
+interface ImageItem {
+  src: string;
+  title: string;
+  description: string | null;
+}
+
 const LearningMaterialDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
   const [post, setPost] = useState<Post | null>(null);
   const [fileUrls, setFileUrls] = useState<{ [key: string]: string }>({});
+  const [index, setIndex] = useState<number>(-1);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -86,8 +105,7 @@ const LearningMaterialDetail: React.FC = () => {
     document.body.appendChild(link);
     link.click();
 
-    // @ts-ignore
-    link.parentNode.removeChild(link);
+    link.parentNode?.removeChild(link);
   };
 
   const fetchFileLink = async (filename: string): Promise<string> => {
@@ -100,44 +118,30 @@ const LearningMaterialDetail: React.FC = () => {
     return url;
   };
 
-  const listData =
-    post.filenames.length === 0 ? (
-      <ListItem>
-        <i>no files yet</i>
-      </ListItem>
-    ) : (
-      post.filenames.map((file, index) => {
-        const url = fileUrls[file];
-        return (
-          <ListItem key={index} mb="xs">
-            {url &&
-              (file.endsWith(".jpg") ||
-              file.endsWith(".jpeg") ||
-              file.endsWith(".png") ||
-              file.endsWith(".gif") ? (
-                <Image
-                  src={url}
-                  alt={file}
-                  width={50}
-                  height={50}
-                  style={{ cursor: "pointer" }}
-                />
-              ) : (
-                <IconFile size={50} />
-              ))}
-            <Text
-              onClick={() => handleDownloadOldFile(file)}
-              td="underline"
-              color="blue"
-              type="button"
-              component="button"
-            >
-              {file}
-            </Text>
-          </ListItem>
-        );
-      })
-    );
+  // Initialize empty lists for images and other files
+  const imageList: ImageItem[] = [];
+  const fileList: string[] = [];
+
+  // Iterate over filenames and categorize them
+  post.filenames.forEach((file, index) => {
+    const url = fileUrls[file];
+    const isImage =
+      url &&
+      (file.endsWith(".jpg") ||
+        file.endsWith(".jpeg") ||
+        file.endsWith(".png") ||
+        file.endsWith(".gif"));
+
+    if (isImage) {
+      imageList.push({
+        src: url,
+        title: file,
+        description: null,
+      });
+    } else {
+      fileList.push(file);
+    }
+  });
 
   return (
     <Center>
@@ -167,15 +171,29 @@ const LearningMaterialDetail: React.FC = () => {
                 />
               </Text>
 
-              <List
-                icon={
-                  <ThemeIcon color="black" size={7} radius="xl"></ThemeIcon>
-                }
-                withPadding
-                size="sm"
-              >
-                {listData}
-              </List>
+              <div className="images-container">
+                {imageList.map((image, idx) => (
+                  <div
+                    key={idx}
+                    className="image"
+                    onClick={() => setIndex(idx)}
+                  >
+                    <img src={image.src} alt={image.title} />
+                  </div>
+                ))}
+              </div>
+
+              <Lightbox
+                plugins={[Captions, Download, Fullscreen, Zoom, Thumbnails]}
+                captions={{
+                  showToggle: true,
+                  descriptionTextAlign: "end",
+                }}
+                index={index}
+                open={index >= 0}
+                close={() => setIndex(-1)}
+                slides={imageList}
+              />
             </Box>
           </CardSection>
           <Divider my="sm" variant="dotted" />
