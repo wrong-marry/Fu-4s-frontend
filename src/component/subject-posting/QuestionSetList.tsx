@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
 import { useNavigate } from "react-router-dom";
+import {Card, Container, Paper, Table} from "@mantine/core";
 
 interface QuestionSet {
 	id: string;
@@ -63,36 +57,35 @@ const handleQuestionSetClick = (id: string) => {
 
 	return (
 		<Paper>
-			<TableContainer>
-				<Table>
-					<TableHead>
-						<TableRow>
-							<TableCell>Title</TableCell>
-							<TableCell>Attempts</TableCell>
-							<TableCell>Author</TableCell>
-							<TableCell>Posting Time</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{questionSets.map((questionSet, index) => (
-							<TableRow>
-								<TableCell
-									key={index}
+			<Container>
+				<Card radius={"md"} withBorder>
+					<Table p={"xl"}>
+						<Table.Thead>
+							<Table.Th>Title</Table.Th>
+							<Table.Th ta={"center"}>Attempts</Table.Th>
+							<Table.Th ta={"center"}>Author</Table.Th>
+							<Table.Th ta={"center"}>Posting Time</Table.Th>
+						</Table.Thead>
+						<Table.Tbody>
+							{questionSets.map((questionSet) => (
+								<Table.Tr key={questionSet.id}>
+									<Table.Td
 									onClick={() => handleQuestionSetClick(questionSet.id)}
 									style={{
 										cursor: "pointer",
 									}}
 								>
 									{questionSet.title}
-								</TableCell>
-								<TableCell>{questionSet.attempts}</TableCell>
-								<TableCell>{questionSet.username}</TableCell>
-								<TableCell>{questionSet.postTime}</TableCell>
-							</TableRow>
+									</Table.Td>
+									<Table.Td ta={"center"}>{questionSet.attempts}</Table.Td>
+									<Table.Td ta={"center"}>{questionSet.username}</Table.Td>
+									<Table.Td ta={"center"}>{questionSet.postTime}</Table.Td>
+								</Table.Tr>
 						))}
-					</TableBody>
+						</Table.Tbody>
 				</Table>
-			</TableContainer>
+				</Card>
+			</Container>
 		</Paper>
 	);
 }

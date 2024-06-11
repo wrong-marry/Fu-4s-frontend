@@ -1,7 +1,5 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import ButtonGroup from "@mui/material/ButtonGroup";
+import {Box, Button, ButtonGroup} from "@mantine/core";
 
 export default function Object2() {
 	const [selectedButton, setSelectedButton] = React.useState<string>("one");
@@ -66,8 +64,8 @@ export default function Object2() {
 	];
 
 	return (
-		<Box
-			sx={{
+		<Box mt={"md"}
+			 style={{
 				display: "flex",
 				flexDirection: "column",
 				alignItems: "center",
@@ -77,7 +75,7 @@ export default function Object2() {
 			}}
 		>
 			<h1 style={{ color: "palevioletred" }}>Kì 1</h1>
-			<ButtonGroup color="secondary" aria-label="Medium-sized button group">
+			<ButtonGroup my={"md"} c="secondary" aria-label="Medium-sized button group">
 				{buttons}
 			</ButtonGroup>
 			<h1 style={{ color: "palevioletred" }}>

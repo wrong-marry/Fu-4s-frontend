@@ -146,7 +146,7 @@ export const Comment = (props: CommentData) => {
         mode: 'uncontrolled',
         initialValues: {
             username: localStorage.getItem("username"),
-            'content': "@" + props.account,
+            'content': "@" + props.account + " ",
         },
         validate: {
             content: (value: string) => (/^\S/.test(value) ? null : 'Invalid content'),
@@ -236,7 +236,8 @@ export const Comment = (props: CommentData) => {
                 <Avatar variant="filled" radius="xl" size="md" mt={"sm"}/>
                 {contentStack}
                 {childrenNumber > 0 ?
-                    <ActionIcon color={childrenOpened ? "red" : "teal"}><CommentButtonSwitch checked={childrenOpened}
+                    <ActionIcon mt={"sm"} color={childrenOpened ? "red" : "teal"}><CommentButtonSwitch
+                        checked={childrenOpened}
                                                      onChange={(checked) => {
                                                          if (checked) {
                                                              getChildren();
