@@ -1,13 +1,12 @@
 import {
   createBrowserRouter,
-  Navigate,
   redirect,
   RouterProvider,
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "@mantine/core/styles.css";
-import { lazy, Suspense } from "react";
+import React, {Suspense} from "react";
 import { Box, LoadingOverlay } from "@mantine/core";
 import Root from "./page/Root";
 import LandingPage from "./page/landing-page/LandingPage";

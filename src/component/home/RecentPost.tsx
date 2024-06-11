@@ -1,8 +1,9 @@
 import { Carousel } from "@mantine/carousel";
-import { Card, Text, Badge, Group, Stack, Avatar } from "@mantine/core";
+import {Card, Text, Badge, Group, Stack, Avatar, ActionIcon, Flex} from "@mantine/core";
 import axios from "axios";
 import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
+import {IconDots} from "@tabler/icons-react";
 
 
 export interface Post {
@@ -44,6 +45,30 @@ function RecentPost() {
             });
     }, []);
 
+    function fetchMore(offset: number) {
+        axios
+            .get(`http://localhost:8080/api/v1/post/recent?offset=${offset}`)
+            .then((res) => {
+                const sortedList =
+                    res && res.data
+                        ? res.data.sort(
+                            (
+                                a: { date: string | number | Date },
+                                b: { date: string | number | Date }
+                            ) => {
+                                const timeA = new Date(a.date).getTime();
+                                const timeB = new Date(b.date).getTime();
+                                return timeB - timeA; // Sort in descending order for most completed views first
+                            }
+                        )
+                        : [];
+                setRecentPost(list => list.concat(sortedList));
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
+                // Handle error gracefully, e.g., display an error message to the user
+            });
+    }
     return (
         <>
             {recentPost.length === 0 ? (
@@ -119,6 +144,15 @@ function RecentPost() {
                             </Card>
                         </Carousel.Slide>
                     ))}
+                    {recentPost.length && <Carousel.Slide> <Flex
+                        p={"lg"}
+                        className="h-full"
+                        align={"center"}
+                    >
+                        <ActionIcon variant="default" aria-label="Dots"
+                                    radius={"xl"} size={"xl"} onClick={() => fetchMore(recentPost.length)}>
+                            <IconDots stroke={1.5}/>
+                        </ActionIcon></Flex></Carousel.Slide>}
                 </Carousel>
             )}
         </>

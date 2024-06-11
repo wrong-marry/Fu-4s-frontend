@@ -1,10 +1,11 @@
 import { Carousel } from "@mantine/carousel";
-import { Card, Text, Badge, Group, Stack, Avatar } from "@mantine/core";
+import {Card, Text, Badge, Group, Stack, Avatar, Flex, ActionIcon} from "@mantine/core";
 import axios from "axios";
 import React, {useEffect, useState} from "react";
 import classes from "./Carousel.module.css";
 import { useNavigate } from "react-router-dom";
 import {Post} from "./RecentPost"
+import {IconDots} from "@tabler/icons-react";
 
 function UploadedPost() {
 
@@ -36,6 +37,30 @@ function UploadedPost() {
             });
     }, []);
 
+    function fetchMore(pageNum: number) {
+        axios
+            .get(`http://localhost:8080/api/v1/post/getAllByUsername?username=${username}&pageSize=6&pageNum=${pageNum}`)
+            .then((res) => {
+                const sortedList =
+                    res && res.data
+                        ? res.data.sort(
+                            (
+                                a: { date: string | number | Date },
+                                b: { date: string | number | Date }
+                            ) => {
+                                const timeA = new Date(a.date).getTime();
+                                const timeB = new Date(b.date).getTime();
+                                return timeB - timeA; // Sort in descending order for most completed views first
+                            }
+                        )
+                        : [];
+                setUploadedPost(list => list.concat(sortedList));
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
+                // Handle error gracefully, e.g., display an error message to the user
+            });
+    }
     return (
         <>
             {uploadedPost.length === 0 ? (
@@ -112,6 +137,15 @@ function UploadedPost() {
                             </Card>
                         </Carousel.Slide>
                     ))}
+                    {uploadedPost.length && <Carousel.Slide> <Flex
+                        p={"lg"}
+                        className="h-full"
+                        align={"center"}
+                    >
+                        <ActionIcon variant="default" aria-label="Dots"
+                                    radius={"xl"} size={"xl"} onClick={() => fetchMore((uploadedPost.length + 1) / 6)}>
+                            <IconDots stroke={1.5}/>
+                        </ActionIcon></Flex></Carousel.Slide>}
                 </Carousel>
             )}
         </>
