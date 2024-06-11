@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios, { AxiosResponse } from "axios";
 import { IconFile } from "@tabler/icons-react";
+import JSZip from "jszip";
+
 import {
   Image,
   Text,
@@ -97,6 +99,37 @@ const LearningMaterialDetail: React.FC = () => {
     return <div>Loading...</div>;
   }
 
+  const handleDownloadMultipleFilesAsZip = async (filenames: string[]) => {
+    const zip = new JSZip();
+
+    // Fetch all the URLs for the files
+    const filePromises = filenames.map(async (filename) => {
+      const url = await fetchFileLink(filename);
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return { filename, blob };
+    });
+
+    const files = await Promise.all(filePromises);
+
+    // Add each file to the zip
+    files.forEach((file) => {
+      zip.file(file.filename, file.blob);
+    });
+
+    // Generate the zip file
+    const content = await zip.generateAsync({ type: "blob" });
+
+    // Create a link to download the zip file
+    const link = document.createElement("a");
+    const zipFilename = "files.zip";
+    link.href = URL.createObjectURL(content);
+    link.setAttribute("download", zipFilename);
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode?.removeChild(link);
+  };
+
   const handleDownloadOldFile = async (filename: string) => {
     const url = await fetchFileLink(filename);
     const link = document.createElement("a");
@@ -163,7 +196,7 @@ const LearningMaterialDetail: React.FC = () => {
           </Group>
           <CardSection>
             <Box w={600}>
-              <Text fw={400} size="lg" mt="md" p={"lg"}>
+              <Text fw={400} size="lg" mt="md" p={"lg"} m="20">
                 <ReactQuill
                   value={post.content}
                   readOnly={true}
@@ -172,9 +205,22 @@ const LearningMaterialDetail: React.FC = () => {
               </Text>
 
               <Divider my="sm" variant="dotted" />
-              <Text size="l" fw={800} m="20">
-                Attachments
-              </Text>
+
+              <Group display="flex" justify="space-between" m={2}>
+                <Text size="l" fw={800} m="20">
+                  Attachments
+                </Text>
+
+                <Button
+                  onClick={() =>
+                    handleDownloadMultipleFilesAsZip(post.filenames)
+                  }
+                  variant="light"
+                  size="xs"
+                >
+                  Download All
+                </Button>
+              </Group>
 
               <div className="images-container">
                 {imageList.map((image, idx) => (
