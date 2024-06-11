@@ -189,7 +189,7 @@ export function CreateMockTestForm() {
         })
             .then((response: Response) => response.json())
             .then(() => {
-                navigate(`/user/post`);
+                navigate(`/user/post/mock-test`);
             })
 
     }

@@ -191,14 +191,13 @@ export function EditMockTestForm() {
             questions.push(question);
         }
 
-        fetch(`http://localhost:8080/api/v1/questionSet/addNew?title=${title}&subjectCode=${subject}&username=${localStorage.getItem('username')}`, {
-            method: "POST", body: JSON.stringify(questions), headers: {
+        fetch(`http://localhost:8080/api/v1/questionSet/edit?id=${id}&title=${title}&subjectCode=${subject}&username=${localStorage.getItem('username')}`, {
+            method: "PUT", body: JSON.stringify(questions), headers: {
                 'Content-Type': 'application/json', //'Authorization': 'Bearer ' + localStorage.getItem('token')
             }
         })
-            .then((response: Response) => response.json())
             .then(() => {
-                navigate(`/user/post`);
+                navigate(`/user/post/mock-test`);
             })
 
     }
@@ -252,7 +251,7 @@ export function EditMockTestForm() {
         fetch(`http://localhost:8080/api/v1/questionSet/remove?id=${id}&username=${localStorage.getItem('username')}`, {
             method: "DELETE"
         }).then(() => {
-            navigate(`/user/post`);
+            navigate(`/user/post/mock-test`);
         })
     }
     //console.log(fileData)
