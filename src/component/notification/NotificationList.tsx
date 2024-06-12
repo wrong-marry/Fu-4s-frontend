@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { Tabs } from "@mantine/core";
+import { Tabs, rem } from "@mantine/core";
 
 import {
   ScrollArea,
@@ -31,7 +31,7 @@ interface Notification {
 function NotificationList() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState<string | null>("all");
   const navigate = useNavigate();
   const username = "user1";
   const pageSize = 6;
@@ -39,6 +39,9 @@ function NotificationList() {
   const [activePage, setPage] = useState(1);
   const [numPage, setNumPage] = useState(1);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unSeenNotifications, setUnSeenNotifications] = useState<
+    Notification[]
+  >([]);
 
   useEffect(() => {
     const fetchNoti = async () => {
@@ -48,6 +51,21 @@ function NotificationList() {
         );
         const data = await response.json();
         setNotifications(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+        setError("Error fetching notifications");
+        setLoading(false);
+      }
+    };
+
+    const fetchUnSeenNoti = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/v1/notification/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}&seen=false`
+        );
+        const data = await response.json();
+        setUnSeenNotifications(data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching notifications:", error);
@@ -71,7 +89,8 @@ function NotificationList() {
 
     fetchNum();
     fetchNoti();
-  }, [activePage]);
+    fetchUnSeenNoti();
+  }, [activePage, activeTab]);
 
   const markAsUnread = async (id: string) => {
     try {
@@ -84,16 +103,35 @@ function NotificationList() {
 
       if (response.ok) {
         const data = await response.json();
-        if (data.message === "Notification marked as unseen successfully") {
-          setNotifications((prevNotifications) =>
-            prevNotifications.map((noti) =>
-              noti.id === id ? { ...noti, seen: false } : noti
-            )
-          );
-        }
+        setNotifications((prev) =>
+          prev.map((noti) => (noti.id === id ? { ...noti, seen: false } : noti))
+        );
       }
     } catch (error) {
       console.error("Error marking notification as unread:", error);
+    }
+  };
+
+  const markAsRead = async (id: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/v1/notification/${id}/seen`,
+        {
+          method: "PUT",
+        }
+      );
+
+      if (response.ok) {
+        setNotifications((prevNotifications) =>
+          prevNotifications.map((noti) =>
+            noti.id === id ? { ...noti, seen: true } : noti
+          )
+        );
+
+        setUnSeenNotifications((prev) => prev.filter((noti) => noti.id !== id));
+      }
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
     }
   };
 
@@ -102,6 +140,9 @@ function NotificationList() {
     if (!notificationToDelete) return;
     const originalIndex = notifications.findIndex((noti) => noti.id === id);
     setNotifications((prevNotifications) =>
+      prevNotifications.filter((noti) => noti.id !== id)
+    );
+    setUnSeenNotifications((prevNotifications) =>
       prevNotifications.filter((noti) => noti.id !== id)
     );
     let shouldDelete = true;
@@ -120,8 +161,13 @@ function NotificationList() {
           }}
           onClick={() => {
             shouldDelete = false;
-            setNotifications((prevNotifications) => {
-              const newNotifications = [...prevNotifications];
+            setNotifications((prev) => {
+              const newNotifications = [...prev];
+              newNotifications.splice(originalIndex, 0, notificationToDelete);
+              return newNotifications;
+            });
+            setUnSeenNotifications((prev) => {
+              const newNotifications = [...prev];
               newNotifications.splice(originalIndex, 0, notificationToDelete);
               return newNotifications;
             });
@@ -163,6 +209,7 @@ function NotificationList() {
       setNotifications((prevNotifications) =>
         prevNotifications.map((noti) => ({ ...noti, seen: true }))
       );
+      setUnSeenNotifications([]);
       toast.success("All notifications marked as read");
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
@@ -186,102 +233,227 @@ function NotificationList() {
     <Container>
       <Space h="md" />
       <Group justify="space-between" mb="md">
-        <Title order={1}>Notifications</Title>
-        <Button onClick={() => setConfirmModalOpen(true)}>
+        <Title order={3}>Notifications</Title>
+        <Button size="xs" onClick={() => setConfirmModalOpen(true)}>
           Mark all as read
         </Button>
-        <Modal
-          opened={confirmModalOpen}
-          onClose={() => setConfirmModalOpen(false)}
-          title="Confirm Action"
-        >
-          <Text>Are you sure you want to mark all notifications as read?</Text>
-          <Group justify="flex-end" gap="sm" mt="md">
-            <Button onClick={() => setConfirmModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleMarkAllAsRead}>OK</Button>
-          </Group>
-        </Modal>
       </Group>
-      <Box>
-        <Paper withBorder>
-          <ScrollArea>
-            {notifications
-              .filter((notification) =>
-                ["APPROVED_POST", "DISAPPROVED_POST", "HIDE_COMMENT"].includes(
-                  notification.message
-                )
-              )
-              .map((notification, index) => (
-                <Box
-                  key={index}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    cursor: "pointer",
-                    padding: "10px",
-                    marginBottom: "10px",
-                    borderRadius: "4px",
-                    transition: "background-color 0.3s ease",
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#f0f0f0")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor = "transparent")
-                  }
-                >
-                  <Box onClick={() => handleNotificationClick(notification.id)}>
-                    <Text
-                      // w={notification.seen ? "normal" : "bold"}
-                      fw={notification.seen ? "" : "700"}
+      <Tabs value={activeTab} onChange={setActiveTab}>
+        <Tabs.List>
+          <Tabs.Tab value="all">All</Tabs.Tab>
+          <Tabs.Tab value="unread">Unread</Tabs.Tab>
+        </Tabs.List>
+
+        <Tabs.Panel value="all">
+          <Box>
+            <Paper withBorder>
+              <ScrollArea>
+                {notifications
+                  .filter((notification) =>
+                    [
+                      "APPROVED_POST",
+                      "DISAPPROVED_POST",
+                      "HIDE_COMMENT",
+                    ].includes(notification.message)
+                  )
+                  .map((notification, index) => (
+                    <Box
+                      key={index}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        cursor: "pointer",
+                        padding: "10px",
+                        marginBottom: "10px",
+                        borderRadius: "4px",
+                        transition: "background-color 0.3s ease",
+                      }}
                       onMouseEnter={(e) =>
-                        (e.currentTarget.style.textDecoration = "underline")
+                        (e.currentTarget.style.backgroundColor = "#f0f0f0")
                       }
                       onMouseLeave={(e) =>
-                        (e.currentTarget.style.textDecoration = "none")
+                        (e.currentTarget.style.backgroundColor = "transparent")
                       }
                     >
-                      {notification.message === "APPROVED_POST"
-                        ? "Bài viết của bạn đã được duyệt"
-                        : notification.message === "DISAPPROVED_POST"
-                        ? "Bài viết của bạn không được duyệt"
-                        : "Comment của bạn đã bị ẩn"}
-                    </Text>
-                    <Text size="xs" color="dimmed">
-                      {new Date(notification.time).toLocaleString()}
-                    </Text>
-                  </Box>
-                  <Menu withArrow position="bottom-end" withinPortal>
-                    <Menu.Target>
-                      <ActionIcon color="gray" variant="light">
-                        <IconDots size={16} />
-                      </ActionIcon>
-                    </Menu.Target>
-                    <Menu.Dropdown>
-                      <Menu.Item
-                        onClick={() => markAsUnread(notification.id)}
-                        leftSection={<IconNote />}
+                      <Box
+                        onClick={() => handleNotificationClick(notification.id)}
                       >
-                        Mark as unread
-                      </Menu.Item>
-                      <Menu.Item
-                        onClick={() => deleteNoti(notification.id)}
-                        leftSection={<IconTrash />}
-                        color="red"
+                        <Text
+                          fw={notification.seen ? "" : "700"}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.textDecoration = "underline")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.textDecoration = "none")
+                          }
+                        >
+                          {notification.message === "APPROVED_POST"
+                            ? "Bài viết của bạn đã được duyệt"
+                            : notification.message === "DISAPPROVED_POST"
+                            ? "Bài viết của bạn không được duyệt"
+                            : "Comment của bạn đã bị ẩn"}
+                        </Text>
+                        <Text size="xs" c="dimmed">
+                          {new Date(notification.time).toLocaleString()}
+                        </Text>
+                      </Box>
+                      <Menu withArrow position="bottom-end" withinPortal>
+                        <Menu.Target>
+                          <ActionIcon color="gray" variant="light">
+                            <IconDots size={16} />
+                          </ActionIcon>
+                        </Menu.Target>
+                        <Menu.Dropdown>
+                          {notification.seen ? (
+                            <Menu.Item
+                              onClick={() => markAsUnread(notification.id)}
+                              leftSection={<IconNote />}
+                            >
+                              Mark as unread
+                            </Menu.Item>
+                          ) : (
+                            <Menu.Item
+                              onClick={() => markAsRead(notification.id)}
+                              leftSection={<IconNote />}
+                            >
+                              Mark as read
+                            </Menu.Item>
+                          )}
+                          <Menu.Item
+                            onClick={() => deleteNoti(notification.id)}
+                            leftSection={<IconTrash />}
+                            color="red"
+                          >
+                            Delete notification
+                          </Menu.Item>
+                        </Menu.Dropdown>
+                      </Menu>
+                    </Box>
+                  ))}
+              </ScrollArea>
+            </Paper>
+            <Center mt={"lg"}>
+              <Pagination
+                value={activePage}
+                onChange={setPage}
+                total={numPage}
+              />
+            </Center>
+          </Box>
+        </Tabs.Panel>
+
+        <Tabs.Panel value="unread">
+          <Box>
+            <Paper withBorder>
+              <ScrollArea>
+                {unSeenNotifications
+                  .filter((notification) =>
+                    [
+                      "APPROVED_POST",
+                      "DISAPPROVED_POST",
+                      "HIDE_COMMENT",
+                    ].includes(notification.message)
+                  )
+                  .map((notification, index) => (
+                    <Box
+                      key={index}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        cursor: "pointer",
+                        padding: "10px",
+                        marginBottom: "10px",
+                        borderRadius: "4px",
+                        transition: "background-color 0.3s ease",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#f0f0f0")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "transparent")
+                      }
+                    >
+                      <Box
+                        onClick={() => handleNotificationClick(notification.id)}
                       >
-                        Delete notification
-                      </Menu.Item>
-                    </Menu.Dropdown>
-                  </Menu>
-                </Box>
-              ))}
-          </ScrollArea>
-        </Paper>
-      </Box>
-      <Center mt={"lg"}>
-        <Pagination value={activePage} onChange={setPage} total={numPage} />
-      </Center>
+                        <Text
+                          fw={notification.seen ? "" : "700"}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.textDecoration = "underline")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.textDecoration = "none")
+                          }
+                        >
+                          {notification.message === "APPROVED_POST"
+                            ? "Bài viết của bạn đã được duyệt"
+                            : notification.message === "DISAPPROVED_POST"
+                            ? "Bài viết của bạn không được duyệt"
+                            : "Comment của bạn đã bị ẩn"}
+                        </Text>
+                        <Text size="xs" c="dimmed">
+                          {new Date(notification.time).toLocaleString()}
+                        </Text>
+                      </Box>
+                      <Menu withArrow position="bottom-end" withinPortal>
+                        <Menu.Target>
+                          <ActionIcon color="gray" variant="light">
+                            <IconDots size={16} />
+                          </ActionIcon>
+                        </Menu.Target>
+                        <Menu.Dropdown>
+                          {notification.seen ? (
+                            <Menu.Item
+                              onClick={() => markAsUnread(notification.id)}
+                              leftSection={<IconNote />}
+                            >
+                              Mark as unread
+                            </Menu.Item>
+                          ) : (
+                            <Menu.Item
+                              onClick={() => markAsRead(notification.id)}
+                              leftSection={<IconNote />}
+                            >
+                              Mark as read
+                            </Menu.Item>
+                          )}
+                          <Menu.Item
+                            onClick={() => deleteNoti(notification.id)}
+                            leftSection={<IconTrash />}
+                            color="red"
+                          >
+                            Delete notification
+                          </Menu.Item>
+                        </Menu.Dropdown>
+                      </Menu>
+                    </Box>
+                  ))}
+              </ScrollArea>
+            </Paper>
+            <Center mt={"lg"}>
+              <Pagination
+                value={activePage}
+                onChange={setPage}
+                total={numPage}
+              />
+            </Center>
+          </Box>
+        </Tabs.Panel>
+      </Tabs>
+
+      <Modal
+        opened={confirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+        title="Confirm Action"
+      >
+        <Text>Are you sure you want to mark all notifications as read?</Text>
+        <Group justify="flex-end" gap="sm" mt="md">
+          <Button onClick={() => setConfirmModalOpen(false)}>Cancel</Button>
+          <Button onClick={handleMarkAllAsRead}>OK</Button>
+        </Group>
+      </Modal>
     </Container>
   );
 }
