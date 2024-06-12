@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { ActionIcon, TextInput, Button, Select, Menu } from "@mantine/core";
+import {
+  ActionIcon,
+  TextInput,
+  Button,
+  Select,
+  Menu,
+  Box,
+} from "@mantine/core";
 import {
   IconDots,
   IconSortAscending,
@@ -52,6 +59,70 @@ function TableSubject() {
     activeModalOpened,
     { open: openActivateSubjectModal, close: closeActivateSubjectModal },
   ] = useDisclosure(false);
+
+  const [allSubject, setAllSubject] = useState(0);
+  const [activeSubject, setActiveSubject] = useState(0);
+  const [disabledSubject, setDisabledSubject] = useState(0);
+
+  useEffect(() => {
+    const fetchAllSubject = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/v1/admin/getNumSubject`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await response.json();
+        setAllSubject(data);
+      } catch (error) {
+        console.error("Error fetching all subjects:", error);
+      }
+    };
+
+    const fetchActiveSubject = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/v1/admin/getNumSubjectsByType?isActive=true`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await response.json();
+        setActiveSubject(data);
+      } catch (error) {
+        console.error("Error fetching active subjects:", error);
+      }
+    };
+
+    const fetchDisabledSubject = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/v1/admin/getNumSubjectsByType?isActive=false`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await response.json();
+        setDisabledSubject(data);
+      } catch (error) {
+        console.error("Error fetching disabled subjects:", error);
+      }
+    };
+
+    fetchAllSubject();
+    fetchActiveSubject();
+    fetchDisabledSubject();
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -110,6 +181,7 @@ function TableSubject() {
 
         if (aField < bField) return sortOrder === "asc" ? -1 : 1;
         if (aField > bField) return sortOrder === "asc" ? 1 : -1;
+
         return 0;
       });
     }
@@ -163,6 +235,8 @@ function TableSubject() {
                 : subject
             )
           );
+          setActiveSubject((prev) => prev - 1);
+          setDisabledSubject((prev) => prev + 1);
           closeDisableSubjectModal();
           notifications.show({
             title: "Subject disabled",
@@ -204,6 +278,8 @@ function TableSubject() {
                 : subject
             )
           );
+          setActiveSubject((prev) => prev + 1);
+          setDisabledSubject((prev) => prev - 1);
           closeActivateSubjectModal();
           notifications.show({
             title: "Subject activated",
@@ -340,46 +416,106 @@ function TableSubject() {
   ));
 
   return (
-    <section className="py-8">
-      <div className="container px-4 mx-auto">
-        <div className="pt-6 bg-white shadow rounded">
-          <div className="px-6 border-b">
-            <div className="flex flex-wrap items-center mb-6">
-              <h3 className="text-xl font-bold">SUBJECT MANAGEMENT</h3>
-              <div className="ml-auto flex items-center">
-                <span>Semester: </span>
-                <Select
-                  placeholder="Filter by semester"
-                  data={["All", "1", "2", "3", "4", "5", "6", "7", "8", "9"]}
-                  value={semesterFilter}
-                  onChange={(value) => setSemesterFilter(value)}
-                  style={{ marginRight: "1rem" }}
-                />
-                <TextInput
-                  placeholder="Search Subject"
-                  value={search}
-                  onChange={(e) => setSearch(e.currentTarget.value)}
-                  style={{ marginRight: "1rem" }}
-                />
-                <Button
-                  style={{ marginRight: "1rem" }}
-                  className="ml-auto"
-                  onClick={handleCreateClick}
-                >
-                  New Subject
-                </Button>
+    <section className="shadow pb-4">
+      <div className="container px-4 mx-auto ">
+        <div>
+          <h3 className="text-xl font-bold w-full w-auto p-5">
+            SUBJECT STATISTICS
+          </h3>
+        </div>
+        <div className="flex flex-wrap -m-3">
+          <div className="w-full md:w-1/2 xl:w-1/3 p-3">
+            <div className="p-6 pb-10 border border-coolGray-100 rounded-md shadow-dashboard">
+              <div className="flex flex-wrap items-end justify-center -m-2 mb-3">
+                <div className="w-auto p-2">
+                  <h3 className="text-sm text-coolGray-500 font-medium">
+                    Active Subjects
+                  </h3>
+                </div>
               </div>
+              <h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
+                {activeSubject}
+              </h2>
+              <p className="text-center max-w-max mx-auto px-2 py-1 text-green-500 font-medium text-xs bg-green-100 rounded-full mt-2">
+                Active
+              </p>
             </div>
           </div>
-          <div className="overflow-x-auto">
-            <table className="table-auto w-full">
-              <thead>
-                <tr className="text-xs text-gray-500 text-left">
-                  <th
-                    className="pl-6 py-4 font-medium"
-                    onClick={() => handleSortClick("code")}
-                    style={{ cursor: "pointer" }}
-                  >
+          <div className="w-full md:w-1/2 xl:w-1/3 p-3">
+            <div className="p-6 pb-10 border border-coolGray-100 rounded-md shadow-dashboard">
+              <div className="flex flex-wrap items-end justify-center -m-2 mb-3">
+                <div className="w-auto p-2">
+                  <h3 className="text-center text-sm text-coolGray-500 font-medium">
+                    Disabled Subjects
+                  </h3>
+                </div>
+              </div>
+              <h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
+                {disabledSubject}
+              </h2>
+              <p className="text-center max-w-max mx-auto px-2 py-1 text-red-500 font-medium text-xs bg-red-100 rounded-full mt-2">
+                Disabled
+              </p>
+            </div>
+          </div>
+          <div className="w-full md:w-1/2 xl:w-1/3 p-3">
+            <div className="p-6 pb-10 border border-coolGray-100 rounded-md shadow-dashboard">
+              <div className="flex flex-wrap items-end justify-center -m-2 mb-3">
+                <div className="w-auto p-2">
+                  <h3 className="text-sm text-coolGray-500 font-medium">
+                    All Subjects
+                  </h3>
+                </div>
+              </div>
+              <h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
+                {allSubject}
+              </h2>
+              <p className="text-center max-w-max mx-auto px-2 py-1 text-yellow-500 font-medium text-xs bg-yellow-100 rounded-full mt-2">
+                All
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="container px-4 mx-auto">
+        <div className="px-6 border-b">
+          <div className="flex flex-wrap items-center mb-6 mt-6">
+            <h3 className="text-xl font-bold">SUBJECT MANAGEMENT</h3>
+            <div className="ml-auto flex items-center">
+              <span>Semester: </span>
+              <Select
+                placeholder="Filter by semester"
+                data={["All", "1", "2", "3", "4", "5", "6", "7", "8", "9"]}
+                value={semesterFilter}
+                onChange={(value) => setSemesterFilter(value)}
+                style={{ marginRight: "1rem" }}
+              />
+              <TextInput
+                placeholder="Search Subject"
+                value={search}
+                onChange={(e) => setSearch(e.currentTarget.value)}
+                style={{ marginRight: "1rem" }}
+              />
+              <Button
+                style={{ marginRight: "1rem" }}
+                className="ml-auto"
+                onClick={handleCreateClick}
+              >
+                New Subject
+              </Button>
+            </div>
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="table-auto w-full">
+            <thead>
+              <tr className="text-xs text-gray-500 text-left">
+                <th
+                  className="pl-6 py-4 font-medium"
+                  onClick={() => handleSortClick("code")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
                     <span>Code</span>
                     {sortBy === "code" && (
                       <span className="ml-2">
@@ -390,12 +526,15 @@ function TableSubject() {
                         )}
                       </span>
                     )}
-                  </th>
-                  <th
-                    className="py-4 font-medium"
-                    onClick={() => handleSortClick("name")}
-                    style={{ cursor: "pointer" }}
-                  >
+                  </div>
+                </th>
+
+                <th
+                  className="py-4 font-medium"
+                  onClick={() => handleSortClick("name")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
                     <span>Name</span>
                     {sortBy === "name" && (
                       <span className="ml-2">
@@ -406,12 +545,14 @@ function TableSubject() {
                         )}
                       </span>
                     )}
-                  </th>
-                  <th
-                    className="py-4 font-medium"
-                    onClick={() => handleSortClick("semester")}
-                    style={{ cursor: "pointer" }}
-                  >
+                  </div>
+                </th>
+                <th
+                  className="py-4 font-medium"
+                  onClick={() => handleSortClick("semester")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
                     <span>Semester</span>
                     {sortBy === "semester" && (
                       <span className="ml-2">
@@ -422,57 +563,74 @@ function TableSubject() {
                         )}
                       </span>
                     )}
+                  </div>
+                </th>
+                <th className="py-4 font-medium">
+                  <th
+                    className="py-4 font-medium"
+                    onClick={() => handleSortClick("status")}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <span>Status</span>
+                      {sortBy === "status" && (
+                        <span className="ml-2">
+                          {sortOrder === "asc" ? (
+                            <IconSortAscending />
+                          ) : (
+                            <IconSortDescending />
+                          )}
+                        </span>
+                      )}
+                    </div>
                   </th>
-                  <th className="py-4 font-medium">
-                    <span>Status</span>
-                  </th>
-                  <th className="py-4 font-medium">
-                    <span>Options</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>{subjectsList}</tbody>
-            </table>
-          </div>
-          <EditSubjectModal
-            opened={editModalOpened}
-            onClose={closeEditSubjectModal}
-            onSave={handleUpdateClick}
-            subject={
-              currentSubject || {
-                code: "",
-                name: "",
-                semester: 1,
-                active: true,
-              }
-            }
-            onInputChange={handleInputChange}
-          />
-          <CreateSubjectModal
-            opened={createModalOpened}
-            onClose={closeCreateSubjectModal}
-            onSave={handleSaveClick}
-            subject={
-              currentSubject || {
-                code: "",
-                name: "",
-                semester: 1,
-                active: true,
-              }
-            }
-            onInputChange={handleInputChange}
-          />
-          <DisableSubjectModal
-            opened={disableModalOpened}
-            onClose={closeDisableSubjectModal}
-            onConfirm={confirmDisable}
-          />
-          <ActivateSubjectModal
-            opened={activeModalOpened}
-            onClose={closeActivateSubjectModal}
-            onConfirm={confirmActivate}
-          />
+                </th>
+                <th className="py-4 font-medium">
+                  <span>Options</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>{subjectsList}</tbody>
+          </table>
         </div>
+        <EditSubjectModal
+          opened={editModalOpened}
+          onClose={closeEditSubjectModal}
+          onSave={handleUpdateClick}
+          subject={
+            currentSubject || {
+              code: "",
+              name: "",
+              semester: 1,
+              active: true,
+            }
+          }
+          onInputChange={handleInputChange}
+        />
+        <CreateSubjectModal
+          opened={createModalOpened}
+          onClose={closeCreateSubjectModal}
+          onSave={handleSaveClick}
+          subject={
+            currentSubject || {
+              code: "",
+              name: "",
+              semester: 1,
+              active: true,
+            }
+          }
+          onInputChange={handleInputChange}
+        />
+        <DisableSubjectModal
+          opened={disableModalOpened}
+          onClose={closeDisableSubjectModal}
+          onConfirm={confirmDisable}
+        />
+        <ActivateSubjectModal
+          opened={activeModalOpened}
+          onClose={closeActivateSubjectModal}
+          onConfirm={confirmActivate}
+        />
       </div>
     </section>
   );
