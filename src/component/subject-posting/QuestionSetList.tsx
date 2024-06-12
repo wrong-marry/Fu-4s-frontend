@@ -61,10 +61,12 @@ const handleQuestionSetClick = (id: string) => {
 				<Card radius={"md"} withBorder>
 					<Table p={"xl"}>
 						<Table.Thead>
+							<Table.Tr>
 							<Table.Th>Title</Table.Th>
 							<Table.Th ta={"center"}>Attempts</Table.Th>
 							<Table.Th ta={"center"}>Author</Table.Th>
 							<Table.Th ta={"center"}>Posting Time</Table.Th>
+							</Table.Tr>
 						</Table.Thead>
 						<Table.Tbody>
 							{questionSets.map((questionSet) => (

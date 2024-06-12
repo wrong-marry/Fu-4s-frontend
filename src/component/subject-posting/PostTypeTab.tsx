@@ -4,24 +4,24 @@ import QuestionSetList from "./QuestionSetList";
 import LearningMaterialList from "./LearningMaterialList";
 import {Box, Center, Tabs} from "@mantine/core";
 
-interface Object3Props {
+interface PostTypeTabProps {
   children?: React.ReactNode;
   index: number;
     value: string;
 }
 
-function Object3(props: Object3Props) {
+function PostTypeTab(props: PostTypeTabProps) {
   const { children, value, index, ...other } = props;
 
   return (
     <div
       role="tabpanel"
-      hidden={value != index}
+      hidden={value != index + ""}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-        {value == index && (
+        {value == index + "" && (
             <Box px={3}>
                 {children}
         </Box>
@@ -30,20 +30,22 @@ function Object3(props: Object3Props) {
   );
 }
 
-Object3.propTypes = {
+PostTypeTab.propTypes = {
   children: PropTypes.node,
   index: PropTypes.number.isRequired,
     value: PropTypes.string.isRequired,
 };
 
 export default function BasicTabs() {
-    const [value, setValue] = React.useState<string>(0);
+    const [value, setValue] = React.useState<string>("0");
 
   return (
       <Box w={"100%"} mt={"md"}>
           <Box style={{borderBottom: 1, borderColor: "divider"}}>
               <Center>
-                  <Tabs value={value} onChange={setValue}>
+                  <Tabs value={value} onChange={() => {
+                      setValue(value)
+                  }}>
                       <Tabs.List>
                           <Tabs.Tab value="all">
                               All
@@ -70,15 +72,15 @@ export default function BasicTabs() {
                   </Tabs>
               </Center>
       </Box>
-      <Object3 value={value} index={0}>
+          <PostTypeTab value={value} index={0}>
         <QuestionSetList />
-      </Object3>
-      <Object3 value={value} index={1}>
+          </PostTypeTab>
+          <PostTypeTab value={value} index={1}>
         <LearningMaterialList />
-      </Object3>
-      <Object3 value={value} index={2}>
+          </PostTypeTab>
+          <PostTypeTab value={value} index={2}>
         Item three
-      </Object3>
+          </PostTypeTab>
     </Box>
   );
 }

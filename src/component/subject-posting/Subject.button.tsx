@@ -1,67 +1,53 @@
 import * as React from "react";
-import {Box, Button, ButtonGroup} from "@mantine/core";
+import {Box, Button, ButtonGroup, Group, NativeSelect, Text} from "@mantine/core";
+import {Subject} from '../manage-subject/TableSubject';
+import {useEffect} from "react";
 
-export default function Object2() {
-	const [selectedButton, setSelectedButton] = React.useState<string>("one");
+export default function StudyComponentOne() {
+	const [selectedButton, setSelectedButton] = React.useState<Subject>();
+	const [semester, setSemester] = React.useState<string>('1');
+	const [subjects, setSubjects] = React.useState<Subject[]>([]);
 
-	const handleButtonClick = (key: string) => {
-		setSelectedButton(key);
-	};
 
-	const getHeaderText = (buttonKey: string) => {
-		switch (buttonKey) {
-			case "one":
-				return "SSL101c-Academic skills for University success";
-			case "two":
-				return "CSI104-Introduction to Computer Science";
-			case "three":
-				return "PRF192-Programming Fundamentals";
-			case "four":
-				return "MAE101-Mathematics for Engineering";
-			case "five":
-				return "CEA201-Computer Organization and Architecture";
-			default:
-				return "";
+	useEffect(() => {
+		async function fetchData() {
+			try {
+				const token = localStorage.getItem("token");
+				const response = await fetch(
+					`http://localhost:8080/api/v1/subject/getAll`,
+					{
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+					}
+				);
+
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+
+				const data: Subject[] = await response.json();
+				setSubjects(data);
+			} catch (error) {
+				console.log(error);
+			}
 		}
-	};
 
-	const buttons = [
-		<Button
-			key="one"
-			variant={selectedButton === "one" ? "contained" : "outlined"}
-			onClick={() => handleButtonClick("one")}
-		>
-			SSL101c
-		</Button>,
-		<Button
-			key="two"
-			variant={selectedButton === "two" ? "contained" : "outlined"}
-			onClick={() => handleButtonClick("two")}
-		>
-			CSI104
-		</Button>,
-		<Button
-			key="three"
-			variant={selectedButton === "three" ? "contained" : "outlined"}
-			onClick={() => handleButtonClick("three")}
-		>
-			PRF192
-		</Button>,
-		<Button
-			key="four"
-			variant={selectedButton === "four" ? "contained" : "outlined"}
-			onClick={() => handleButtonClick("four")}
-		>
-			MAE101
-		</Button>,
-		<Button
-			key="five"
-			variant={selectedButton === "five" ? "contained" : "outlined"}
-			onClick={() => handleButtonClick("five")}
-		>
-			CEA201
-		</Button>,
-	];
+		fetchData();
+	}, []);
+
+	const [semesterSubjects, setSemesterSubjects] = React.useState<Subject[]>(subjects.filter(subject => subject.semester == 1));
+	useEffect(() => {
+		setSemesterSubjects(subjects.filter(subject => subject.semester + "" == semester));
+	}, [semester]);
+
+	const buttons = semesterSubjects.map(sub => <Button
+		key={sub.code}
+		variant={selectedButton?.code == sub?.code ? "outline" : "filled"}
+		onClick={() => setSelectedButton(sub)}
+	>
+		{sub.code}
+	</Button>);
 
 	return (
 		<Box mt={"md"}
@@ -74,12 +60,21 @@ export default function Object2() {
 				},
 			}}
 		>
-			<h1 style={{ color: "palevioletred" }}>Kì 1</h1>
+			<Group>
+				<Text fw={600}>Semester</Text>
+				<NativeSelect
+					ta={"center"}
+					display={"inline"}
+					value={semester}
+					onChange={(event) => setSemester(event.currentTarget.value)}
+					data={['1', '2', '3', '4', '5', '6', '7', '8', '9']}
+				/>
+			</Group>
 			<ButtonGroup my={"md"} c="secondary" aria-label="Medium-sized button group">
 				{buttons}
 			</ButtonGroup>
-			<h1 style={{ color: "palevioletred" }}>
-				{getHeaderText(selectedButton)}
+			<h1>
+				{(selectedButton?.code ?? "") + " " + (selectedButton?.name ?? "")}
 			</h1>
 		</Box>
 	);

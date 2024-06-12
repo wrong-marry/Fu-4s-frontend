@@ -1,13 +1,13 @@
-import {Center, Container, Title} from "@mantine/core";
-import Object2 from "../../component/subject-posting/Subject.button.tsx";
-import Object3 from "../../component/subject-posting/Semester.button.tsx";
+import {Container} from "@mantine/core";
+import StudyComponentOne from "../../component/subject-posting/Subject.button.tsx";
+import PostTypeTab from "../../component/subject-posting/PostTypeTab.tsx";
 import React from "react";
 
 
 export default function StudyPage() {
     return (
         <Container fluid>
-            <Object2/>
-            <Object3/>
+            <StudyComponentOne/>
+            <PostTypeTab/>
         </Container>) as React.ReactElement;
 }

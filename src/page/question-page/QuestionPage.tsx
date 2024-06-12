@@ -1,10 +1,10 @@
 import Object2 from "../../component/subject-posting/Subject.button";
-import Object3 from "../../component/subject-posting/Semester.button";
+import PostTypeTab from "../../component/subject-posting/PostTypeTab.tsx";
 export default function QuestionPage() {
   return (
     <>
       <Object2 />
-      <Object3 />
+        <PostTypeTab/>
     </>
   );
 }
