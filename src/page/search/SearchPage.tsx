@@ -41,6 +41,7 @@ const SearchDrawer = (props: {
             isTest:searchRequest?.isTest
         },
         validate: {
+            semester: s => s != null && (s < 0 || s > 10),
         },
     });
     const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -109,6 +110,7 @@ const SearchDrawer = (props: {
                     }
                     description="Pick a subject code"
                     key={form.key('subjectCode')}
+                    {...form.getInputProps('subjectCode')}
                 />
 
                 <TextInput
