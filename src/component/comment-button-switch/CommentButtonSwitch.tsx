@@ -16,7 +16,7 @@ export const CommentButtonSwitch: React.FC<Props> = ({
     return (
         <animated.svg
             xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"
+            stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"
             className="icon icon-tabler icons-tabler-outline icon-tabler-messages-off"
             color={checked ? onColor : offColor}
             onClick={toggle}

@@ -20,10 +20,11 @@ import axios, {AxiosError, AxiosResponse} from "axios";
 import React, {useEffect, useState} from "react";
 import {useForm} from "@mantine/form";
 import {useDisclosure} from "@mantine/hooks";
-import {CommentButtonSwitch} from "../button-switch/CommentButtonSwitch.tsx";
+import {CommentButtonSwitch} from "../comment-button-switch/CommentButtonSwitch.tsx";
 import {IconMessageReply} from "@tabler/icons-react";
 
 export const Comment = (props: CommentData) => {
+    const [replyOpened, {open: openReply, close: closeReply}] = useDisclosure(true);
     const [childrenOpened, {open: openChildren, close: closeChildren}] = useDisclosure(false);
     const [opened, {open, close}] = useDisclosure(false);
     const username = props.username;
@@ -44,6 +45,20 @@ export const Comment = (props: CommentData) => {
         defaultContentStack(content)
     );
 
+    function handleReplyClick() {
+        if (!childrenOpened) {
+            getChildren();
+            openChildren();
+        } else {
+            if (replyOpened) {
+                closeReply();
+                console.log("closed");
+            } else {
+                openReply();
+                console.log("opened");
+            }
+        }
+    }
     function getChildren() {
         const response = axios.get(`http://localhost:8080/api/v1/comments/children/comment-${id}`);
         response.then(data => {
@@ -51,6 +66,7 @@ export const Comment = (props: CommentData) => {
         }).catch(error => console.log(error))
     }
     function defaultContentStack(newContent: string) {
+
         return (<Stack gap={3}>
             <Card p={"sm"} withBorder radius={20} maw={"800"}>
                 <CardSection inheritPadding py="md" pb={"xs"}>
@@ -70,12 +86,7 @@ export const Comment = (props: CommentData) => {
             </Card>
 
             <Group mt={0} mx={"md"} lh={"xs"}>
-                <Anchor fz={"sm"} mx={"sm"} mt={0} onClick={() => {
-                    if (!childrenOpened) {
-                        getChildren();
-                        openChildren();
-                    } else closeChildren();
-                }}
+                <Anchor fz={"sm"} mx={"sm"} mt={0} onClick={handleReplyClick}
                 >{childrenNumber ? "View replies..." : "Reply"}</Anchor>
                 {isMine ?
                     <>
@@ -203,13 +214,7 @@ export const Comment = (props: CommentData) => {
                 </Card>
                 <Group mt={0} mx={"md"} lh={"xs"}>
                     <Anchor fz={"sm"} mx={"sm"} mt={0}
-                            onClick={() => {
-                                if (!childrenOpened) {
-                                    getChildren();
-                                    openChildren();
-                                } else closeChildren();
-                            }
-                            }>{childrenNumber ? "View replies..." : "Reply"}</Anchor>
+                            onClick={handleReplyClick}>{childrenNumber ? "View replies..." : "Reply"}</Anchor>
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={open}>Delete</Anchor>
                 </Group>
@@ -248,12 +253,6 @@ export const Comment = (props: CommentData) => {
             </Group>
             <Container ms={"md"}>
                 <Collapse in={childrenOpened}>
-                    {children?.map((item) => (
-                        <Comment id={item.id} date={item.date} account={item.account}
-                                 username={item.username} content={item.content}
-                                 status={item.status} isMine={item.account == localStorage.getItem("username")}
-                                 childrenNumber={item.childrenNumber} key={item.id}></Comment>
-                    ))}
                     <form
                         onSubmit={replyForm.onSubmit(async (values) => {
                             console.log(values);
@@ -285,6 +284,8 @@ export const Comment = (props: CommentData) => {
                             }
                         })}
                     >
+                    </form>
+                    <Collapse in={replyOpened}>
                         <Textarea
                             radius={"xl"}
                             size={"md"}
@@ -300,7 +301,14 @@ export const Comment = (props: CommentData) => {
                                 </ActionIcon>
                             }
                         ></Textarea>
-                    </form>
+                    </Collapse>
+                    {children?.map((item) => (
+                        <Comment id={item.id} date={item.date} account={item.account}
+                                 username={item.username} content={item.content}
+                                 status={item.status} isMine={item.account == localStorage.getItem("username")}
+                                 childrenNumber={item.childrenNumber} key={item.id}></Comment>
+                    ))}
+
                 </Collapse>
             </Container>
         </Container>)
