@@ -166,7 +166,7 @@ export default function TakingTestPage() {
         <Text>
           Do you want to{" "}
           <Text c="red" span inherit>
-            go back and continue doing the test
+            {numberOfQuestionChecked!=Number(numberOfQuestion)?"go back and continue doing the test":"go back and change your answers"}
           </Text>{" "}
           or{" "}
           <Text c="blue" span inherit>
