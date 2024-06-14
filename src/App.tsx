@@ -16,7 +16,6 @@ import ForgotPasswordPage from "./page/authentication/ForgotPasswordPage";
 import ResetPasswordPage from "./page/authentication/ResetPasswordPage";
 import HomePage from "./page/home/HomePage";
 import { ErrorPage } from "./page/404/ErrorPage";
-import QuestionPage from "./page/question-page/QuestionPage";
 import UserProfilePage from "./page/user-profile/UserProfilePage";
 import UpdateProfilePage from "./page/user-profile/UpdateProfilePage";
 import ManageUser from "./page/manageUser-page/ManageUserPage";
@@ -111,10 +110,6 @@ const router = createBrowserRouter([
       {
         path: "study",
         element: <StudyPage />,
-      },
-      {
-        path: "subject-posting",
-        element: <QuestionPage />,
       },
       {
         path: "manage-user",

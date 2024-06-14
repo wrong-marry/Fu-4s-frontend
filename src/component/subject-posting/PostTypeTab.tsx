@@ -1,8 +1,9 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-import QuestionSetList from "./QuestionSetList";
-import LearningMaterialList from "./LearningMaterialList";
+import PostList from "./PostList.tsx";
 import {Box, Center, Tabs} from "@mantine/core";
+import {POST_PAGE_SIZE, SearchRequest} from "../../page/search/SearchPage.tsx";
+import {SearchOrder} from "../../page/search/SearchPage.tsx";
 
 interface PostTypeTabProps {
   children?: React.ReactNode;
@@ -36,16 +37,22 @@ PostTypeTab.propTypes = {
     value: PropTypes.string.isRequired,
 };
 
-export default function BasicTabs() {
-    const [value, setValue] = React.useState<string>("0");
-
+export default function BasicTabs(props: { subject: string | undefined, key: string | undefined }) {
+    const [searchRequest] = React.useState<SearchRequest>({
+        username: null,
+        title: null,
+        subjectCode: props.subject,
+        postTime: null,
+        isTest: null,
+        order: SearchOrder[SearchOrder.DATE_DESC],
+        pageSize: POST_PAGE_SIZE,
+        currentPage: 1,
+        semester: null
+    } as SearchRequest);
   return (
-      <Box w={"100%"} mt={"md"}>
-          <Box style={{borderBottom: 1, borderColor: "divider"}}>
-              <Center>
-                  <Tabs value={value} onChange={() => {
-                      setValue(value)
-                  }}>
+      <Box mt="md" style={{borderBottom: 1, borderColor: "divider"}}>
+          <Center>
+              <Tabs defaultValue={"all"}>
                       <Tabs.List>
                           <Tabs.Tab value="all">
                               All
@@ -58,29 +65,25 @@ export default function BasicTabs() {
                           </Tabs.Tab>
                       </Tabs.List>
 
-                      <Tabs.Panel value="gallery">
-                          Gallery tab content
+                  <Tabs.Panel value="all">
+                      <PostTypeTab value={"0"} index={0}>
+                          <PostList searchRequest={searchRequest}/>
+                      </PostTypeTab>
                       </Tabs.Panel>
 
-                      <Tabs.Panel value="messages">
-                          Messages tab content
+                  <Tabs.Panel value="test">
+                      <PostTypeTab value={"1"} index={1}>
+                          <PostList searchRequest={{...searchRequest, isTest: true}}/>
+                      </PostTypeTab>
                       </Tabs.Panel>
 
-                      <Tabs.Panel value="settings">
-                          Settings tab content
+                  <Tabs.Panel value="material">
+                      <PostTypeTab value={"2"} index={2}>
+                          <PostList searchRequest={{...searchRequest, isTest: false}}/>
+                      </PostTypeTab>
                       </Tabs.Panel>
                   </Tabs>
               </Center>
       </Box>
-          <PostTypeTab value={value} index={0}>
-        <QuestionSetList />
-          </PostTypeTab>
-          <PostTypeTab value={value} index={1}>
-        <LearningMaterialList />
-          </PostTypeTab>
-          <PostTypeTab value={value} index={2}>
-        Item three
-          </PostTypeTab>
-    </Box>
   );
 }

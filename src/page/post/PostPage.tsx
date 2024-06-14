@@ -46,6 +46,7 @@ const PostPage: React.FC = () => {
     },
   });
 
+  const [outOfComment, setOutOfComment] = useState<boolean>(false);
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<CommentData[] | null>([]);
 
@@ -82,6 +83,7 @@ const PostPage: React.FC = () => {
       setComments(comment =>
           comment?.concat(response.data) || []
       );
+      if (response.data.length < 10) setOutOfComment(true);
     } catch (error) {
       console.error("Error fetching comment:", error);
     }
@@ -104,14 +106,13 @@ const PostPage: React.FC = () => {
       <Title order={2}>Comment section</Title>
       {(comments == null || comments?.length == 0) ? <Text>No comments</Text> : <></>}
       {forEach(comments)?.map(
-          c => {
-            return <Comment key={c.id} id={c.id} username={c.username} content={c.content} date={c.date}
+          c => <Comment key={c.id} id={c.id} username={c.username} content={c.content} date={c.date}
                             isMine={c.account == localStorage.getItem("username")}
                             account={c.account} status={c.status} childrenNumber={c.childrenNumber}
             />
-        })}
+      )}
       {/*Check if there is more comment to fetch*/}
-      {!((comments?.length ?? 0) % 10 || (comments?.length ?? 0) == 0) ?
+      {!((comments?.length ?? 0) % 10 || (comments?.length ?? 0) == 0 || outOfComment) ?
           <Anchor onClick={fetchMore}>Load more comments</Anchor> : <></>}
       <form
           onSubmit={form.onSubmit(async (values) => {

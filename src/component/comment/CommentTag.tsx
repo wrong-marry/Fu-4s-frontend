@@ -45,6 +45,10 @@ export const Comment = (props: CommentData) => {
         defaultContentStack(content)
     );
 
+    useEffect(() => {
+        form.setInitialValues({"content": content});
+        form.setValues({"content": content});
+    }, [content]);
     function handleReplyClick() {
         if (!childrenOpened) {
             getChildren();
@@ -147,7 +151,7 @@ export const Comment = (props: CommentData) => {
     const form = useForm({
         mode: 'uncontrolled',
         initialValues: {
-            'content': props.content,
+            'content': content,
         },
         validate: {
             content: (value: string) => (/^\S/.test(value) ? null : 'Invalid content'),
@@ -177,8 +181,7 @@ export const Comment = (props: CommentData) => {
                         </Flex>
                     </CardSection>
                     <CardSection inheritPadding py="xs" pt={0}>
-                        <form onSubmit={form.onSubmit(async (values) => {
-                            console.log(values);
+                        <form onSubmit={form.onSubmit((values) => {
                             axios.put(
                                     `http://localhost:8080/api/v1/comments/update/${id}`,
                                     values,
@@ -190,13 +193,16 @@ export const Comment = (props: CommentData) => {
                                     if (response.status === 200) {
                                         setContent(values.content);
                                         console.log("Updated, form value: " + values.content + ", new content: " + content);
+                                        form.setFieldValue("content", values.content);
+                                        form.setInitialValues({"content": values.content});
                                         setContentStack(defaultContentStack(values.content));
                                     }
                                 })
                                 .catch((error: AxiosError) => {
                                         console.error("Error updating comment:", error);
                                     }
-                                );
+                                ).finally(() => {
+                            });
                         })}>
                             <Textarea size={"md"} my={"sm"} mt={0} placeholder={"Type in your comment"} autosize
                                       minRows={2}
@@ -218,12 +224,16 @@ export const Comment = (props: CommentData) => {
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={open}>Delete</Anchor>
                 </Group>
+
+                <Button onClick={() => console.log(form.values.content + " " + content)}>hi</Button>
             </Stack>
         );
     }
 
     return (
         <Container w={"100%"}>
+            <Button
+                onClick={() => console.log("form value: " + form.values.content + " new content: " + content)}>hi</Button>
             <Modal opened={opened} onClose={close} title="Confirm deletion" centered>
                 Delete comment?
                 <Group justify={"flex-end"}>
@@ -308,7 +318,6 @@ export const Comment = (props: CommentData) => {
                                  status={item.status} isMine={item.account == localStorage.getItem("username")}
                                  childrenNumber={item.childrenNumber} key={item.id}></Comment>
                     ))}
-
                 </Collapse>
             </Container>
         </Container>)

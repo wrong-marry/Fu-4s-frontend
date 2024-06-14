@@ -10,12 +10,12 @@ import {Avatar, Badge, Card, Group, Stack, Text} from "@mantine/core";
 import {Carousel} from "@mantine/carousel";
 import classes from "../../component/home/Carousel.module.css";
 import '@mantine/dates/styles.css';
-import { Radio} from '@mantine/core';
+import {Radio} from '@mantine/core';
 import {IconAdjustmentsAlt} from '@tabler/icons-react';
-import { Select, rem } from '@mantine/core';
+import {Select, rem} from '@mantine/core';
 
-import { useDisclosure } from '@mantine/hooks';
-import { Drawer, Button } from '@mantine/core';
+import {useDisclosure} from '@mantine/hooks';
+import {Drawer, Button} from '@mantine/core';
 import {DateInput} from "@mantine/dates";
 import {useForm} from "@mantine/form";
 import dayjs from 'dayjs';
@@ -29,16 +29,16 @@ const SearchDrawer = (props: {
 }) => {
     const searchRequest = props.searchRequest;
     const setSearchRequest = props.setSearchRequest;
-    const [opened, { open, close }] = useDisclosure(false);
+    const [opened, {open, close}] = useDisclosure(false);
     const [value] = useState<Date | null>();
     const form = useForm({
         mode: 'uncontrolled',
         initialValues: {
-            title:searchRequest?.title,
-            subjectCode:searchRequest?.subjectCode,
+            title: searchRequest?.title,
+            subjectCode: searchRequest?.subjectCode,
             semester: null,
-            postTime:searchRequest?.postTime,
-            isTest:searchRequest?.isTest
+            postTime: searchRequest?.postTime,
+            isTest: searchRequest?.isTest
         },
         validate: {
             semester: s => s != null && (s < 0 || s > 10),
@@ -80,9 +80,10 @@ const SearchDrawer = (props: {
             overlayProps={{backgroundOpacity: 0.5, blur: 2}}
         >
             <form onSubmit={form.onSubmit((values) => {
-                setSearchRequest({ ...searchRequest,
-                    title:values.title,
-                    subjectCode:values.subjectCode,
+                setSearchRequest({
+                    ...searchRequest,
+                    title: values.title,
+                    subjectCode: values.subjectCode,
                     semester: values.semester,
                     postTime: values.postTime,
                     isTest: values.isTest,
@@ -164,18 +165,20 @@ const SearchDrawer = (props: {
                     {
                         group: 'Recency',
                         items: [
-                            { label: 'Newest first', value: SearchOrder[SearchOrder.DATE_DESC]},
-                            { label: 'Oldest first', value: SearchOrder[SearchOrder.DATE_ASC]}
+                            {label: 'Newest first', value: SearchOrder[SearchOrder.DATE_DESC]},
+                            {label: 'Oldest first', value: SearchOrder[SearchOrder.DATE_ASC]}
                         ]
                     },
-                    { group: 'Alphabet', items: [
-                            { label: 'A-Z', value: SearchOrder[SearchOrder.TITLE_ASC]},
-                            { label: 'Z-A', value: SearchOrder[SearchOrder.TITLE_DESC]}
-                        ] },
+                    {
+                        group: 'Alphabet', items: [
+                            {label: 'A-Z', value: SearchOrder[SearchOrder.TITLE_ASC]},
+                            {label: 'Z-A', value: SearchOrder[SearchOrder.TITLE_DESC]}
+                        ]
+                    },
                 ]}
             />
             <Box ta={"center"}>
-                <Text  opacity={0.6} fz={12} >
+                <Text opacity={0.6} fz={12}>
                     Did not find the post?
                 </Text>
                 <div>
@@ -197,42 +200,49 @@ export interface Post {
     username: string;
     test: boolean;
 }
+
 interface ResponseMaterialData {
     totalMaterial: number;
     learningMaterials: Post[];
 }
+
 interface ResponseTestData {
     totalTest: number;
     tests: Post[];
 }
+
 export const POST_PAGE_SIZE = 10;
+
 export interface SearchRequest {
-    username: string|null;
-    title: string|null;
-    subjectCode: string|null;
-    postTime: string|null;
-    isTest: boolean|null;
-    order: string;
-    pageSize: number;
-    currentPage: number;
-    semester: number|null;
-    updateBoth: boolean | null;
+    username: string | null,
+    title: string | null,
+    subjectCode: string | null,
+    postTime: string | null,
+    isTest: boolean | null,
+    order: string,
+    pageSize: number,
+    currentPage: number,
+    semester: number | null,
+    updateBoth: boolean | null,
+    searchRequest?: SearchRequest
 }
-enum SearchOrder {
+
+export enum SearchOrder {
     TITLE_ASC, TITLE_DESC, DATE_ASC, DATE_DESC
 }
+
 export async function advancedSearch(searchRequest: SearchRequest) {
     try {
-        let api = `http://localhost:8080/api/v1/search?pageSize=`+POST_PAGE_SIZE;
-        if (searchRequest.username) api+=`&username=${searchRequest.username}`;
-        if (searchRequest.title) api+=`&keyword=${searchRequest.title}`;
-        if (searchRequest.isTest!=null) api+=`&isTest=${searchRequest.isTest}`;
-        if (searchRequest.subjectCode) api+=`&subjectCode=${searchRequest.subjectCode}`;
-        if (searchRequest.semester) api+=`&semester=${searchRequest.semester}`;
-        if (searchRequest.postTime) api+=`&postTime=${dayjs(searchRequest.postTime).format('YYYY-MM-DDTHH:mm:ssZ[Z]')}`;
-        api+=`&order=${searchRequest.order}`;
+        let api = `http://localhost:8080/api/v1/search?pageSize=` + POST_PAGE_SIZE;
+        if (searchRequest.username) api += `&username=${searchRequest.username}`;
+        if (searchRequest.title) api += `&keyword=${searchRequest.title}`;
+        if (searchRequest.isTest != null) api += `&isTest=${searchRequest.isTest}`;
+        if (searchRequest.subjectCode) api += `&subjectCode=${searchRequest.subjectCode}`;
+        if (searchRequest.semester) api += `&semester=${searchRequest.semester}`;
+        if (searchRequest.postTime) api += `&postTime=${dayjs(searchRequest.postTime).format('YYYY-MM-DDTHH:mm:ssZ[Z]')}`;
+        api += `&order=${searchRequest.order}`;
 
-        api+=`&page=${searchRequest.currentPage}`;
+        api += `&page=${searchRequest.currentPage}`;
         const response = await axios.get(api);
         console.log(api);
         return response.data;
@@ -240,6 +250,7 @@ export async function advancedSearch(searchRequest: SearchRequest) {
         throw new Error("Error fetching post data");
     }
 }
+
 function SearchPage() {
     const [displayedNumber, setDisplayedNumber] = useState(0);
     const [totalItem, setTotalItem] = useState(0);
@@ -249,7 +260,7 @@ function SearchPage() {
     const [resTestData, setResTestData] = useState<ResponseTestData>();
     const [currentMaterialPage, setCurrentMaterialPage] = useState<number>(1);
     const [currentTestPage, setCurrentTestPage] = useState<number>(1);
-    const advancedFetchData = async (searchReq:SearchRequest) => {
+    const advancedFetchData = async (searchReq: SearchRequest) => {
         const data = await advancedSearch(searchReq);
         setTotalItem(0);
         setDisplayedNumber(0);
@@ -285,10 +296,10 @@ function SearchPage() {
         advancedFetchData(searchRequest);
     }, [searchRequest, searchParams]);
 
-    const numberOfMaterialPages = (resMaterialData?.totalMaterial==0||resMaterialData?.totalMaterial==undefined)
-            ?0:(Math.ceil(resMaterialData.totalMaterial/POST_PAGE_SIZE));
-    const numberOfTestPages = (resTestData?.totalTest==0||resTestData?.totalTest==undefined)
-        ?0:(Math.ceil(resTestData.totalTest/POST_PAGE_SIZE));
+    const numberOfMaterialPages = (resMaterialData?.totalMaterial == 0 || resMaterialData?.totalMaterial == undefined)
+        ? 0 : (Math.ceil(resMaterialData.totalMaterial / POST_PAGE_SIZE));
+    const numberOfTestPages = (resTestData?.totalTest == 0 || resTestData?.totalTest == undefined)
+        ? 0 : (Math.ceil(resTestData.totalTest / POST_PAGE_SIZE));
     return (
         <Container my="lg" size={"lg"}>
             <Text ta={"center"} fw={650} fz={25}>Search result</Text>
@@ -296,7 +307,7 @@ function SearchPage() {
                           displayed={displayedNumber}/>
             <Text lh={3} ta={"center"}>______</Text>
             {
-                (resMaterialData==null)?
+                (resMaterialData == null) ?
                     <></> :
                     <>
                         <Text lh={2} fw={650} fz={25}>Learning material</Text>
@@ -319,39 +330,51 @@ function SearchPage() {
                     })}
                     getControlProps={(control) => {
                         if (control === 'first') {
-                            return { onClick: () => {
+                            return {
+                                onClick: () => {
                                     setCurrentMaterialPage(1);
                                     setSearchRequest({...searchRequest, currentPage: 1, isTest: false});
-                                } };
+                                }
+                            };
                         }
 
                         if (control === 'last') {
-                            return { onClick: () => {
+                            return {
+                                onClick: () => {
                                     setCurrentMaterialPage(numberOfMaterialPages);
                                     setSearchRequest({
                                         ...searchRequest,
                                         currentPage: numberOfMaterialPages,
                                         isTest: false
                                     });
-                                } };
+                                }
+                            };
                         }
 
                         if (control === 'next') {
-                            return { onClick: () => {
-                                    setCurrentMaterialPage(currentMaterialPage+1);
+                            return {
+                                onClick: () => {
+                                    setCurrentMaterialPage(currentMaterialPage + 1);
                                     setSearchRequest({
                                         ...searchRequest,
                                         currentPage: currentMaterialPage,
                                         isTest: false
                                     });
-                                } };
+                                }
+                            };
                         }
 
                         if (control === 'previous') {
-                            return { onClick: () => {
-                                    setCurrentMaterialPage(currentMaterialPage-1);
-                                    setSearchRequest({ ...searchRequest, currentPage: currentMaterialPage, isTest: false });
-                                } };
+                            return {
+                                onClick: () => {
+                                    setCurrentMaterialPage(currentMaterialPage - 1);
+                                    setSearchRequest({
+                                        ...searchRequest,
+                                        currentPage: currentMaterialPage,
+                                        isTest: false
+                                    });
+                                }
+                            };
                         }
 
                         return {};
@@ -359,13 +382,13 @@ function SearchPage() {
                 />
             </Center>
             {
-                (resTestData==null)?
-                   <></> :
+                (resTestData == null) ?
+                    <></> :
                     <>
                         <Text lh={2} fw={650} fz={25}>Mock test</Text>
                         {((resTestData?.tests?.length || 0) === 0) ?
-                        <Text c={"dimmed"}>No mock tests found</Text>
-                        :
+                            <Text c={"dimmed"}>No mock tests found</Text>
+                            :
                             MyPostList(resTestData.tests, navigate)}
                     </>
             }
@@ -377,36 +400,44 @@ function SearchPage() {
                     getItemProps={(page) => ({
                         onClick: () => {
                             setCurrentTestPage(page);
-                            setSearchRequest({ ...searchRequest, currentPage: page, isTest: true });
+                            setSearchRequest({...searchRequest, currentPage: page, isTest: true});
                         }
                     })}
                     getControlProps={(control) => {
                         if (control === 'first') {
-                            return { onClick: () => {
+                            return {
+                                onClick: () => {
                                     setCurrentTestPage(1);
-                                    setSearchRequest({ ...searchRequest, currentPage: 1, isTest: true });
-                                } };
+                                    setSearchRequest({...searchRequest, currentPage: 1, isTest: true});
+                                }
+                            };
                         }
 
                         if (control === 'last') {
-                            return { onClick: () => {
+                            return {
+                                onClick: () => {
                                     setCurrentTestPage(numberOfTestPages);
                                     setSearchRequest({...searchRequest, currentPage: numberOfTestPages, isTest: true});
-                                } };
+                                }
+                            };
                         }
 
                         if (control === 'next') {
-                            return { onClick: () => {
-                                    setCurrentTestPage(currentTestPage+1);
-                                    setSearchRequest({ ...searchRequest, currentPage: currentTestPage, isTest: true });
-                                } };
+                            return {
+                                onClick: () => {
+                                    setCurrentTestPage(currentTestPage + 1);
+                                    setSearchRequest({...searchRequest, currentPage: currentTestPage, isTest: true});
+                                }
+                            };
                         }
 
                         if (control === 'previous') {
-                            return { onClick: () => {
-                                    setCurrentTestPage(currentTestPage-1);
-                                    setSearchRequest({ ...searchRequest, currentPage: currentTestPage, isTest: false });
-                                } };
+                            return {
+                                onClick: () => {
+                                    setCurrentTestPage(currentTestPage - 1);
+                                    setSearchRequest({...searchRequest, currentPage: currentTestPage, isTest: false});
+                                }
+                            };
                         }
 
                         return {};
@@ -447,11 +478,11 @@ const MyPostList = (resData: Post[], navigate: NavigateFunction) => {
                                 <Stack gap={2}>
                                     <Text fw={500} truncate="end">{test.title}</Text>
                                     <Text fw={150} fz={13}>{test.postTime
-                                        .toString().substring(0,10)
+                                        .toString().substring(0, 10)
                                     }
                                     </Text>
                                     {
-                                        (test.test)?
+                                        (test.test) ?
                                             <Badge color="indigo">
                                                 Mock Test
                                             </Badge> :
@@ -461,7 +492,7 @@ const MyPostList = (resData: Post[], navigate: NavigateFunction) => {
                                     }
                                 </Stack>
                                 <Group gap={"xs"}>
-                                    <Avatar variant="filled" radius="xl" size="sm" />
+                                    <Avatar variant="filled" radius="xl" size="sm"/>
                                     <Text size="sm">{test.username}</Text>
                                     <Stack gap={2}>
                                         <Badge color="blue">
@@ -475,6 +506,6 @@ const MyPostList = (resData: Post[], navigate: NavigateFunction) => {
                 ))}
             </Carousel>
         </Card>
-        </>;
+    </>;
 }
 export default SearchPage;
