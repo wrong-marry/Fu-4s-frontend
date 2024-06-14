@@ -2,7 +2,6 @@ import {Center, Paper, Table} from "@mantine/core";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {POST_PAGE_SIZE, SearchRequest} from "../../page/search/SearchPage.tsx";
-import dayjs from "dayjs";
 import axios from "axios";
 
 interface Post {
@@ -34,8 +33,6 @@ function PostList(props: { searchRequest: SearchRequest }) {
         api += `&page=${searchRequest.currentPage}`;
         const data = (await axios.get(api)).data;
 
-        console.log(api);
-        console.log(data);
         setPosts(data.posts);
         setLoading(false);
       } catch (error: any) {
@@ -87,7 +84,7 @@ function PostList(props: { searchRequest: SearchRequest }) {
                   <Table.Td>{post.postTime}</Table.Td>
                 </Table.Tr>
             ))}
-            {posts.length ? <></> : <Table.Tr>No posts found.</Table.Tr>}
+            {posts.length ? <></> : <Table.Tr><Table.Td>No posts found.</Table.Td></Table.Tr>}
           </Table.Tbody>
         </Table>
         </Center>
