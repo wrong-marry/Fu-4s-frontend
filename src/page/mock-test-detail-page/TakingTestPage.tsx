@@ -57,10 +57,16 @@ export default function TakingTestPage() {
 
   let questionIndex = 0;
 
+  const personalized = () => {
+    if (mode === "personalized") return true;
+    else if (mode === "random") return false;
+    else throw new Response("Wrong mode", { status: 404 });
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       if (id != null && numberOfQuestion != null) {
-        const res = await fetchRandomQuestion(id, Number(numberOfQuestion));
+        const res = await fetchRandomQuestion(id, Number(numberOfQuestion),personalized());
         setQuestions(res.data);
       } else navigate("/forbidden");
     };
@@ -78,12 +84,6 @@ export default function TakingTestPage() {
     fetchData();
     personalized();
   }, []);
-
-  const personalized = () => {
-      if (mode === "personalized") return true;
-      else if (mode === "random") return false;
-      else throw new Response("Wrong mode", {status:404});
-  };
 
   const increaseNumberOfQuestionsChecked = () => {
     setNumberOfQuestionsChecked(numberOfQuestionChecked + 1);
@@ -130,8 +130,10 @@ export default function TakingTestPage() {
   };
 
   const increaseAttempts = async () => {
-    await axios.put(`http://localhost:8080/api/v1/questionSet/increase-attempts?id=${id}`);
-  }
+    await axios.put(
+      `http://localhost:8080/api/v1/questionSet/increase-attempts?id=${id}`
+    );
+  };
 
   const handleSubmit = () => {
     setSubmitFormOpened(false);
@@ -166,7 +168,9 @@ export default function TakingTestPage() {
         <Text>
           Do you want to{" "}
           <Text c="red" span inherit>
-            {numberOfQuestionChecked!=Number(numberOfQuestion)?"go back and continue doing the test":"go back and change your answers"}
+            {numberOfQuestionChecked != Number(numberOfQuestion)
+              ? "go back and continue doing the test"
+              : "go back and change your answers"}
           </Text>{" "}
           or{" "}
           <Text c="blue" span inherit>
