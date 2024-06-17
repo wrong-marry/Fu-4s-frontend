@@ -1,4 +1,4 @@
-import { Title } from "@mantine/core";
+import {Title, useMantineTheme} from "@mantine/core";
 import Carousel from "../../component/carousel/HomeCarousel";
 import {HeroContent, HeroContent2} from "../../component/hero/HeroContent";
 import DocumentTitle from "../../component/document-title/DocumentTitle";
@@ -11,13 +11,13 @@ export default function LandingPage() {
             <HeroContent />
             <div className="p-10 mx-auto">
                 <Title className="text-center text-4xl">
-                    Why you should use FU-4S
+                    About us
                 </Title>
             </div>
             <HeroContent2/>
             <div className="p-10 mx-auto">
                 <Title className="text-center text-4xl">
-                    Why you should use FU-4S
+                    Join now
                 </Title>
             </div>
             <Carousel/>
