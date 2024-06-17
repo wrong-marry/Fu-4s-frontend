@@ -319,7 +319,7 @@ export function EditMockTestForm() {
             <Grid >
                 <Grid.Col span={3} offset={5}>
                     <Center>
-                        <Button variant="default" onClick={() => setRemovePopup(false)} mt="sm">
+                        <Button variant="default" onClick={() => setEditPopup(false)} mt="sm">
                             Cancel
                         </Button>
                     </Center>
