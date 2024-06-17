@@ -15,7 +15,6 @@ import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import {useDisclosure} from "@mantine/hooks";
 
 interface Subject {
     code: string;
@@ -35,14 +34,13 @@ export function EditLearningMaterialForm() {
     const maxSize = 2 * 1024 * 1024 * 1024;
 
     const {id} = useParams<{ id: string }>();
-    const [material, setMaterial] = useState<Material>(null);
+    const [material, setMaterial] = useState<Material | null>(null);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const [files, setFiles] = useState<File[]>([]);
+    const [files, setFiles] = useState<File[] | null>(null);
     const [subject, setSubject] = useState<string | null>();
     const [subjectList, setSubjectList] = useState<Subject[]>([]);
 
-    const [opened, {open, close}] = useDisclosure(false);
     const [removePopup, setRemovePopup] = useState(false);
 
     const [error, setError] = useState<string>("");
@@ -149,19 +147,20 @@ export function EditLearningMaterialForm() {
         });
 
         if(check) {
-            setFiles([]);
+            setFiles(null);
             return;
         }
 
         setError("");
-        setFiles(fs);
+        if(fs.length != 0) setFiles(fs);
+        else setFiles(null);
     }
 
     const handleRemove = () => {
         fetch(`http://localhost:8080/api/v1/learningMaterial/remove?id=${id}&username=${localStorage.getItem('username')}`, {
             method: "DELETE"
         }).then(() => {
-            navigate(`/user/post`);
+            navigate(`/user/post/learning-material`);
         })
     }
 
@@ -176,7 +175,7 @@ export function EditLearningMaterialForm() {
     if(material == null) return;
 
     let listData;
-    if(files.length > 0) listData = files.length == 0 ? <ListItem><i>no files yet</i></ListItem> : files.map((file, index) => {
+    if(files != null) listData = files.length == 0 ? <ListItem><i>no files yet</i></ListItem> : files.map((file, index) => {
                                         return <ListItem key={index} mb="xs">
                                             <Text onClick={() => handleDownloadNewFile(file)} td="underline" color="blue" type="button" component="button">{file.name}</Text>
                                         </ListItem>
@@ -267,7 +266,6 @@ export function EditLearningMaterialForm() {
                             <FileInput
                                 radius="md"
                                 label="Attached files"
-                                withAsterisk
                                 description="Choose all files at a time. Only accept files < 2GB"
                                 placeholder="Choose files"
                                 onChange={(fs) => handleSetFiles(fs)}
@@ -296,7 +294,7 @@ export function EditLearningMaterialForm() {
                     <Grid>
                         <Grid.Col span={2} offset={6}>
                             <Center>
-                                <Button variant="outline" color="black" onClick={() => navigate("/home")} ml="lg">
+                                <Button variant="outline" color="black" onClick={() => navigate("/user/post/learning-material")} ml="lg">
                                     Back
                                 </Button>
                             </Center>
