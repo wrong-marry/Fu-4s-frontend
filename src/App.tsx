@@ -265,6 +265,10 @@ const router = createBrowserRouter([
       },
       {
         path: "create-mock-test",
+          loader: () => {
+              if (!isLoggedIn()) return redirect("/forbidden");
+              return null;
+          },
         element: (
             <Suspense fallback={loadingIndicator}>
               <CreateMockTestPage />
@@ -285,6 +289,10 @@ const router = createBrowserRouter([
       },
       {
         path: "create-learning-material",
+          loader: () => {
+              if (!isLoggedIn()) return redirect("/forbidden");
+              return null;
+          },
         element: (
             <Suspense fallback={loadingIndicator}>
                 <AddLearningMaterialPage/>
@@ -293,6 +301,10 @@ const router = createBrowserRouter([
       },
       {
         path: "edit-learning-material/:id",
+          loader: () => {
+              if (!isLoggedIn()) return redirect("/forbidden");
+              return null;
+          },
         element: (
             <Suspense fallback={loadingIndicator}>
                 <EditLearningMaterialPage />
