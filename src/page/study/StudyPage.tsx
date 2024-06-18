@@ -1,6 +1,6 @@
 import {Box, Button, ButtonGroup, Container, Group, NativeSelect, Text} from "@mantine/core";
 import PostTypeTab from "../../component/subject-posting/PostTypeTab.tsx";
-import React, {ReactElement, useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {Subject} from "../../component/manage-subject/TableSubject.tsx";
 
 
@@ -10,7 +10,6 @@ export default function StudyPage() {
     const [subjects, setSubjects] = React.useState<Subject[]>([]);
     const [selectedSubject, setSelectedSubject] = React.useState<string>();
     const [semesterSubjects, setSemesterSubjects] = React.useState<Subject[]>();
-
     const buttons = semesterSubjects?.map(sub => <Button
         key={sub.code}
         variant={selectedButton?.code == sub?.code ? "outline" : "filled"}
@@ -33,8 +32,9 @@ export default function StudyPage() {
                 } else {
                     const data: Subject[] = await response.json();
                     setSubjects(data);
-                    setSelectedSubject(data[0].code);
                     setSemesterSubjects(data.filter(subject => subject.semester + "" == semester));
+                    setSelectedButton(data[0]);
+                    setSelectedSubject(data[0].code);
                 }
             } catch (error) {
                 console.log(error);
