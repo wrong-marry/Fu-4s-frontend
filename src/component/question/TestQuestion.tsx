@@ -38,6 +38,9 @@ export default function TestQuestion(props: any) {
   const pickCorrectAnswer = (correct: boolean) => {
     props.modifyNumberOfCorrectAnswers(correct);
     setQuestionIsCorrect(correct);
+    console.log(props.question.id);
+    if(correct) props.addToCorrectAnswers(props.question.id);
+    else props.addToWrongAnswers(props.question.id);
   };
 
   const handleRadioChange = (selectedValue: string, isCorrect: boolean) => {

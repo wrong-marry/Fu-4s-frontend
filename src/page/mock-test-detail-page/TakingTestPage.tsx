@@ -39,6 +39,12 @@ import { notifications } from "@mantine/notifications";
 import { IconArrowDown } from "@tabler/icons-react";
 import { blue, green } from "@mui/material/colors";
 import TestScore from "../../component/test-mark/TestScore";
+import { delay } from "lodash";
+
+interface Result {
+  correctAnswersId: number[];
+  wrongAnswersId: number[];
+}
 export default function TakingTestPage() {
   const [searchParam, setSearchParam] = useSearchParams();
   const id = searchParam.get("id");
@@ -54,20 +60,39 @@ export default function TakingTestPage() {
   const [reviewing, setReviewing] = useState(false);
   const [submitFormOpened, setSubmitFormOpened] = useState(false);
   const [congratulationOpened, setCongratulationOpened] = useState(false);
-
+  const [correctAnswersId, setCorrectAnswersId] = useState<number[]>([]);
+  const [wrongAnswersId, setWrongAnswersId] = useState<number[]>([]);
+  const [result, setResult] = useState<Result | null>(null);
   let questionIndex = 0;
-
   const personalized = () => {
     if (mode === "personalized") return true;
     else if (mode === "random") return false;
     else throw new Response("Wrong mode", { status: 404 });
   };
 
+  const addToCorrectAnswers = (id: number) => {
+    setCorrectAnswersId([...correctAnswersId, id]);
+    setWrongAnswersId(wrongAnswersId.filter((i) => i != id));
+  };
+
+  const addToWrongAnswers = (id: number) => {
+    setWrongAnswersId([...wrongAnswersId, id]);
+    setCorrectAnswersId(correctAnswersId.filter((i) => i != id));
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       if (id != null && numberOfQuestion != null) {
-        const res = await fetchRandomQuestion(id, Number(numberOfQuestion),personalized());
+        const res = await fetchRandomQuestion(
+          id,
+          Number(numberOfQuestion),
+          personalized()
+        );
         setQuestions(res.data);
+        const idsArray: number[] = res.data.map(
+          (question: Question) => question.id
+        );
+        setWrongAnswersId(idsArray);
       } else navigate("/forbidden");
     };
     const fetchPost = async () => {
@@ -110,6 +135,8 @@ export default function TakingTestPage() {
         modifyNumberOfCorrectAnswers={modifyNumberOfCorrectAnswers}
         increaseNumberOfQuestionsChecked={increaseNumberOfQuestionsChecked}
         decreaseNumberOfQuestionsChecked={decreaseNumberOfQuestionsChecked}
+        addToCorrectAnswers={addToCorrectAnswers}
+        addToWrongAnswers={addToWrongAnswers}
       />
     );
   });
@@ -135,7 +162,24 @@ export default function TakingTestPage() {
     );
   };
 
-  const handleSubmit = () => {
+  const handleClickSubmit = () => {
+    setResult({
+      correctAnswersId: correctAnswersId,
+      wrongAnswersId: wrongAnswersId,
+    });
+    setSubmitFormOpened(true);
+  };
+
+  const handleSubmit = async () => {
+    if (personalized()) {
+      await axios.put(
+        `http://localhost:8080/api/v1/question-priority/update?username=${localStorage.getItem(
+          "username"
+        )}`,
+        result
+      ).catch(err=>console.log(err));
+      console.log(result);
+    }
     setSubmitFormOpened(false);
     setCongratulationOpened(true);
     setReviewing(true);
@@ -317,7 +361,7 @@ export default function TakingTestPage() {
         </Grid.Col>
       </Grid>
       <Group display={reviewing ? "none" : "block"}>
-        <HeroText handleSubmit={() => setSubmitFormOpened(true)} />
+        <HeroText handleSubmit={() => handleClickSubmit()} />
       </Group>
       <section ref={bottom}></section>
       <Affix position={{ bottom: 20, right: 20 }}>
@@ -340,7 +384,7 @@ export default function TakingTestPage() {
         position={{ top: 150, right: 20 }}
       >
         <ProgressCardColored
-          handleSubmit={() => setSubmitFormOpened(true)}
+          handleSubmit={() => handleClickSubmit()}
           numberOfQuestion={numberOfQuestion}
           numberOfQuestionChecked={numberOfQuestionChecked}
         />
