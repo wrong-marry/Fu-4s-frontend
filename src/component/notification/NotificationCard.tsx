@@ -1,31 +1,35 @@
 import * as React from "react";
-// import "moment/locale/vi";
-import {
-  NavLink,
-} from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import {
-  Menu,
-  // Avatar,
-} from "@mantine/core";
-
+import { Menu, ActionIcon } from "@mantine/core";
+import NotificationList from "./NotificationList";
 
 const NotificationCard: React.FC = () => {
   return (
     <>
-      <Menu trigger="hover" shadow="md" width={200}>
+      <Menu shadow="md" width={200} closeOnClickOutside={false}>
         <Menu.Target>
-          <NotificationsIcon />
+          <ActionIcon variant="default" aria-label="Notification">
+            <NotificationsIcon />
+          </ActionIcon>
         </Menu.Target>
 
-        <Menu.Dropdown>
-          <Menu.Label>Notification</Menu.Label>
-          <NavLink to={"/create-test"}>
-            <Menu.Item>Noti1</Menu.Item>
-          </NavLink>
-          <NavLink to={"/create-test"}>
-            <Menu.Item>Noti2</Menu.Item>
-          </NavLink>
+        <Menu.Dropdown
+          style={{
+            maxHeight: "400px",
+            overflowY: "auto",
+            width: "400px",
+          }}
+        >
+          <NotificationList />
+          <div style={{ textAlign: "center", padding: "10px" }}>
+            <NavLink
+              to="/notifications"
+              style={{ textDecoration: "none", color: "#007bff" }}
+            >
+              See all
+            </NavLink>
+          </div>
         </Menu.Dropdown>
       </Menu>
     </>

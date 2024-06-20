@@ -12,7 +12,6 @@ export function isLoggedIn() {
   return !(username == null || token == null);
 }
 
-
 export function getUsername() {
   return localStorage.getItem("username");
 }

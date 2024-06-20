@@ -1,13 +1,12 @@
 import {
   createBrowserRouter,
-  Navigate,
   redirect,
   RouterProvider,
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "@mantine/core/styles.css";
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { Box, LoadingOverlay } from "@mantine/core";
 import Root from "./page/Root";
 import LandingPage from "./page/landing-page/LandingPage";
@@ -28,21 +27,30 @@ import { getAuthCredentials } from "./util/loader/Auth";
 import StudyPage from "./page/study/StudyPage.tsx";
 import SearchPage from "./page/search/SearchPage.tsx";
 import PostPage from "./page/post/PostPage.tsx";
-import LearningMaterialDetail from "./component/learning-material/LearningMaterialDetail.tsx";
+import LearningMaterialDetail from "./component/user-post/learning-material/LearningMaterialDetail.tsx";
 import NotificationList from "./component/notification/NotificationList.tsx";
 import { UserPostPage } from "./page/user-post/UserPostPage.tsx";
-import { UserLearningMaterialPage } from "./page/user-post/UserLearningMaterialPage.tsx";
-import { UserMockTestPage } from "./page/user-post/UserMockTestPage.tsx";
+import { UserLearningMaterialPage } from "./page/user-post/learning-material/UserLearningMaterialPage.tsx";
+import { UserMockTestPage } from "./page/user-post/mock-test/UserMockTestPage.tsx";
 import ManageSubjectPage from "./page/manage-subject/ManageSubjectPage.tsx";
 import TakingTestPage from "./page/mock-test-detail-page/TakingTestPage.tsx";
 
-import CreateMockTestPage from "./page/user-post/CreateMockTestPage.tsx";
-import EditMockTestPage from "./page/user-post/EditMockTestPage.tsx";
+
+import Calendar from "./component/manageUser/calendar/calendar.tsx";
+
+import CreateMockTestPage from "./page/user-post/mock-test/CreateMockTestPage.tsx";
+import EditMockTestPage from "./page/user-post/mock-test/EditMockTestPage.tsx";
+
 import { isValidUser } from "./util/ValidUser.tsx";
 
 import MockTestDetail from "./component/mock-test/MockTestDetail.tsx";
 import ManagePostForStaff from "./page/manage-post-forstaff/ManagePostPage.tsx";
+
 import TestResultPage from "./page/test-result/TestResultPage.tsx";
+
+import { AddLearningMaterialPage } from "./page/user-post/learning-material/AddLearningMaterialPage.tsx";
+import { EditLearningMaterialPage } from "./page/user-post/learning-material/EditLearningMaterialPage.tsx";
+
 export const loadingIndicator = (
   <Box pos={"relative"} h={"100vh"} w={"100vw"}>
     <LoadingOverlay
@@ -55,6 +63,7 @@ export const loadingIndicator = (
 );
 
 const router = createBrowserRouter([
+
   {
     path: "/",
     loader: getAuthCredentials,
@@ -253,6 +262,52 @@ const router = createBrowserRouter([
         ],
       },
       {
+				path: "admin",
+				children: [
+					{
+						path: "manage-user",
+						loader: async () => {
+							if (!isLoggedIn()) return redirect("/forbidden");
+							else return "";
+						},
+						element: (
+							<Suspense fallback={loadingIndicator}>
+								<ManageUser />
+							</Suspense>
+						),
+					},
+					{
+						path: "calendar",
+						loader: async () => {
+							if (!isLoggedIn()) return redirect("/forbidden");
+							else return "";
+						},
+						element: (
+							<Suspense fallback={loadingIndicator}>
+								<Calendar />
+							</Suspense>
+						),
+					},
+				],
+			},
+			{
+				path: "staff",
+				children: [
+					{
+						path: "manage-post",
+						loader: async () => {
+							if (!isLoggedIn()) return redirect("/forbidden");
+							else return "";
+						},
+						element: (
+							<Suspense fallback={loadingIndicator}>
+								<ManagePostForStaff />
+							</Suspense>
+						),
+					},
+				],
+			},
+      {
         path: "update-profile",
         element: (
           <Suspense fallback={loadingIndicator}>
@@ -262,10 +317,15 @@ const router = createBrowserRouter([
       },
       {
         path: "create-mock-test",
+          loader: () => {
+              if (!isLoggedIn()) return redirect("/forbidden");
+              return null;
+          },
         element: (
           <Suspense fallback={loadingIndicator}>
             <CreateMockTestPage />
           </Suspense>
+
         ),
       },
       {
@@ -274,6 +334,7 @@ const router = createBrowserRouter([
           <Suspense fallback={loadingIndicator}>
             <TestResultPage />
           </Suspense>
+
         ),
       },
       {
@@ -285,6 +346,30 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={loadingIndicator}>
             <EditMockTestPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "create-learning-material",
+          loader: () => {
+              if (!isLoggedIn()) return redirect("/forbidden");
+              return null;
+          },
+        element: (
+          <Suspense fallback={loadingIndicator}>
+            <AddLearningMaterialPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "edit-learning-material/:id",
+          loader: () => {
+              if (!isLoggedIn()) return redirect("/forbidden");
+              return null;
+          },
+        element: (
+          <Suspense fallback={loadingIndicator}>
+            <EditLearningMaterialPage />
           </Suspense>
         ),
       },
