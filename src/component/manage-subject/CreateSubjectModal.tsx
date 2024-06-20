@@ -1,6 +1,6 @@
 // CreateModal.tsx
 import React from "react";
-import { Modal, TextInput, Button } from "@mantine/core";
+import { Modal, TextInput, Button, Select } from "@mantine/core";
 
 interface CreateModalProps {
   opened: boolean;
@@ -35,11 +35,14 @@ const CreateSubjectModal: React.FC<CreateModalProps> = ({
         value={subject.name}
         onChange={onInputChange}
       />
-      <TextInput
+      <Select
         label="Semester"
         name="semester"
         value={subject.semester.toString()}
-        onChange={onInputChange}
+        onChange={(value) =>
+          onInputChange({ target: { name: "semester", value: value ?? "" } })
+        }
+        data={["1", "2", "3", "4", "5", "6", "7", "8", "9"]}
       />
       <Button mt="10px" onClick={onSave}>
         Create

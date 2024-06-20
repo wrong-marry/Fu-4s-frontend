@@ -6,22 +6,13 @@ import {
     Space,
     TextInput,
     Title,
-    Text, Modal
+    Text, Modal, Divider
 } from "@mantine/core";
-import classes from "../user-profile/update-profile/AuthenticationTitle.module.css";
+import classes from "../../user-profile/update-profile/AuthenticationTitle.module.css";
 import {useEffect, useState} from "react";
 import * as XLSX from 'xlsx'
-import {useNavigate, useParams} from "react-router-dom";
-import {i, j} from "vite/dist/node/types.d-FdqQ54oU";
-import {number} from "zod";
+import {useNavigate} from "react-router-dom";
 import {useDisclosure} from "@mantine/hooks";
-
-interface MockTest {
-    id: string;
-    title: string;
-    subjectCode: string;
-    questions: Question[];
-}
 
 interface Subject {
     code: string;
@@ -48,8 +39,7 @@ interface row {
     correct: string
 }
 
-export function EditMockTestForm() {
-    const { id } = useParams<{ id: string }>();
+export function CreateMockTestForm() {
     const [subject, setSubject] = useState<string | null>('');
     const [subjectList, setList] = useState<Subject[]>([]);
     const [file, setFile] = useState<File | null>(null);
@@ -57,7 +47,6 @@ export function EditMockTestForm() {
     const [errorFile, setError] = useState<string | null>(null);
     const [fileData, setFileData] = useState<row[]>([]);
     const [errorAll, setErrorAll] = useState('');
-    const [test, setTest] = useState<MockTest>();
     const [opened, { open, close }] = useDisclosure(false);
     const navigate = useNavigate();
 
@@ -82,6 +71,10 @@ export function EditMockTestForm() {
         const worksheet = workbook.Sheets[sheetName];
 
         const json : row[] = XLSX.utils.sheet_to_json(worksheet);
+        if(json.length == 0) {
+            setError("Invalid file! Must have at least 1 question!");
+            return;
+        }
         setFileData(json);
     };
 
@@ -99,19 +92,6 @@ export function EditMockTestForm() {
             }
         };
 
-        const fetchMockTest = async () => {
-            try {
-                const response = await fetch(
-                    `http://localhost:8080/api/v1/questionSet/getById?id=` + id
-                );
-                const data = await response.json();
-                setTest(data);
-            } catch (error) {
-                console.error("Error fetching post:", error);
-            }
-        };
-
-        fetchMockTest();
         fetchSubject();
     }, []);
 
@@ -135,55 +115,77 @@ export function EditMockTestForm() {
     );
 
     const handleAdd = () => {
-        if(file == null || !isExcelFile(file) || title == "" || subject == "") {
+        if (file == null || !isExcelFile(file) || title == "" || subject == "") {
             setErrorAll("All fields are required");
             return;
         }
 
         setError(null);
         let questions: Question[] = [];
-        for(var row of fileData) {
-            let answers : Answer[] = [];
+        for (var row of fileData) {
+            let answers: Answer[] = [];
 
-            let answer : Answer = {
-                content: row.answer1,
-                correct: row.correct == "1"
+            if(parseInt(row.correct) > 4 || parseInt(row.correct) < 1) {
+                setError("Invalid file format! Please read the instruction!");
+                return;
+            }
+
+            if(!row.answer1) {
+                console.log(row.answer1);
+                setError("Invalid file format! Please read the instruction!");
+                return;
+            }
+            let answer: Answer = {
+                content: row.answer1, correct: row.correct == "1"
             };
             answers.push(answer);
-
+            console.log(row.answer2);
+            if(!row.answer2) {
+                setError("Invalid file format! Please read the instruction!");
+                return;
+            }
             answer = {
-                content: row.answer2,
-                correct: row.correct == "2"
+                content: row.answer2, correct: row.correct == "2"
             };
             answers.push(answer);
 
+            if(!row.answer3) {
+                setError("Invalid file format! Please read the instruction!");
+                return;
+            }
             answer = {
-                content: row.answer2,
-                correct: row.correct == "3"
+                content: row.answer3, correct: row.correct == "3"
             };
             answers.push(answer);
 
+            if(!row.answer4) {
+                setError("Invalid file format! Please read the instruction!");
+                return;
+            }
             answer = {
-                content: row.answer2,
-                correct: row.correct == "4"
+                content: row.answer4, correct: row.correct == "4"
             };
             answers.push(answer);
 
-            let question : Question = {
-                content: row.content,
-                answers: answers
+            if(!row.content) {
+                console.log(1);
+                setError("Invalid file format! Please read the instruction!");
+                return;
+            }
+            let question: Question = {
+                content: row.content, answers: answers
             }
 
             questions.push(question);
         }
 
         fetch(`http://localhost:8080/api/v1/questionSet/addNew?title=${title}&subjectCode=${subject}&username=${localStorage.getItem('username')}`, {
-            method: "POST",
-            body: JSON.stringify(questions),
-            headers: {
-                'Content-Type': 'application/json',
-                //'Authorization': 'Bearer ' + localStorage.getItem('token')
-            }
+                method: "POST",
+                body: JSON.stringify(questions),
+                headers: {
+                    'Content-Type': 'application/json',
+                    //'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
         })
             .then((response: Response) => response.json())
             .then(() => {
@@ -191,27 +193,17 @@ export function EditMockTestForm() {
             })
 
     }
-    if(test == null) return <></>
 
-    console.log(test.questions)
-    const downloadQuestion = () => {
+    const downloadTemplate = () => {
         const fileName = 'questions.xlsx';
-        const data = test.questions.map(value => {
-            if(value.answers.length == 0) return {};
-
-            let correct = 0;
-            for(let i = 0; i < 4; i++) {
-                if(value.answers[i].correct) correct = i + 1;
-            }
-            return {
-                content: value.content,
-                answer1: value.answers[0].content,
-                answer2: value.answers[1].content,
-                answer3: value.answers[2].content,
-                answer4: value.answers[3].content,
-                correct: correct
-            }
-        });
+        const data = [{
+                content: "",
+                answer1: "",
+                answer2: "",
+                answer3: "",
+                answer4: "",
+                correct: "",
+        }];
 
         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
@@ -220,18 +212,25 @@ export function EditMockTestForm() {
         XLSX.writeFile(wb, fileName);
     }
 
-
     return <>
         <Modal opened={opened} onClose={close} title="Import instruction">
             <Text size="sm">
-                The system only accept excel (.xlsx) files. File must be in the following format:
+                <Divider my="md" />
+                The system only accept excel (.xlsx) files. File must <b>strictly</b> be in the following format:
                 <Space h="sm"></Space>
                 <img src="/src/asset/excelFileFormat.png" alt=""/>
                 <Space h="sm"></Space>
                 <Space h="sm"></Space>
+                <b>Strictly</b> means it must in the <b>exact</b> same format with the picture (the same column name and no extra columns).
                 <Space h="sm"></Space>
+
+                Please <Text td="underline" color="blue" component="button" type="button" onClick={downloadTemplate}>download the template</Text> for easier use.
+                <Space h="sm"></Space>
+                <Space h="sm"></Space>
+                <Divider my="md" />
                 <b>Example:</b>
                 <Space h="sm"></Space>
+
                 <img src="/src/asset/fileFormatExample.png" alt=""/>
                 <Space h="sm"></Space>
                 <Space h="sm"></Space>
@@ -244,7 +243,7 @@ export function EditMockTestForm() {
 
         <Container size={900} my={40}>
             <Title ta="center" className={classes.title} order={2}>
-                Edit Mock Test
+                Create new Mock Test
             </Title>
             <Paper withBorder shadow="md" p={30} mt={30} radius="md">
                 <form>
@@ -254,10 +253,9 @@ export function EditMockTestForm() {
                                 label="Title"
                                 description="Your mock test title"
                                 placeholder="Enter title"
-                                onChange={(event) => setTitle(event.currentTarget.value)}
+                                    onChange={(event) => setTitle(event.currentTarget.value)}
                                 required
                                 radius="md"
-                                value={test.title}
                             />
 
                             <Space h="md" />
@@ -266,7 +264,7 @@ export function EditMockTestForm() {
                                 label="Subject"
                                 description="Your mock test subject"
 
-                                value={test?.subjectCode}
+                                value={subject}
                                 onChange={setSubject}
 
                                 data={dataSubject}
@@ -274,7 +272,6 @@ export function EditMockTestForm() {
                                 searchable
                                 required
                                 radius="md"
-                                disabled
                             />
 
                             <Space h="md" />
@@ -294,14 +291,23 @@ export function EditMockTestForm() {
                                 onChange={setFile}
                                 accept={".xlsx"}
                             />
-                            <Text c="dimmed" size="xs">Only accept excel files. Import format instruction <Text type="button" td="underline" color="blue" component="button" onClick={open}>here</Text></Text>
-                            <Text c="dimmed" size="xs">Click <Text td="underline" color="blue" component="button" type="button" onClick={downloadQuestion}>here</Text> to download your old questions</Text>
+                            <Text c="dimmed" size="xs">Only accept excel files. Import format instruction <Text td="underline" color="blue" component="button" onClick={open}>here</Text></Text>
+                            <Text c="dimmed" size="xs">Download template <Text td="underline" color="blue" type="button" component="button" onClick={downloadTemplate}>here</Text></Text>
 
                             <Space h="xs" />
 
-                            <Button onClick={handleAdd}  mt="xl" >
-                                Edit Mock Test
-                            </Button>
+                            <Grid>
+                                <Grid.Col span={6}>
+                                    <Button color="black" variant="outline" onClick={() => navigate("/home")} mt="md">
+                                        Back
+                                    </Button>
+                                </Grid.Col>
+                                <Grid.Col span={6}>
+                                    <Button onClick={handleAdd}  mt="md" >
+                                        Create
+                                    </Button>
+                                </Grid.Col>
+                            </Grid>
 
                             <Text size="xs" color="red">{errorAll}</Text>
                         </Grid.Col>
