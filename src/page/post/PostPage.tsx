@@ -4,8 +4,6 @@ import { Text, Container, Title, Space, Textarea, Button, Anchor } from "@mantin
 
 import { Comment } from "../../component/comment/CommentTag";
 import { useParams } from "react-router-dom";
-import LearningMaterialDetail from "../../component/learning-material/LearningMaterialDetail";
-
 import MockTestDetailPage from "../mock-test-detail-page/MockTestDetailPage";
 import MockTestDetail from "../../component/mock-test/MockTestDetail";
 import { forEach } from "lodash";
@@ -108,7 +106,7 @@ const PostPage: React.FC = () => {
   }
 
   return <>
-    {!post?.test && <LearningMaterialDetail id={post?.id + "" ?? ""} />}
+    {!post?.test && <LearningMaterialDetail />}
     {post?.test && <MockTestDetailPage {...post} />}
     <Space h={"md"} />
     <Container>
