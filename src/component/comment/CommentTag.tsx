@@ -23,7 +23,11 @@ import {useDisclosure} from "@mantine/hooks";
 import {CommentButtonSwitch} from "../comment-button-switch/CommentButtonSwitch.tsx";
 import {IconMessageReply} from "@tabler/icons-react";
 
-export const Comment = (props: CommentData) => {
+interface CommentTagData extends CommentData {
+    updateFunction: (id: number, content: string) => void;
+}
+
+export const Comment = (props: CommentTagData) => {
     const [replyOpened, {open: openReply, close: closeReply}] = useDisclosure(true);
     const [childrenOpened, {open: openChildren, close: closeChildren}] = useDisclosure(false);
     const [opened, {open, close}] = useDisclosure(false);
@@ -49,6 +53,7 @@ export const Comment = (props: CommentData) => {
         form.setInitialValues({"content": content});
         form.setValues({"content": content});
     }, [content]);
+
     function handleReplyClick() {
         if (!childrenOpened) {
             getChildren();
@@ -63,12 +68,14 @@ export const Comment = (props: CommentData) => {
             }
         }
     }
+
     function getChildren() {
         const response = axios.get(`http://localhost:8080/api/v1/comments/children/comment-${id}`);
         response.then(data => {
             setChildren([...data.data] as CommentData[]);
         }).catch(error => console.log(error))
     }
+
     function defaultContentStack(newContent: string) {
 
         return (<Stack gap={3}>
@@ -117,6 +124,7 @@ export const Comment = (props: CommentData) => {
             </Group>
         </Stack>) as React.ReactElement;
     }
+
     const deleteComment = async (id: number) => {
         try {
             const response = await axios.delete(
@@ -183,12 +191,12 @@ export const Comment = (props: CommentData) => {
                     <CardSection inheritPadding py="xs" pt={0}>
                         <form onSubmit={form.onSubmit((values) => {
                             axios.put(
-                                    `http://localhost:8080/api/v1/comments/update/${id}`,
-                                    values,
-                                    {
-                                        headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
-                                    }
-                                )
+                                `http://localhost:8080/api/v1/comments/update/${id}`,
+                                values,
+                                {
+                                    headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
+                                }
+                            )
                                 .then((response: AxiosResponse<string>) => {
                                     if (response.status === 200) {
                                         setContent(values.content);
@@ -196,6 +204,8 @@ export const Comment = (props: CommentData) => {
                                         form.setFieldValue("content", values.content);
                                         form.setInitialValues({"content": values.content});
                                         setContentStack(defaultContentStack(values.content));
+                                        props.content = values.content;
+                                        props.updateFunction(id, values.content);
                                     }
                                 })
                                 .catch((error: AxiosError) => {
@@ -224,16 +234,12 @@ export const Comment = (props: CommentData) => {
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={open}>Delete</Anchor>
                 </Group>
-
-                <Button onClick={() => console.log(form.values.content + " " + content)}>hi</Button>
             </Stack>
         );
     }
 
     return (
         <Container w={"100%"}>
-            <Button
-                onClick={() => console.log("form value: " + form.values.content + " new content: " + content)}>hi</Button>
             <Modal opened={opened} onClose={close} title="Confirm deletion" centered>
                 Delete comment?
                 <Group justify={"flex-end"}>
@@ -253,13 +259,13 @@ export const Comment = (props: CommentData) => {
                 {childrenNumber > 0 ?
                     <ActionIcon mt={"sm"} color={childrenOpened ? "red" : "teal"}><CommentButtonSwitch
                         checked={childrenOpened}
-                                                     onChange={(checked) => {
-                                                         if (checked) {
-                                                             getChildren();
-                                                             openChildren();
-                                                         } else closeChildren();
-                                                     }}
-                                                     size={20}/></ActionIcon> : <></>}
+                        onChange={(checked) => {
+                            if (checked) {
+                                getChildren();
+                                openChildren();
+                            } else closeChildren();
+                        }}
+                        size={20}/></ActionIcon> : <></>}
             </Group>
             <Container ms={"md"}>
                 <Collapse in={childrenOpened}>
@@ -316,7 +322,8 @@ export const Comment = (props: CommentData) => {
                         <Comment id={item.id} date={item.date} account={item.account}
                                  username={item.username} content={item.content}
                                  status={item.status} isMine={item.account == localStorage.getItem("username")}
-                                 childrenNumber={item.childrenNumber} key={item.id}></Comment>
+                                 childrenNumber={item.childrenNumber} key={item.id}
+                                 updateFunction={props.updateFunction}></Comment>
                     ))}
                 </Collapse>
             </Container>
