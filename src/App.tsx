@@ -1,13 +1,12 @@
 import {
   createBrowserRouter,
-  Navigate,
   redirect,
   RouterProvider,
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "@mantine/core/styles.css";
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { Box, LoadingOverlay } from "@mantine/core";
 import Root from "./page/Root";
 import LandingPage from "./page/landing-page/LandingPage";
@@ -36,6 +35,8 @@ import { UserMockTestPage } from "./page/user-post/mock-test/UserMockTestPage.ts
 import ManageSubjectPage from "./page/manage-subject/ManageSubjectPage.tsx";
 import TakingTestPage from "./page/mock-test-detail-page/TakingTestPage.tsx";
 
+import Calendar from "./component/manageUser/calendar/calendar.tsx";
+
 import CreateMockTestPage from "./page/user-post/mock-test/CreateMockTestPage.tsx";
 import EditMockTestPage from "./page/user-post/mock-test/EditMockTestPage.tsx";
 import { isValidUser } from "./util/ValidUser.tsx";
@@ -56,6 +57,7 @@ export const loadingIndicator = (
 );
 
 const router = createBrowserRouter([
+
   {
     path: "/",
     loader: getAuthCredentials,
@@ -253,6 +255,52 @@ const router = createBrowserRouter([
           },
         ],
       },
+      {
+				path: "admin",
+				children: [
+					{
+						path: "manage-user",
+						loader: async () => {
+							if (!isLoggedIn()) return redirect("/forbidden");
+							else return "";
+						},
+						element: (
+							<Suspense fallback={loadingIndicator}>
+								<ManageUser />
+							</Suspense>
+						),
+					},
+					{
+						path: "calendar",
+						loader: async () => {
+							if (!isLoggedIn()) return redirect("/forbidden");
+							else return "";
+						},
+						element: (
+							<Suspense fallback={loadingIndicator}>
+								<Calendar />
+							</Suspense>
+						),
+					},
+				],
+			},
+			{
+				path: "staff",
+				children: [
+					{
+						path: "manage-post",
+						loader: async () => {
+							if (!isLoggedIn()) return redirect("/forbidden");
+							else return "";
+						},
+						element: (
+							<Suspense fallback={loadingIndicator}>
+								<ManagePostForStaff />
+							</Suspense>
+						),
+					},
+				],
+			},
       {
         path: "update-profile",
         element: (

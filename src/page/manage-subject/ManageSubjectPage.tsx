@@ -20,7 +20,7 @@ export default function ManageSubjectPage() {
           {isSmallScreen ? (
             <Burger opened={drawerOpened} onClick={handleBurgerClick} />
           ) : (
-            <NavbarNested />
+            <></>
           )}
         </Grid.Col>
         <Grid.Col span={isSmallScreen ? 12 : isMediumScreen ? 9 : 9}>
@@ -34,7 +34,6 @@ export default function ManageSubjectPage() {
         padding="md"
         size="100%"
       >
-        <NavbarNested />
       </Drawer>
     </>
   );
