@@ -19,7 +19,7 @@ import { notifications } from "@mantine/notifications";
 import DisableSubjectModal from "./DisableSubjectModal";
 import ActivateSubjectModal from "./ActivateSubjectModal";
 
-interface Subject {
+export interface Subject {
   code: string;
   name: string;
   semester: number;

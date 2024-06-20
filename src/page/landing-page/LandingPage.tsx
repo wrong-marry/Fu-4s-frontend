@@ -1,7 +1,8 @@
-import { Title } from "@mantine/core";
+import {Title, useMantineTheme} from "@mantine/core";
 import Carousel from "../../component/carousel/HomeCarousel";
-import HeroContent from "../../component/hero/HeroContent";
+import {HeroContent, HeroContent2} from "../../component/hero/HeroContent";
 import DocumentTitle from "../../component/document-title/DocumentTitle";
+import React from "react";
 
 export default function LandingPage() {
     DocumentTitle("FU-4S");
@@ -10,10 +11,16 @@ export default function LandingPage() {
             <HeroContent />
             <div className="p-10 mx-auto">
                 <Title className="text-center text-4xl">
-                    Why you should use FU-4S
+                    About us
                 </Title>
             </div>
-            <Carousel />
+            <HeroContent2/>
+            <div className="p-10 mx-auto">
+                <Title className="text-center text-4xl">
+                    Join now
+                </Title>
+            </div>
+            <Carousel/>
         </div>
-    );
-  }
+    ) as React.ReactElement;
+}

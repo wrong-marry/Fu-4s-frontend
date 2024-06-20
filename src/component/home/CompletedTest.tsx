@@ -1,7 +1,7 @@
 import { Carousel } from "@mantine/carousel";
 import { Card, Text, Badge, Group, Stack, Avatar } from "@mantine/core";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 function CompletedTest() {
   interface Test {
@@ -103,7 +103,7 @@ function CompletedTest() {
         </Carousel>
       )}
     </>
-  );
+  ) as React.ReactElement;
 }
 
 export default CompletedTest;
