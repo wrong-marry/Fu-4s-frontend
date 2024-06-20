@@ -133,7 +133,7 @@ export function UserMockTestTable() {
                                 <th className="flex items-center pl-6 py-4 font-medium">
 
                                     <a className="flex items-center" href="#">
-                                        <span>ID </span>
+                                        <span>No </span>
                                     </a>
                                 </th>
                                 <th className="py-4 font-medium">

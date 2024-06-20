@@ -51,6 +51,7 @@ export function EditMockTestForm() {
     const [test, setTest] = useState<MockTest>();
     const [opened, {open, close}] = useDisclosure(false);
     const [removePopup, setRemovePopup] = useState(false);
+    const [editPopup, setEditPopup] = useState(false);
     const navigate = useNavigate();
 
     const isExcelFile = (file: File) => {
@@ -126,13 +127,17 @@ export function EditMockTestForm() {
             value: subject.code, label: subject.code + " - " + subject.name + " - Semester: " + subject.semester,
         }));
 
-    const handleEdit = () => {
+    const handleEditBtn = () => {
         if (file == null || !isExcelFile(file) || title == "" || subject == "") {
             setErrorAll("All fields are required");
             return;
         }
-
+        setErrorAll("");
         setError(null);
+        setEditPopup(true);
+    }
+
+    const handleEdit = () => {
         let questions: Question[] = [];
         for (var row of fileData) {
             let answers: Answer[] = [];
@@ -191,17 +196,16 @@ export function EditMockTestForm() {
             questions.push(question);
         }
 
-        fetch(`http://localhost:8080/api/v1/questionSet/addNew?title=${title}&subjectCode=${subject}&username=${localStorage.getItem('username')}`, {
-            method: "POST", body: JSON.stringify(questions), headers: {
+        fetch(`http://localhost:8080/api/v1/questionSet/edit?id=${id}&title=${title}&subjectCode=${subject}&username=${localStorage.getItem('username')}`, {
+            method: "PUT", body: JSON.stringify(questions), headers: {
                 'Content-Type': 'application/json', //'Authorization': 'Bearer ' + localStorage.getItem('token')
             }
         })
-            .then((response: Response) => response.json())
             .then(() => {
-                navigate(`/user/post`);
+                navigate(`/user/post/mock-test`);
             })
-
     }
+
     if (test == null) return <></>
 
     const downloadQuestion = () => {
@@ -252,7 +256,7 @@ export function EditMockTestForm() {
         fetch(`http://localhost:8080/api/v1/questionSet/remove?id=${id}&username=${localStorage.getItem('username')}`, {
             method: "DELETE"
         }).then(() => {
-            navigate(`/user/post`);
+            navigate(`/user/post/mock-test`);
         })
     }
     //console.log(fileData)
@@ -302,6 +306,29 @@ export function EditMockTestForm() {
                     <Center>
                         <Button onClick={handleRemove} mt="sm" color="red">
                             Remove
+                        </Button>
+                    </Center>
+                </Grid.Col>
+            </Grid>
+        </Modal>
+
+        <Modal opened={editPopup} onClose={() => setEditPopup(false)} title="Are you sure">
+            <Text size="md">
+                Are you sure you want to edit this question? The action cannot be undone
+            </Text>
+            <Grid >
+                <Grid.Col span={3} offset={5}>
+                    <Center>
+                        <Button variant="default" onClick={() => setEditPopup(false)} mt="sm">
+                            Cancel
+                        </Button>
+                    </Center>
+                </Grid.Col>
+
+                <Grid.Col span={4}>
+                    <Center>
+                        <Button onClick={handleEdit} mt="sm" color="blue">
+                            Edit
                         </Button>
                     </Center>
                 </Grid.Col>
@@ -371,7 +398,7 @@ export function EditMockTestForm() {
 
                             <Grid>
                                 <Grid.Col span={4}>
-                                    <Button color="black" variant="outline" onClick={() => navigate("/home")} mt="md">
+                                    <Button color="black" variant="outline" onClick={() => navigate("/user/post/mock-test")} mt="md">
                                         Back
                                     </Button>
                                 </Grid.Col>
@@ -384,7 +411,7 @@ export function EditMockTestForm() {
 
                                 <Grid.Col span={4}>
                                     <Center>
-                                        <Button onClick={handleEdit} mt="md">
+                                        <Button onClick={handleEditBtn} mt="md">
                                             Edit
                                         </Button>
                                     </Center>

@@ -28,7 +28,7 @@ export function AddLearningMaterialForm() {
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const [files, setFiles] = useState<File[]>([]);
+    const [files, setFiles] = useState<File[] | null>(null);
     const [subject, setSubject] = useState<string | null>();
     const [subjectList, setSubjectList] = useState<Subject[]>([]);
 
@@ -68,13 +68,13 @@ export function AddLearningMaterialForm() {
     };
 
     const handleAdd = () => {
-        if(files.length == 0 || title == "" || content == "" || subject == null) {
-            setErrorAll("All fields required!");
+        if(title == "" || content == "" || subject == null) {
+            setErrorAll("Please fill all required fields!");
             return;
         }
 
         const formData = new FormData();
-        files.forEach((file: File) => {
+        if(files != null) files.forEach((file: File) => {
             formData.append("files", file);
         });
 
@@ -83,7 +83,7 @@ export function AddLearningMaterialForm() {
                 method: "POST",
                 body: formData
             }).then(() => {
-                navigate('/user/post');
+                navigate('/user/post/learning-material');
         })
     }
 
@@ -116,12 +116,13 @@ export function AddLearningMaterialForm() {
         });
 
         if(check) {
-            setFiles([]);
+            setFiles(null);
             return;
         }
 
         setError("");
-        setFiles(fs);
+        if(fs.length == 0) setFiles(null);
+        else setFiles(fs);
     }
 
     const dataSubject = subjectList.map((subject) => (
@@ -132,7 +133,7 @@ export function AddLearningMaterialForm() {
         )
     );
 
-    const listData = files.length == 0 ? <ListItem><i>no files yet</i></ListItem> : files.map((file, index) => {
+    const listData = files == null ? <ListItem><i>no files yet</i></ListItem> : files.map((file, index) => {
         return <ListItem key={index} mb="xs">
                 <Text onClick={() => handleDownloadFile(file)} td="underline" color="blue" type="button" component="button">{file.name}</Text>
             </ListItem>
@@ -192,8 +193,7 @@ export function AddLearningMaterialForm() {
                             <FileInput
                                 radius="md"
                                 label="Attached files"
-                                withAsterisk
-                                description="Choose all files at a time. Only accept files < 2GB"
+                                description="Optional. Choose all files at a time. Only accept files < 2GB"
                                 placeholder="Choose files"
                                 onChange={(fs) => handleSetFiles(fs)}
                                 multiple
