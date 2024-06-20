@@ -1,7 +1,7 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
-import { Center, Pagination } from "@mantine/core";
+import { Button, Center, Pagination, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
@@ -19,6 +19,8 @@ import {
 	IconCheck,
 } from "@tabler/icons-react";
 import BanAccountModal from "./BanAccountModal";
+import * as XLSX from "xlsx";
+import { FaFileExcel } from "react-icons/fa";
 
 
 
@@ -34,10 +36,18 @@ function TableUser() {
 	const pageSize = 5;
 	const [activePage, setPage] = useState(1);
 	const [numPage, setNumPage] = useState(1);
+	const [search, setSearch] = useState("");
 	const [users, SetUsers] = useState<User[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
-	const navigate = useNavigate();
+	const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+		const navigate = useNavigate();
+	const exportToExcel = () => {
+		const ws = XLSX.utils.json_to_sheet(users);
+		const wb = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(wb, ws, "Users");
+		XLSX.writeFile(wb, "users.xlsx");
+	};
 	 const [currentTab, setCurrentTab] = useState("ALL");
 
 	 const [userToBan, setuserToBan] = useState<User | null>(
@@ -157,6 +167,7 @@ function TableUser() {
 
 				const data: User[] = await response.json();
 				SetUsers(data);
+				setFilteredUsers(data);
 				setLoading(false);
 			} catch (error: any) {
 				setError(error.message);
@@ -187,6 +198,22 @@ function TableUser() {
 		setPage(1);
  }, [currentTab]);
 
+useEffect(() => {
+	let filtered = users;
+
+	if (search) {
+		filtered = filtered.filter(
+			(user) =>
+				user.email.toLowerCase().includes(search.toLowerCase()) ||
+				user.username.toLowerCase().includes(search.toLowerCase())
+		);
+	}
+
+	setFilteredUsers(filtered);
+}, [search, users]);
+ 
+
+
 	if (loading) {
 		return <div>Loading...</div>;
 	}
@@ -203,8 +230,9 @@ function TableUser() {
 		setuserToBan(user);
 		openBanAccountModal();
 	};
+	
 
-	const All = users.map((user) => (
+	const All = filteredUsers.map((user) => (
 		<tr className="text-xs bg-gray-50" key={user.username}>
 			<td
 				className="flex items-center py-5 px-6 font-medium"
@@ -305,9 +333,11 @@ function TableUser() {
 		</tr>
 	));
 
-	const handleTabClick = (tab: string) => {
+
+ const handleTabClick = (tab: string) => {
 		setCurrentTab(tab);
-	};
+ };
+
 
 	return (
 		<section className="py-8">
@@ -316,33 +346,17 @@ function TableUser() {
 					<div className="px-6 border-b">
 						<div className="flex flex-wrap items-center mb-6">
 							<h3 className="text-xl font-bold">USER MANAGEMENT</h3>
-							<a
-								className="ml-auto flex items-center py-2 px-3 text-xs text-white hover:bg-indigo-600 rounded"
-								href="#"
-							>
+							<a className="ml-auto flex items-center py-2 px-3 text-xs text-white ">
 								<span className="mr-1">
 									<SearchIcon style={{ fontSize: 30, color: "#AFABF1" }} />
 								</span>
-								<span style={{ display: "inline-block", width: "100%" }}>
-									<input
-										type="search"
-										name=""
-										id=""
-										placeholder="Search User"
-										style={{
-											width: "100%",
-											padding: "10px 15px",
-											borderRadius: "25px",
-											border: "1px solid #ccc",
-											boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-											fontSize: "16px",
-											outline: "none",
-											transition: "border-color 0.3s, box-shadow 0.3s",
-										}}
-										onFocus={(e) => (e.target.style.borderColor = "#007BFF")}
-										onBlur={(e) => (e.target.style.borderColor = "#ccc")}
-									/>
-								</span>
+								<TextInput
+									placeholder="Search Username or Email"
+									value={search}
+									onChange={(e) => {setSearch(e.currentTarget.value);
+									}}
+									style={{ marginRight: "1rem", width: "200px" }}
+								/>
 							</a>
 						</div>
 						<div>
@@ -496,6 +510,17 @@ function TableUser() {
 					onConfirm={confirmBanAccount}
 					userToBan={userToBan}
 				/>
+			</div>
+			<div
+				style={{
+					display: "flex",
+					justifyContent: "right",
+					margin: "20px",
+				}}
+			>
+				<Button onClick={exportToExcel}>
+					<FaFileExcel size={20} color="lightblue" /> Export to Excel
+				</Button>
 			</div>
 		</section>
 	);
