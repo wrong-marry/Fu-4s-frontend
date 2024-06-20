@@ -30,6 +30,14 @@ const EditSubjectModal: React.FC<EditModalProps> = ({
         name="code"
         value={subject.code}
         onChange={onInputChange}
+        readOnly
+        styles={{
+          input: {
+            backgroundColor: "#f0f0f0",
+            color: "#6e6e6e",
+            cursor: "not-allowed",
+          },
+        }}
       />
       <TextInput
         label="Name"

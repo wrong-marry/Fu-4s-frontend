@@ -1,23 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { ActionIcon, TextInput, Button, Select, Text } from "@mantine/core";
 import {
-  IconPencil,
-  IconTrash,
-  IconPlus,
-  IconSearch,
+  ActionIcon,
+  TextInput,
+  Button,
+  Select,
+  Menu,
+  Box,
+} from "@mantine/core";
+import {
+  IconDots,
   IconSortAscending,
   IconSortDescending,
 } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import EditSubjectModal from "./EditSubjectModal";
 import CreateSubjectModal from "./CreateSubjectModal";
-import DeleteSubjectModal from "./DeleteSubjectModal";
 import { notifications } from "@mantine/notifications";
+import DisableSubjectModal from "./DisableSubjectModal";
+import ActivateSubjectModal from "./ActivateSubjectModal";
 
 interface Subject {
   code: string;
   name: string;
   semester: number;
+  active: boolean;
 }
 
 function TableSubject() {
@@ -28,7 +34,12 @@ function TableSubject() {
   const [search, setSearch] = useState("");
   const [semesterFilter, setSemesterFilter] = useState<string | null>("All");
   const [currentSubject, setCurrentSubject] = useState<Subject | null>(null);
-  const [subjectToDelete, setSubjectToDelete] = useState<Subject | null>(null);
+  const [subjectToDisable, setSubjectToDisable] = useState<Subject | null>(
+    null
+  );
+  const [subjectToActivate, setSubjectToActivate] = useState<Subject | null>(
+    null
+  );
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
@@ -41,9 +52,77 @@ function TableSubject() {
     { open: openCreateSubjectModal, close: closeCreateSubjectModal },
   ] = useDisclosure(false);
   const [
-    deleteModalOpened,
-    { open: openDeleteSubjectModal, close: closeDeleteSubjectModal },
+    disableModalOpened,
+    { open: openDisableSubjectModal, close: closeDisableSubjectModal },
   ] = useDisclosure(false);
+  const [
+    activeModalOpened,
+    { open: openActivateSubjectModal, close: closeActivateSubjectModal },
+  ] = useDisclosure(false);
+
+  const [allSubject, setAllSubject] = useState(0);
+  const [activeSubject, setActiveSubject] = useState(0);
+  const [disabledSubject, setDisabledSubject] = useState(0);
+
+  useEffect(() => {
+    const fetchAllSubject = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/v1/admin/getNumSubject`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await response.json();
+        setAllSubject(data);
+      } catch (error) {
+        console.error("Error fetching all subjects:", error);
+      }
+    };
+
+    const fetchActiveSubject = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/v1/admin/getNumSubjectsByType?isActive=true`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await response.json();
+        setActiveSubject(data);
+      } catch (error) {
+        console.error("Error fetching active subjects:", error);
+      }
+    };
+
+    const fetchDisabledSubject = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/v1/admin/getNumSubjectsByType?isActive=false`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await response.json();
+        setDisabledSubject(data);
+      } catch (error) {
+        console.error("Error fetching disabled subjects:", error);
+      }
+    };
+
+    fetchAllSubject();
+    fetchActiveSubject();
+    fetchDisabledSubject();
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -102,6 +181,7 @@ function TableSubject() {
 
         if (aField < bField) return sortOrder === "asc" ? -1 : 1;
         if (aField > bField) return sortOrder === "asc" ? 1 : -1;
+
         return 0;
       });
     }
@@ -122,62 +202,113 @@ function TableSubject() {
     openEditSubjectModal();
   };
 
-  const handleDeleteClick = (subject: Subject) => {
-    setSubjectToDelete(subject);
-    openDeleteSubjectModal();
+  const handleDisableClick = (subject: Subject) => {
+    setSubjectToDisable(subject);
+    openDisableSubjectModal();
   };
 
-  const confirmDelete = async () => {
-    if (subjectToDelete) {
+  const handleActivateClick = (subject: Subject) => {
+    setSubjectToActivate(subject);
+    openActivateSubjectModal();
+  };
+
+  const confirmDisable = async () => {
+    if (subjectToDisable) {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://localhost:8080/api/v1/admin/deleteSubject?subjectCode=${subjectToDelete.code}`,
+          `http://localhost:8080/api/v1/admin/disableSubject?subjectCode=${subjectToDisable.code}`,
           {
-            method: "DELETE",
+            method: "PUT",
             headers: {
               Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
             },
           }
         );
 
         if (response.ok) {
-          setSubjects(
-            subjects.filter((subject) => subject.code !== subjectToDelete.code)
+          setSubjects((prevSubjects) =>
+            prevSubjects.map((subject) =>
+              subject.code === subjectToDisable.code
+                ? { ...subject, active: false }
+                : subject
+            )
           );
-          closeDeleteSubjectModal();
-
+          setActiveSubject((prev) => prev - 1);
+          setDisabledSubject((prev) => prev + 1);
+          closeDisableSubjectModal();
           notifications.show({
-            title: "Subject deleted",
-            message: `${subjectToDelete.name}" has been deleted!`,
+            title: "Subject disabled",
+            message: `"${subjectToDisable.name}" has been disabled!`,
             color: "blue",
           });
-        } else {
-          // Xảy ra lỗi khi xóa subject
-          console.error("Error deleting subject:", await response.json());
         }
       } catch (error) {
-        console.error("Error deleting subject:", error);
+        console.error("Error deactivating subject:", error);
+        notifications.show({
+          title: "Error deactivating subject",
+          message: `An unknown error occurred while deactivating "${subjectToDisable.name}"`,
+          color: "red",
+        });
+      }
+    }
+  };
+
+  const confirmActivate = async () => {
+    if (subjectToActivate) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `http://localhost:8080/api/v1/admin/activeSubject?subjectCode=${subjectToActivate.code}`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          setSubjects((prevSubjects) =>
+            prevSubjects.map((subject) =>
+              subject.code === subjectToActivate.code
+                ? { ...subject, active: true }
+                : subject
+            )
+          );
+          setActiveSubject((prev) => prev + 1);
+          setDisabledSubject((prev) => prev - 1);
+          closeActivateSubjectModal();
+          notifications.show({
+            title: "Subject activated",
+            message: `"${subjectToActivate.name}" has been activated!`,
+            color: "blue",
+          });
+        }
+      } catch (error) {
+        console.error("Error activating subject:", error);
+        notifications.show({
+          title: "Error activating subject",
+          message: `An unknown error occurred while activating "${subjectToActivate.name}"`,
+          color: "red",
+        });
       }
     }
   };
 
   const handleCreateClick = () => {
-    setCurrentSubject({ code: "", name: "", semester: 1 });
+    setCurrentSubject({ code: "", name: "", semester: 1, active: true });
     openCreateSubjectModal();
   };
 
-  const handleSaveClick = async () => {
+  const handleUpdateClick = async () => {
     if (currentSubject) {
       try {
         const token = localStorage.getItem("token");
-        const method = currentSubject.code ? "PUT" : "POST";
-        const url = currentSubject.code
-          ? `http://localhost:8080/api/v1/admin/updateSubject`
-          : `http://localhost:8080/api/v1/admin/createSubject`;
-
-        await fetch(url, {
-          method: method,
+        await fetch(`http://localhost:8080/api/v1/admin/updateSubject`, {
+          method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -185,17 +316,45 @@ function TableSubject() {
           body: JSON.stringify(currentSubject),
         });
 
-        if (method === "POST") {
-          setSubjects([...subjects, currentSubject]);
-        } else {
-          setSubjects(
-            subjects.map((subject) =>
-              subject.code === currentSubject.code ? currentSubject : subject
-            )
-          );
-        }
+        setSubjects((prevSubjects) =>
+          prevSubjects.map((subject) =>
+            subject.code === currentSubject.code ? currentSubject : subject
+          )
+        );
 
         closeEditSubjectModal();
+      } catch (error) {
+        console.error("Error saving subject:", error);
+      }
+    }
+  };
+  const handleSaveClick = async () => {
+    if (currentSubject) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `http://localhost:8080/api/v1/admin/createSubject`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(currentSubject),
+          }
+        );
+
+        const responseMessage = await response.text();
+
+        if (response.ok) {
+          setSubjects((prevSubjects) => [...prevSubjects, currentSubject]);
+          notifications.show({
+            title: "Subject created",
+            message: responseMessage,
+            color: "green",
+          });
+        }
+
         closeCreateSubjectModal();
       } catch (error) {
         console.error("Error saving subject:", error);
@@ -220,71 +379,143 @@ function TableSubject() {
       <td className="py-5 px-6 font-medium">{subject.code}</td>
       <td className="font-medium">{subject.name}</td>
       <td className="font-medium">{subject.semester}</td>
-
-      <td style={{ textAlign: "center" }}>
-        <ActionIcon
-          variant="outline"
-          size="lg"
-          radius="xl"
-          onClick={() => handleEditClick(subject)}
+      <td className="font-medium">
+        <span
+          className={`inline-block py-1 px-2 text-white rounded-full ${
+            subject.active ? "bg-green-500" : "bg-red-500"
+          }`}
         >
-          <IconPencil />
-        </ActionIcon>
+          {subject.active ? "Active" : "Disabled"}
+        </span>
       </td>
       <td style={{ textAlign: "center" }}>
-        <ActionIcon
-          variant="outline"
-          size="lg"
-          radius="xl"
-          color="red"
-          onClick={() => handleDeleteClick(subject)}
-        >
-          <IconTrash />
-        </ActionIcon>
+        <Menu transitionProps={{ transition: "pop" }} withArrow>
+          <Menu.Target>
+            <ActionIcon variant="subtle" color="gray">
+              <IconDots />
+            </ActionIcon>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item onClick={() => handleEditClick(subject)}>
+              Edit Subject
+            </Menu.Item>
+
+            {subject.active ? (
+              <Menu.Item onClick={() => handleDisableClick(subject)}>
+                Disable Subject
+              </Menu.Item>
+            ) : (
+              <Menu.Item onClick={() => handleActivateClick(subject)}>
+                Activate Subject
+              </Menu.Item>
+            )}
+          </Menu.Dropdown>
+        </Menu>
       </td>
     </tr>
   ));
 
   return (
-    <section className="py-8">
-      <div className="container px-4 mx-auto">
-        <div className="pt-6 bg-white shadow rounded">
-          <div className="px-6 border-b">
-            <div className="flex flex-wrap items-center mb-6">
-              <h3 className="text-xl font-bold">SUBJECT MANAGEMENT</h3>
-              <div className="ml-auto flex items-center">
-                <TextInput
-                  placeholder="Search Subject"
-                  value={search}
-                  onChange={(e) => setSearch(e.currentTarget.value)}
-                  style={{ marginRight: "1rem" }}
-                />
-                <Select
-                  placeholder="Filter by semester"
-                  data={["All", "1", "2", "3", "4", "5", "6", "7", "8", "9"]}
-                  value={semesterFilter}
-                  onChange={(value) => setSemesterFilter(value)}
-                  style={{ marginRight: "1rem" }}
-                />
-                <Button
-                  style={{ marginRight: "1rem" }}
-                  className="ml-auto"
-                  onClick={handleCreateClick}
-                >
-                  New Subject
-                </Button>
+    <section className="shadow pb-4">
+      <div className="container px-4 mx-auto ">
+        <div>
+          <h3 className="text-xl font-bold w-full w-auto p-5">
+            SUBJECT STATISTICS
+          </h3>
+        </div>
+        <div className="flex flex-wrap -m-3">
+          <div className="w-full md:w-1/2 xl:w-1/3 p-3">
+            <div className="p-6 pb-10 border border-coolGray-100 rounded-md shadow-dashboard">
+              <div className="flex flex-wrap items-end justify-center -m-2 mb-3">
+                <div className="w-auto p-2">
+                  <h3 className="text-sm text-coolGray-500 font-medium">
+                    Active Subjects
+                  </h3>
+                </div>
               </div>
+              <h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
+                {activeSubject}
+              </h2>
+              <p className="text-center max-w-max mx-auto px-2 py-1 text-green-500 font-medium text-xs bg-green-100 rounded-full mt-2">
+                Active
+              </p>
             </div>
           </div>
-          <div className="overflow-x-auto">
-            <table className="table-auto w-full">
-              <thead>
-                <tr className="text-xs text-gray-500 text-left">
-                  <th
-                    className="pl-6 py-4 font-medium"
-                    onClick={() => handleSortClick("code")}
-                    style={{ cursor: "pointer" }}
-                  >
+          <div className="w-full md:w-1/2 xl:w-1/3 p-3">
+            <div className="p-6 pb-10 border border-coolGray-100 rounded-md shadow-dashboard">
+              <div className="flex flex-wrap items-end justify-center -m-2 mb-3">
+                <div className="w-auto p-2">
+                  <h3 className="text-center text-sm text-coolGray-500 font-medium">
+                    Disabled Subjects
+                  </h3>
+                </div>
+              </div>
+              <h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
+                {disabledSubject}
+              </h2>
+              <p className="text-center max-w-max mx-auto px-2 py-1 text-red-500 font-medium text-xs bg-red-100 rounded-full mt-2">
+                Disabled
+              </p>
+            </div>
+          </div>
+          <div className="w-full md:w-1/2 xl:w-1/3 p-3">
+            <div className="p-6 pb-10 border border-coolGray-100 rounded-md shadow-dashboard">
+              <div className="flex flex-wrap items-end justify-center -m-2 mb-3">
+                <div className="w-auto p-2">
+                  <h3 className="text-sm text-coolGray-500 font-medium">
+                    All Subjects
+                  </h3>
+                </div>
+              </div>
+              <h2 className="text-center font-medium text-5xl text-coolGray-900 tracking-tighter">
+                {allSubject}
+              </h2>
+              <p className="text-center max-w-max mx-auto px-2 py-1 text-yellow-500 font-medium text-xs bg-yellow-100 rounded-full mt-2">
+                All
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="container px-4 mx-auto">
+        <div className="px-6 border-b">
+          <div className="flex flex-wrap items-center mb-6 mt-6">
+            <h3 className="text-xl font-bold">SUBJECT MANAGEMENT</h3>
+            <div className="ml-auto flex items-center">
+              <span>Semester: </span>
+              <Select
+                placeholder="Filter by semester"
+                data={["All", "1", "2", "3", "4", "5", "6", "7", "8", "9"]}
+                value={semesterFilter}
+                onChange={(value) => setSemesterFilter(value)}
+                style={{ marginRight: "1rem" }}
+              />
+              <TextInput
+                placeholder="Search Subject"
+                value={search}
+                onChange={(e) => setSearch(e.currentTarget.value)}
+                style={{ marginRight: "1rem" }}
+              />
+              <Button
+                style={{ marginRight: "1rem" }}
+                className="ml-auto"
+                onClick={handleCreateClick}
+              >
+                New Subject
+              </Button>
+            </div>
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="table-auto w-full">
+            <thead>
+              <tr className="text-xs text-gray-500 text-left">
+                <th
+                  className="pl-6 py-4 font-medium"
+                  onClick={() => handleSortClick("code")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
                     <span>Code</span>
                     {sortBy === "code" && (
                       <span className="ml-2">
@@ -295,12 +526,15 @@ function TableSubject() {
                         )}
                       </span>
                     )}
-                  </th>
-                  <th
-                    className="py-4 font-medium"
-                    onClick={() => handleSortClick("name")}
-                    style={{ cursor: "pointer" }}
-                  >
+                  </div>
+                </th>
+
+                <th
+                  className="py-4 font-medium"
+                  onClick={() => handleSortClick("name")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
                     <span>Name</span>
                     {sortBy === "name" && (
                       <span className="ml-2">
@@ -311,12 +545,14 @@ function TableSubject() {
                         )}
                       </span>
                     )}
-                  </th>
-                  <th
-                    className="py-4 font-medium"
-                    onClick={() => handleSortClick("semester")}
-                    style={{ cursor: "pointer" }}
-                  >
+                  </div>
+                </th>
+                <th
+                  className="py-4 font-medium"
+                  onClick={() => handleSortClick("semester")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
                     <span>Semester</span>
                     {sortBy === "semester" && (
                       <span className="ml-2">
@@ -327,35 +563,74 @@ function TableSubject() {
                         )}
                       </span>
                     )}
+                  </div>
+                </th>
+                <th className="py-4 font-medium">
+                  <th
+                    className="py-4 font-medium"
+                    onClick={() => handleSortClick("status")}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <span>Status</span>
+                      {sortBy === "status" && (
+                        <span className="ml-2">
+                          {sortOrder === "asc" ? (
+                            <IconSortAscending />
+                          ) : (
+                            <IconSortDescending />
+                          )}
+                        </span>
+                      )}
+                    </div>
                   </th>
-                  <th className="py-4 font-medium" style={{ width: "5px" }}>
-                    <span>Options</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>{subjectsList}</tbody>
-            </table>
-          </div>
-          <EditSubjectModal
-            opened={editModalOpened}
-            onClose={closeEditSubjectModal}
-            onSave={handleSaveClick}
-            subject={currentSubject || { code: "", name: "", semester: 1 }}
-            onInputChange={handleInputChange}
-          />
-          <CreateSubjectModal
-            opened={createModalOpened}
-            onClose={closeCreateSubjectModal}
-            onSave={handleSaveClick}
-            subject={currentSubject || { code: "", name: "", semester: 1 }}
-            onInputChange={handleInputChange}
-          />
-          <DeleteSubjectModal
-            opened={deleteModalOpened}
-            onClose={closeDeleteSubjectModal}
-            onConfirm={confirmDelete}
-          />
+                </th>
+                <th className="py-4 font-medium">
+                  <span>Options</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>{subjectsList}</tbody>
+          </table>
         </div>
+        <EditSubjectModal
+          opened={editModalOpened}
+          onClose={closeEditSubjectModal}
+          onSave={handleUpdateClick}
+          subject={
+            currentSubject || {
+              code: "",
+              name: "",
+              semester: 1,
+              active: true,
+            }
+          }
+          onInputChange={handleInputChange}
+        />
+        <CreateSubjectModal
+          opened={createModalOpened}
+          onClose={closeCreateSubjectModal}
+          onSave={handleSaveClick}
+          subject={
+            currentSubject || {
+              code: "",
+              name: "",
+              semester: 1,
+              active: true,
+            }
+          }
+          onInputChange={handleInputChange}
+        />
+        <DisableSubjectModal
+          opened={disableModalOpened}
+          onClose={closeDisableSubjectModal}
+          onConfirm={confirmDisable}
+        />
+        <ActivateSubjectModal
+          opened={activeModalOpened}
+          onClose={closeActivateSubjectModal}
+          onConfirm={confirmActivate}
+        />
       </div>
     </section>
   );
