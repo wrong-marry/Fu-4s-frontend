@@ -31,14 +31,14 @@ export default function CustomizeTestModal(prop: any) {
         This is test mode. A number of questions are picked randomly or based on
         your previous attempts.
       </Text>
-      <Text mb={5}>Number of questions (1 - 40)</Text>
+      <Text mb={5}>Number of questions (1 - {prop.numberOfQuestion})</Text>
       <NumberInput
         {...form.getInputProps("numberOfQuestions")}
         key={form.key("numberOfQuestions")}
         mb={20}
-        placeholder="Don't enter more than 40 and less than 1"
+        placeholder={"Don't enter more than " + prop.numberOfQuestion + " and less than 1"}
         min={1}
-        max={40}
+        max={prop.numberOfQuestion>40?40:prop.numberOfQuestion}
       />
 
       <Flex justify="space-between">

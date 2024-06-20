@@ -45,7 +45,6 @@ export default function QuestionDetail(props: any) {
         value={answer.content}
         key={answer.id}
         checked={value === answer.content || (showAnswer && answer.correct)}
-        onChangeCapture={() => handleRadioChange(answer.content)}
       >
         <Group wrap="nowrap" align="flex-start">
           <Radio.Indicator color={answerState(false)} />

@@ -66,7 +66,7 @@ export default function MockTestDetailPage(post: any) {
                 }
               >
                 {isLoggedIn() ? (
-                  <CustomizeTestModal id={post.id} />
+                  <CustomizeTestModal numberOfQuestion={questions.length} id={post.id} />
                 ) : (
                   <Text>BRUH NOT LOGGED IN BRUHH!</Text>
                 )}

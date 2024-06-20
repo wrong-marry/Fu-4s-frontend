@@ -35,16 +35,22 @@ import { UserMockTestPage } from "./page/user-post/mock-test/UserMockTestPage.ts
 import ManageSubjectPage from "./page/manage-subject/ManageSubjectPage.tsx";
 import TakingTestPage from "./page/mock-test-detail-page/TakingTestPage.tsx";
 
+
 import Calendar from "./component/manageUser/calendar/calendar.tsx";
 
 import CreateMockTestPage from "./page/user-post/mock-test/CreateMockTestPage.tsx";
 import EditMockTestPage from "./page/user-post/mock-test/EditMockTestPage.tsx";
+
 import { isValidUser } from "./util/ValidUser.tsx";
 
 import MockTestDetail from "./component/mock-test/MockTestDetail.tsx";
 import ManagePostForStaff from "./page/manage-post-forstaff/ManagePostPage.tsx";
+
+import TestResultPage from "./page/test-result/TestResultPage.tsx";
+
 import { AddLearningMaterialPage } from "./page/user-post/learning-material/AddLearningMaterialPage.tsx";
 import { EditLearningMaterialPage } from "./page/user-post/learning-material/EditLearningMaterialPage.tsx";
+
 export const loadingIndicator = (
   <Box pos={"relative"} h={"100vh"} w={"100vw"}>
     <LoadingOverlay
@@ -319,6 +325,16 @@ const router = createBrowserRouter([
           <Suspense fallback={loadingIndicator}>
             <CreateMockTestPage />
           </Suspense>
+
+        ),
+      },
+      {
+        path: "/test-result",
+        element: (
+          <Suspense fallback={loadingIndicator}>
+            <TestResultPage />
+          </Suspense>
+
         ),
       },
       {
