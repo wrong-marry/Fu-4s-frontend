@@ -6,6 +6,8 @@ import {
   Select,
   Menu,
   Box,
+  Table,
+  Card,
 } from "@mantine/core";
 import {
   IconDots,
@@ -375,11 +377,11 @@ function TableSubject() {
   };
 
   const subjectsList = filteredSubjects.map((subject) => (
-    <tr className="text-xs bg-gray-50" key={subject.code}>
-      <td className="py-5 px-6 font-medium">{subject.code}</td>
-      <td className="font-medium">{subject.name}</td>
-      <td className="font-medium">{subject.semester}</td>
-      <td className="font-medium">
+    <Table.Tr className="text-xs " key={subject.code}>
+      <Table.Td className="py-5 px-6 font-medium">{subject.code}</Table.Td>
+      <Table.Td className="font-medium">{subject.name}</Table.Td>
+      <Table.Td className="font-medium">{subject.semester}</Table.Td>
+      <Table.Td className="font-medium">
         <span
           className={`inline-block py-1 px-2 text-white rounded-full ${
             subject.active ? "bg-green-500" : "bg-red-500"
@@ -387,8 +389,8 @@ function TableSubject() {
         >
           {subject.active ? "Active" : "Disabled"}
         </span>
-      </td>
-      <td style={{ textAlign: "center" }}>
+      </Table.Td>
+      <Table.Td style={{ textAlign: "center" }}>
         <Menu transitionProps={{ transition: "pop" }} withArrow>
           <Menu.Target>
             <ActionIcon variant="subtle" color="gray">
@@ -411,8 +413,8 @@ function TableSubject() {
             )}
           </Menu.Dropdown>
         </Menu>
-      </td>
-    </tr>
+      </Table.Td>
+    </Table.Tr>
   ));
 
   return (
@@ -477,40 +479,41 @@ function TableSubject() {
           </div>
         </div>
       </div>
-      <div className="container px-4 mx-auto">
-        <div className="px-6 border-b">
-          <div className="flex flex-wrap items-center mb-6 mt-6">
-            <h3 className="text-xl font-bold">SUBJECT MANAGEMENT</h3>
-            <div className="ml-auto flex items-center">
-              <span>Semester: </span>
-              <Select
-                placeholder="Filter by semester"
-                data={["All", "1", "2", "3", "4", "5", "6", "7", "8", "9"]}
-                value={semesterFilter}
-                onChange={(value) => setSemesterFilter(value)}
-                style={{ marginRight: "1rem" }}
-              />
-              <TextInput
-                placeholder="Search Subject"
-                value={search}
-                onChange={(e) => setSearch(e.currentTarget.value)}
-                style={{ marginRight: "1rem" }}
-              />
-              <Button
-                style={{ marginRight: "1rem" }}
-                className="ml-auto"
-                onClick={handleCreateClick}
-              >
-                New Subject
-              </Button>
+      <Card radius="md" shadow="md" withBorder pt="md" mt='lg'>
+        <div className="container px-4 mx-auto">
+          <div className="px-6 border-b">
+            <div className="flex flex-wrap items-center mb-6 mt-6">
+              <h3 className="text-xl font-bold">SUBJECT MANAGEMENT</h3>
+              <div className="ml-auto flex items-center">
+                <span>Semester: </span>
+                <Select
+                  placeholder="Filter by semester"
+                  data={["All", "1", "2", "3", "4", "5", "6", "7", "8", "9"]}
+                  value={semesterFilter}
+                  onChange={(value) => setSemesterFilter(value)}
+                  style={{ marginRight: "1rem" }}
+                />
+                <TextInput
+                  placeholder="Search Subject"
+                  value={search}
+                  onChange={(e) => setSearch(e.currentTarget.value)}
+                  style={{ marginRight: "1rem" }}
+                />
+                <Button
+                  style={{ marginRight: "1rem" }}
+                  className="ml-auto"
+                  onClick={handleCreateClick}
+                >
+                  New Subject
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="table-auto w-full">
-            <thead>
-              <tr className="text-xs text-gray-500 text-left">
-                <th
+
+          <Table striped highlightOnHover>
+            <Table.Thead>
+              <Table.Tr className="text-xs text-gray-500 text-left">
+                <Table.Th
                   className="pl-6 py-4 font-medium"
                   onClick={() => handleSortClick("code")}
                   style={{ cursor: "pointer" }}
@@ -527,9 +530,9 @@ function TableSubject() {
                       </span>
                     )}
                   </div>
-                </th>
+                </Table.Th>
 
-                <th
+                <Table.Th
                   className="py-4 font-medium"
                   onClick={() => handleSortClick("name")}
                   style={{ cursor: "pointer" }}
@@ -546,8 +549,8 @@ function TableSubject() {
                       </span>
                     )}
                   </div>
-                </th>
-                <th
+                </Table.Th>
+                <Table.Th
                   className="py-4 font-medium"
                   onClick={() => handleSortClick("semester")}
                   style={{ cursor: "pointer" }}
@@ -564,74 +567,72 @@ function TableSubject() {
                       </span>
                     )}
                   </div>
-                </th>
-                <th className="py-4 font-medium">
-                  <th
-                    className="py-4 font-medium"
-                    onClick={() => handleSortClick("status")}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <span>Status</span>
-                      {sortBy === "status" && (
-                        <span className="ml-2">
-                          {sortOrder === "asc" ? (
-                            <IconSortAscending />
-                          ) : (
-                            <IconSortDescending />
-                          )}
-                        </span>
-                      )}
-                    </div>
-                  </th>
-                </th>
-                <th className="py-4 font-medium">
+                </Table.Th>
+                <Table.Th
+                  className="py-4 font-medium"
+                  onClick={() => handleSortClick("status")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <span>Status</span>
+                    {sortBy === "status" && (
+                      <span className="ml-2">
+                        {sortOrder === "asc" ? (
+                          <IconSortAscending />
+                        ) : (
+                          <IconSortDescending />
+                        )}
+                      </span>
+                    )}
+                  </div>
+                </Table.Th>
+                <Table.Th className="py-4 font-medium">
                   <span>Options</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>{subjectsList}</tbody>
-          </table>
+                </Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>{subjectsList}</Table.Tbody>
+          </Table>
         </div>
-        <EditSubjectModal
-          opened={editModalOpened}
-          onClose={closeEditSubjectModal}
-          onSave={handleUpdateClick}
-          subject={
-            currentSubject || {
-              code: "",
-              name: "",
-              semester: 1,
-              active: true,
-            }
+      </Card>
+      <EditSubjectModal
+        opened={editModalOpened}
+        onClose={closeEditSubjectModal}
+        onSave={handleUpdateClick}
+        subject={
+          currentSubject || {
+            code: "",
+            name: "",
+            semester: 1,
+            active: true,
           }
-          onInputChange={handleInputChange}
-        />
-        <CreateSubjectModal
-          opened={createModalOpened}
-          onClose={closeCreateSubjectModal}
-          onSave={handleSaveClick}
-          subject={
-            currentSubject || {
-              code: "",
-              name: "",
-              semester: 1,
-              active: true,
-            }
+        }
+        onInputChange={handleInputChange}
+      />
+      <CreateSubjectModal
+        opened={createModalOpened}
+        onClose={closeCreateSubjectModal}
+        onSave={handleSaveClick}
+        subject={
+          currentSubject || {
+            code: "",
+            name: "",
+            semester: 1,
+            active: true,
           }
-          onInputChange={handleInputChange}
-        />
-        <DisableSubjectModal
-          opened={disableModalOpened}
-          onClose={closeDisableSubjectModal}
-          onConfirm={confirmDisable}
-        />
-        <ActivateSubjectModal
-          opened={activeModalOpened}
-          onClose={closeActivateSubjectModal}
-          onConfirm={confirmActivate}
-        />
-      </div>
+        }
+        onInputChange={handleInputChange}
+      />
+      <DisableSubjectModal
+        opened={disableModalOpened}
+        onClose={closeDisableSubjectModal}
+        onConfirm={confirmDisable}
+      />
+      <ActivateSubjectModal
+        opened={activeModalOpened}
+        onClose={closeActivateSubjectModal}
+        onConfirm={confirmActivate}
+      />
     </section>
   );
 }

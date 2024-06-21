@@ -298,7 +298,7 @@ export function CreateMockTestForm() {
 
                             <Grid>
                                 <Grid.Col span={6}>
-                                    <Button color="black" variant="outline" onClick={() => navigate("/home")} mt="md">
+                                    <Button color="red" variant="outline" onClick={() => navigate("/home")} mt="md">
                                         Back
                                     </Button>
                                 </Grid.Col>

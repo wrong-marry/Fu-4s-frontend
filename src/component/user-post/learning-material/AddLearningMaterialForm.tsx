@@ -133,10 +133,10 @@ export function AddLearningMaterialForm() {
         )
     );
 
-    const listData = files == null ? <ListItem><i>no files yet</i></ListItem> : files.map((file, index) => {
-        return <ListItem key={index} mb="xs">
+    const listData = files == null ? <List.Item><i>no files yet</i></List.Item> : files.map((file, index) => {
+        return <List.Item mb="xs">
                 <Text onClick={() => handleDownloadFile(file)} td="underline" color="blue" type="button" component="button">{file.name}</Text>
-            </ListItem>
+            </List.Item>
 
     })
     return <>
@@ -184,7 +184,7 @@ export function AddLearningMaterialForm() {
                     <Space h="xs"/>
                     <ReactQuill modules={module} theme="snow" onChange={setContent} value={content} style={{height: "60vh"}}/>
 
-                    <Space h="lg"/>
+                    <Space mb='md' h="lg"/>
                     <Space h="md"/>
 
                     <Space h="lg"/><Space h="lg"/>
@@ -206,10 +206,7 @@ export function AddLearningMaterialForm() {
                     <Space h="xs"/>
 
                     <List
-                        icon={
-                            <ThemeIcon color="black" size={7} radius="xl">
-                            </ThemeIcon>
-                        }
+                        icon="•"
                         withPadding
                         size="sm"
                     >
@@ -221,7 +218,7 @@ export function AddLearningMaterialForm() {
                     <Grid>
                         <Grid.Col span={2} offset={8}>
                             <Center>
-                                <Button color="black" variant="outline" onClick={() => navigate("/home")} ml="lg">
+                                <Button color="red" variant="outline" onClick={() => navigate("/home")} ml="lg">
                                     Back
                                 </Button>
                             </Center>

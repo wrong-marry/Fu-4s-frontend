@@ -26,22 +26,12 @@ import {
 import { useWindowScroll } from "@mantine/hooks";
 import { IconArrowUp, IconCheck } from "@tabler/icons-react";
 import { format } from "date-fns";
-import QuizIcon from "@mui/icons-material/Quiz";
-import { isLoggedIn } from "../../util/loader/Auth";
-import LearningMaterialDetail from "../../component/learning-material/LearningMaterialDetail";
-import CustomizeTestModal from "../../component/test-modals/CustomizeTestModal";
 import axios, { AxiosResponse } from "axios";
 import { Post } from "../post/PostPage";
 import TestQuestion from "../../component/question/TestQuestion";
 import { HeroText } from "../../component/hero-text/HeroText";
 import { ProgressCardColored } from "../../component/progress-card/ProgressCard";
-import { notifications } from "@mantine/notifications";
-import { IconArrowDown } from "@tabler/icons-react";
-import { blue, green } from "@mui/material/colors";
-import TestScore from "../../component/test-mark/TestScore";
-import { delay } from "lodash";
-
-interface Result {
+import TestScore from "../../component/test-mark/TestScore";interface Result {
   correctAnswersId: number[];
   wrongAnswersId: number[];
 }
@@ -63,6 +53,7 @@ export default function TakingTestPage() {
   const [correctAnswersId, setCorrectAnswersId] = useState<number[]>([]);
   const [wrongAnswersId, setWrongAnswersId] = useState<number[]>([]);
   const [result, setResult] = useState<Result | null>(null);
+  const [displayProgress,SetDisplayProgress] = useState<boolean>(true);
   let questionIndex = 0;
   const personalized = () => {
     if (mode === "personalized") return true;
@@ -168,6 +159,7 @@ export default function TakingTestPage() {
       wrongAnswersId: wrongAnswersId,
     });
     setSubmitFormOpened(true);
+    SetDisplayProgress(false);
   };
 
   const handleSubmit = async () => {
@@ -197,7 +189,7 @@ export default function TakingTestPage() {
           blur: 2,
         }}
         opened={submitFormOpened}
-        onClose={() => setSubmitFormOpened(false)}
+        onClose={() => {setSubmitFormOpened(false);SetDisplayProgress(true);}}
         title="Test submission"
         centered
         size="lg"
@@ -223,7 +215,7 @@ export default function TakingTestPage() {
         </Text>
         <Flex mt="md" gap="xs" justify="flex-end">
           <Button bg="red" onClick={() => setSubmitFormOpened(false)}>
-            Continue
+            Back to test
           </Button>
           <Button onClick={handleSubmit}>Submit</Button>
         </Flex>
@@ -380,7 +372,7 @@ export default function TakingTestPage() {
         </Transition>
       </Affix>
       <Affix
-        display={reviewing ? "none" : "block"}
+        display={reviewing ? "none" : displayProgress?"block":"none"}
         position={{ top: 150, right: 20 }}
       >
         <ProgressCardColored
