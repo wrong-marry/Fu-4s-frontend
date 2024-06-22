@@ -267,6 +267,90 @@ const staffBtn = (data: LoaderData, handleLogout: () => void) => {
   ) as React.ReactElement;
 };
 
+<<<<<<< Updated upstream
+=======
+const adminBtn = (data: LoaderData, handleLogout: () => void) => {
+  return (
+    <>
+      <Menu shadow="md" width={200}>
+        <Menu.Target>
+          <Group className="cursor-pointer border-none">
+            <Avatar
+              variant="filled"
+              radius="xl"
+              color="grape"
+              className="cursor-pointer"
+              // src={data?.avatar}
+            />
+            <Text className="text-sm font-semibold">
+              {data ? data.firstName + " " + data.lastName : "Guest"}
+            </Text>
+          </Group>
+        </Menu.Target>
+        <Menu.Dropdown>
+          <Menu.Label>Menu</Menu.Label>
+          <NavLink to={"/user"}>
+            <Menu.Item
+              leftSection={
+                <IconUserCircle style={{ width: rem(14), height: rem(14) }} />
+              }
+            >
+              Profile
+            </Menu.Item>
+          </NavLink>
+
+          <NavLink to={"/user/post"}>
+            <Menu.Item
+              leftSection={
+                <IconSettings style={{ width: rem(14), height: rem(14) }} />
+              }
+            >
+              Manage Posts
+            </Menu.Item>
+          </NavLink>
+
+          <Menu.Item
+            leftSection={
+              <IconPremiumRights style={{ width: rem(14), height: rem(14) }} />
+            }
+          >
+            Upgrade to Premium
+          </Menu.Item>
+
+          <Menu.Divider />
+          <Menu.Item
+            color="red"
+            leftSection={
+              <IconLogout style={{ width: rem(14), height: rem(14) }} />
+            }
+            onClick={handleLogout}
+          >
+            Logout
+          </Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
+      <Menu shadow="md" width={200}>
+        <Menu.Target>
+          <IconDeviceLaptop className="cursor-pointer w-5 h-5" />
+        </Menu.Target>
+        <Menu.Dropdown>
+          <Menu.Label>Admin Menu</Menu.Label>
+          <NavLink to={"/manage-user"}>
+            <Menu.Item
+              leftSection={
+                <IconDeviceLaptop style={{ width: rem(14), height: rem(14) }} />
+              }
+            >
+              Join your workspace
+            </Menu.Item>
+          </NavLink>
+        </Menu.Dropdown>
+      </Menu>
+    </>
+  ) as React.ReactElement;
+};
+
+>>>>>>> Stashed changes
 const guestBtn = () => {
   const navigate = useNavigate();
   return (
@@ -335,8 +419,11 @@ function Navbar() {
       ? guestBtn()
       : data.role === "ADMIN"
       ? adminBtn(data, Logout)
+<<<<<<< Updated upstream
       : data.role === "STAFF"
       ? staffBtn(data, Logout)
+=======
+>>>>>>> Stashed changes
       : userBtn(data, Logout);
 
   const whichHomepage = "";
@@ -419,7 +506,14 @@ function Navbar() {
               </Menu.Dropdown>
             </Menu>
 
+<<<<<<< Updated upstream
             <NotificationCard />
+=======
+            {data &&
+              (data.role === "ADMIN" ||
+                data.role === "STAFF" ||
+                data.role === "USER") && <NotificationCard />}
+>>>>>>> Stashed changes
             <Group>{btnState}</Group>
           </Group>
         </div>
