@@ -48,14 +48,8 @@ const SearchDrawer = (props: {
     useEffect(() => {
         async function fetchData() {
             try {
-                const token = localStorage.getItem("token");
                 const response = await fetch(
                     `http://localhost:8080/api/v1/subject/getAll`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
                 );
 
                 if (!response.ok) {
@@ -240,6 +234,7 @@ export async function advancedSearch(searchRequest: SearchRequest) {
         if (searchRequest.subjectCode) api += `&subjectCode=${searchRequest.subjectCode}`;
         if (searchRequest.semester) api += `&semester=${searchRequest.semester}`;
         if (searchRequest.postTime) api += `&postTime=${dayjs(searchRequest.postTime).format('YYYY-MM-DDTHH:mm:ssZ[Z]')}`;
+        if (["STAFF", "ADMIN"].includes(localStorage.getItem("role") ?? "")) api += `&isStaff=true`;
         api += `&order=${searchRequest.order}`;
 
         api += `&page=${searchRequest.currentPage}`;
