@@ -455,7 +455,7 @@ function TablePostStaff() {
           <Table className="table-auto w-full">
             <Table.Thead>
               <Table.Tr className="text-xs text-gray-500 text-left">
-                <Table.Th className="flex items-center pl-6 py-4 font-medium">
+                <Table.Th className="py-4 font-medium">
                   Post ID
                 </Table.Th>
                 <Table.Th className="py-4 font-medium">Subject</Table.Th>
