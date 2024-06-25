@@ -10,6 +10,7 @@ import {
   Grid,
   GridCol,
   Flex,
+  Burger,
 } from "@mantine/core";
 import logo from "../../asset/logo.png";
 import darkLogo from "../../asset/darkLogo.png";
@@ -306,7 +307,7 @@ export interface LoaderData {
   role: string;
 }
 
-function Navbar() {
+function Navbar(props: any) {
   const [, { open }] = useDisclosure(false);
 
   const { assignUserCredentials } = useContext(UserCredentialsContext);
@@ -346,64 +347,74 @@ function Navbar() {
 
   return (
     <>
-      <Flex align='center' justify='space-between' >
-        
-          <NavLink to={whichHomepage} >
-            <img
-              src={computedColorScheme === "dark" ? darkLogo : logo}
-              alt="Dark FU4S logo"
+      <Grid align="center">
+        <div>
+          <Flex align="center" justify="center">
+            <Burger
+              ml="lg"
+              opened={props.opened}
+              onClick={props.setOpened}
+              size="sm"
             />
-          </NavLink>
+            <NavLink to={whichHomepage}>
+              <img
+                className="h-12 w-36 overflow-hidden"
+                src={computedColorScheme === "dark" ? darkLogo : logo}
+                alt="Dark FU4S logo"
+              />
+            </NavLink>
+          </Flex>
+        </div>
 
-          <div className="ml-5 grow">
-            <GeneralSearchBar />
-          </div>
+        <div className="ml-5 grow">
+          <GeneralSearchBar />
+        </div>
 
-          <Group className="mx-5">
-            <DarkModeSwitch
-              checked={colorScheme === "dark"}
-              onChange={toggleColorScheme}
-              size={20}
-            />
-            <Menu trigger="hover" shadow="md" width={200}>
-              <Menu.Target>
-                <IconSquarePlus className="w-5 h-auto" />
-              </Menu.Target>
+        <Group className="mx-5">
+          <DarkModeSwitch
+            checked={colorScheme === "dark"}
+            onChange={toggleColorScheme}
+            size={20}
+          />
+          <Menu trigger="hover" shadow="md" width={200}>
+            <Menu.Target>
+              <IconSquarePlus className="w-5 h-auto" />
+            </Menu.Target>
 
-              <Menu.Dropdown>
-                <Menu.Label>Create</Menu.Label>
-                <NavLink to={"/create-mock-test"}>
-                  <Menu.Item
-                    leftSection={
-                      <IconLibraryPlus
-                        style={{ width: rem(14), height: rem(14) }}
-                      />
-                    }
-                  >
-                    Mock Test
-                  </Menu.Item>
-                </NavLink>
+            <Menu.Dropdown>
+              <Menu.Label>Create</Menu.Label>
+              <NavLink to={"/create-mock-test"}>
+                <Menu.Item
+                  leftSection={
+                    <IconLibraryPlus
+                      style={{ width: rem(14), height: rem(14) }}
+                    />
+                  }
+                >
+                  Mock Test
+                </Menu.Item>
+              </NavLink>
 
-                <NavLink to={"/create-learning-material"}>
-                  <Menu.Item
-                    onClick={open}
-                    leftSection={
-                      <IconPhoto style={{ width: rem(14), height: rem(14) }} />
-                    }
-                  >
-                    Learning material
-                  </Menu.Item>
-                </NavLink>
-              </Menu.Dropdown>
-            </Menu>
+              <NavLink to={"/create-learning-material"}>
+                <Menu.Item
+                  onClick={open}
+                  leftSection={
+                    <IconPhoto style={{ width: rem(14), height: rem(14) }} />
+                  }
+                >
+                  Learning material
+                </Menu.Item>
+              </NavLink>
+            </Menu.Dropdown>
+          </Menu>
 
-            {data &&
-              (data.role === "ADMIN" ||
-                data.role === "STAFF" ||
-                data.role === "USER") && <NotificationCard />}
-            <Group>{btnState}</Group>
-          </Group>
-      </Flex>
+          {data &&
+            (data.role === "ADMIN" ||
+              data.role === "STAFF" ||
+              data.role === "USER") && <NotificationCard />}
+          <Group>{btnState}</Group>
+        </Group>
+      </Grid>
     </>
   );
 }

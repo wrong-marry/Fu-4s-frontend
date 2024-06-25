@@ -1,7 +1,7 @@
 import { Outlet, useNavigation } from "react-router-dom";
-import { AppShell, Burger, Center, Flex, Grid } from "@mantine/core";
+import { AppShell, Burger, Center, Flex, Grid, Stack } from "@mantine/core";
 import Navbar from "../component/navbar/Navbar";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { nprogress } from "@mantine/nprogress";
 
 import { Footer } from "../component/layout/Footer/Footer";
@@ -19,6 +19,9 @@ export default function Root() {
       nprogress.complete();
     }
   }, [navigation.state]);
+  const handleClickBurger = () => {
+    toggle();
+  };
   return (
     <AppShell
       header={{ height: 65 }}
@@ -29,22 +32,13 @@ export default function Root() {
       }}
       padding="md"
     >
-      <AppShell.Header>
-        <Grid>
-          <Grid.Col span={0.5}>
-            <Flex align="center" justify="center">
-              <Burger ml="lg" opened={opened} onClick={toggle} size="sm" />
-            </Flex>
-          </Grid.Col>
-          <Grid.Col span={11.5} p={0}>
-              <Navbar />
-          </Grid.Col>
-        </Grid>
+      <AppShell.Header p={0}>
+      <Navbar opened={opened} setOpened={handleClickBurger} />
       </AppShell.Header>
       <AppShell.Navbar>
         <NavbarSimple />
       </AppShell.Navbar>
-      <AppShell.Main p={0}>
+      <AppShell.Main>
         <div className="mt-10">
           <Outlet />
           <Footer />
