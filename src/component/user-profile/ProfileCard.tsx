@@ -134,7 +134,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
 						height={295}
 						onCrop={onCrop}
 						onClose={onClose}
-						src={src}
+						// src={src}
 					/>
 				</div>
 
