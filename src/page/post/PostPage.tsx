@@ -102,11 +102,11 @@ const PostPage: React.FC = () => {
     }
 
     return <>
-        <Modal opened={opened} onClose={() => toggle.close} title={"Login required"}>
+        <Modal opened={opened} onClose={toggle.close} title={"Login required"}>
             <Text ta={"center"}>You did not login!</Text>
             <Group justify={"space-around"} mt={"md"}>
                 <Button size={"sm"} onClick={() => window.location.href = "/auth/login"}>Login</Button>
-                <Button color={"red"} size={"sm"} onClick={() => toggle.close}>Close</Button>
+                <Button color={"red"} size={"sm"} onClick={toggle.close}>Close</Button>
             </Group>
         </Modal>
         {!post?.test && <LearningMaterialDetail/>}
