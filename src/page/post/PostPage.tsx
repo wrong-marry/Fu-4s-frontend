@@ -63,7 +63,12 @@ const PostPage: React.FC = () => {
     const fetchComments = async () => {
         try {
             const response: AxiosResponse<CommentData[]> = await axios.get(
-                `http://localhost:8080/api/v1/comments/post/${id}` + (isStaff ? "?isStaff=true" : "")
+                `http://localhost:8080/api/v1/comments/post/${id}` + (isStaff ? "?isStaff=true" : ""), {
+                    headers: {
+                        // Check login
+                        Authorization: localStorage.getItem("username") !== null ? `Bearer ${localStorage.getItem("token")}` : ""
+                    }
+                }
             )
             setComments(response.data);
         } catch (error) {
@@ -74,7 +79,11 @@ const PostPage: React.FC = () => {
         try {
             const api = `http://localhost:8080/api/v1/comments/post/${id}` + (isStaff ? `?isStaff=true&` : `?`) +
                 `offset=` + (comments?.length ?? 0);
-            const response: AxiosResponse<CommentData[]> = await axios.get(api);
+            const response: AxiosResponse<CommentData[]> = await axios.get(api, {
+                headers: {
+                    Authorization: localStorage.getItem("username") !== null ? `Bearer ${localStorage.getItem("token")}` : "",
+                }
+            });
             console.log(response.data);
             setComments(comment =>
                 comment?.concat(response.data) || []
