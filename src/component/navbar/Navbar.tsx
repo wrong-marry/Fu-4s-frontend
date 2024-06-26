@@ -11,6 +11,7 @@ import {
   GridCol,
   Flex,
   Burger,
+  em,
 } from "@mantine/core";
 import logo from "../../asset/logo.png";
 import darkLogo from "../../asset/darkLogo.png";
@@ -32,7 +33,7 @@ import {
   UserCredentials,
   UserCredentialsContext,
 } from "../../store/user-credentials-context";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
 
 import { Logout } from "../../util/loader/Auth.tsx";
@@ -40,6 +41,7 @@ import { Logout } from "../../util/loader/Auth.tsx";
 import NotificationCard from "../notification/NotificationCard.tsx";
 
 const userBtn = (data: LoaderData, handleLogout: () => void) => {
+  const isMobile = useMediaQuery(`(max-width: ${em(500)})`);
   return (
     <>
       <Menu shadow="md" width={200}>
@@ -52,7 +54,7 @@ const userBtn = (data: LoaderData, handleLogout: () => void) => {
               className="cursor-pointer"
               // src={data?.avatar}
             />
-            <Text className="text-sm font-semibold">
+            <Text display={isMobile?"none":"block"} className="text-sm font-semibold">
               {data ? data.firstName + " " + data.lastName : "Guest"}
             </Text>
           </Group>
@@ -334,88 +336,52 @@ function Navbar(props: any) {
     setColorScheme(computedColorScheme === "dark" ? "light" : "dark");
   };
 
-  const btnState =
-    data?.error || !data
-      ? guestBtn()
-      : data.role === "ADMIN"
-      ? adminBtn(data, Logout)
-      : data.role === "STAFF"
-      ? staffBtn(data, Logout)
-      : userBtn(data, Logout);
+  const btnState = data?.error || !data ? guestBtn() : userBtn(data, Logout);
 
   const whichHomepage = "";
 
   return (
-    <>
-      <Grid align="center">
-        <div>
-          <Flex align="center" justify="center">
-            <Burger
-              ml="lg"
-              opened={props.opened}
-              onClick={props.setOpened}
-              size="sm"
-            />
-            <NavLink to={whichHomepage}>
-              <img
-                className="h-12 w-36 overflow-hidden"
-                src={computedColorScheme === "dark" ? darkLogo : logo}
-                alt="Dark FU4S logo"
-              />
-            </NavLink>
-          </Flex>
-        </div>
-
-        <div className="ml-5 grow">
-          <GeneralSearchBar />
-        </div>
-
-        <Group className="mx-5">
-          <DarkModeSwitch
-            checked={colorScheme === "dark"}
-            onChange={toggleColorScheme}
-            size={20}
+    <Grid align="center">
+      <Grid.Col span={{ base: 7, sm: 3.5 }} >
+        <Flex align="center" justify="flex-start">
+          <Burger
+            ml="lg"
+            mr='md'
+            opened={props.opened}
+            onClick={props.setOpened}
+            size="sm"
           />
-          <Menu trigger="hover" shadow="md" width={200}>
-            <Menu.Target>
-              <IconSquarePlus className="w-5 h-auto" />
-            </Menu.Target>
+          <NavLink to={whichHomepage}>
+            <img
+              className="h-12 w-36 overflow-hidden"
+              src={computedColorScheme === "dark" ? darkLogo : logo}
+              alt="Dark FU4S logo"
+            />
+          </NavLink>
+        </Flex>
+      </Grid.Col>
 
-            <Menu.Dropdown>
-              <Menu.Label>Create</Menu.Label>
-              <NavLink to={"/create-mock-test"}>
-                <Menu.Item
-                  leftSection={
-                    <IconLibraryPlus
-                      style={{ width: rem(14), height: rem(14) }}
-                    />
-                  }
-                >
-                  Mock Test
-                </Menu.Item>
-              </NavLink>
+      <Grid.Col span={{ base: 11, sm: 5 }} offset={{ base: 0.5, sm: 0 }} order={{base:3,sm:2}}>
+        <GeneralSearchBar />
+      </Grid.Col>
 
-              <NavLink to={"/create-learning-material"}>
-                <Menu.Item
-                  onClick={open}
-                  leftSection={
-                    <IconPhoto style={{ width: rem(14), height: rem(14) }} />
-                  }
-                >
-                  Learning material
-                </Menu.Item>
-              </NavLink>
-            </Menu.Dropdown>
-          </Menu>
-
+      <Grid.Col span={{base:5,sm:3.5}}  order={{base:2,sm:3}}>
+        <Flex align='center' justify='flex-end' mx='md'>
+         
           {data &&
             (data.role === "ADMIN" ||
               data.role === "STAFF" ||
-              data.role === "USER") && <NotificationCard />}
+              data.role === "USER")}
           <Group>{btnState}</Group>
-        </Group>
-      </Grid>
-    </>
+ 
+          <DarkModeSwitch className="ml-5"
+            checked={colorScheme === "dark"}
+            onChange={toggleColorScheme}
+            size={25}
+          />
+        </Flex>
+      </Grid.Col>
+    </Grid>
   );
 }
 

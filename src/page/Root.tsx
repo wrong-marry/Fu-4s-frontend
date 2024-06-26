@@ -24,16 +24,16 @@ export default function Root() {
   };
   return (
     <AppShell
-      header={{ height: 65 }}
+      header={{ height: {base:120, sm:65} }}
       navbar={{
-        width: 300,
+        width: 250,
         breakpoint: "sm",
         collapsed: { mobile: !opened, desktop: !opened },
       }}
       padding="md"
     >
-      <AppShell.Header p={0}>
-      <Navbar opened={opened} setOpened={handleClickBurger} />
+      <AppShell.Header py='xs'>
+        <Navbar opened={opened} setOpened={handleClickBurger} />
       </AppShell.Header>
       <AppShell.Navbar>
         <NavbarSimple />

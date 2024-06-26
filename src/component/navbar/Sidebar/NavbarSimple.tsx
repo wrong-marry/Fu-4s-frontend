@@ -10,6 +10,7 @@ import {
   em,
   useMantineColorScheme,
   Center,
+  Text,
 } from "@mantine/core";
 import {
   IconBellRinging,
@@ -25,6 +26,11 @@ import {
   IconLibraryPlus,
   IconPhoto,
   IconSquarePlus,
+  IconChartBar,
+  IconUsers,
+  IconBook,
+  IconEyeCheck,
+  IconFileText,
 } from "@tabler/icons-react";
 
 import classes from "./NavbarSimple.module.css";
@@ -39,7 +45,7 @@ export function NavbarSimple() {
   const [active, setActive] = useState("home");
   const computedColorScheme = useComputedColorScheme("light");
   const navigate = useNavigate();
-  const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+  const isMobile = useMediaQuery(`(max-width: ${em(769)})`);
   const { colorScheme, setColorScheme } = useMantineColorScheme({
     keepTransitions: true,
   });
@@ -143,9 +149,32 @@ export function NavbarSimple() {
         </Menu>
         
       </div>
-
       <div className={classes.footer}>
-        <a href="#" className={classes.link} onClick={() => Logout()}>
+        <Text ml='sm'>Admin workspace</Text>
+        <a className={classes.link} onClick={() => navigate("/admin/overview")}>
+          <IconChartBar className={classes.linkIcon} stroke={1.5} />
+          <span>Overview Charts</span>
+        </a>
+        <a className={classes.link} onClick={() => navigate("/admin/manage-users")}>
+          <IconUsers className={classes.linkIcon} stroke={1.5} />
+          <span>Manage users</span>
+        </a>
+        <a className={classes.link} onClick={() => navigate("/admin/manage-subjects")}>
+          <IconBook className={classes.linkIcon} stroke={1.5} />
+          <span>Manage subjects</span>
+        </a>
+        <a className={classes.link} onClick={() => navigate("/admin/staff-monitoring")}>
+          <IconEyeCheck className={classes.linkIcon} stroke={1.5} />
+          <span>Staff monitoring</span>
+          
+        </a>
+        <a className={classes.link} onClick={() => navigate("/admin/pending-posts")}>
+          <IconFileText className={classes.linkIcon} stroke={1.5} />
+          <span>Pending posts</span>
+        </a>
+      </div>
+      <div className={classes.footer}>
+        <a className={classes.link} onClick={() => Logout()}>
           <IconLogout className={classes.linkIcon} stroke={1.5} />
           <span>Logout</span>
         </a>
