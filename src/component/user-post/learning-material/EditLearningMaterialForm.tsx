@@ -107,7 +107,17 @@ export function EditLearningMaterialForm() {
     }
 
     const handleEdit = () => {
+        const formData = new FormData();
+        if(files != null) files.forEach((file: File) => {
+            formData.append("files", file);
+        });
 
+        fetch(`http://localhost:8080/api/v1/learningMaterial/edit?title=${title}&content=${content}&username=${localStorage.getItem("username")}&subjectCode=${subject}&id=${id}&deleteAllFiles=${deleteAllFiles}`, {
+            method: "PUT",
+            body: formData
+        }).then(() => {
+            navigate(`/user/post/learning-material`);
+        })
     }
 
     const handleDownloadNewFile = (file: File) => {
