@@ -76,6 +76,7 @@ export function NavbarSimple() {
         >
           <Menu.Target>
             <a
+            onClick={()=>{navigate("/notifications");setActive("notifications");}}
               className={classes.link}
               data-active={"notifications" === active || undefined}
             >

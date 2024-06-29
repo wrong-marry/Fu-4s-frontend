@@ -1,4 +1,4 @@
-import { Outlet, useNavigation } from "react-router-dom";
+import { Outlet, useLocation, useNavigation } from "react-router-dom";
 import { AppShell, Burger, Center, Flex, Grid, Stack } from "@mantine/core";
 import Navbar from "../component/navbar/Navbar";
 import React, { useEffect, useState } from "react";
@@ -10,7 +10,8 @@ import { useDisclosure } from "@mantine/hooks";
 
 export default function Root() {
   const navigation = useNavigation();
-
+  const location = useLocation();
+  const isLandingPage = location.pathname === '/';
   const [opened, { toggle }] = useDisclosure();
   useEffect(() => {
     if (navigation.state === "loading") {
@@ -33,12 +34,12 @@ export default function Root() {
       padding="md"
     >
       <AppShell.Header py='xs'>
-        <Navbar opened={opened} setOpened={handleClickBurger} />
+        <Navbar isLandingPage={isLandingPage} opened={opened} setOpened={handleClickBurger} />
       </AppShell.Header>
-      <AppShell.Navbar>
+      <AppShell.Navbar display={isLandingPage?"none":"block"}>
         <NavbarSimple />
       </AppShell.Navbar>
-      <AppShell.Main>
+      <AppShell.Main className={isLandingPage?"p-0":""}>
         <div className="mt-10">
           <Outlet />
           <Footer />

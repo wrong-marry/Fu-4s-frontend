@@ -25,6 +25,8 @@ import {
   IconPremiumRights,
   IconLogout,
   IconDeviceLaptop,
+  IconBurger,
+  IconMenu2,
 } from "@tabler/icons-react";
 
 import { DarkModeSwitch } from "react-toggle-dark-mode";
@@ -54,7 +56,10 @@ const userBtn = (data: LoaderData, handleLogout: () => void) => {
               className="cursor-pointer"
               // src={data?.avatar}
             />
-            <Text display={isMobile?"none":"block"} className="text-sm font-semibold">
+            <Text
+              display={isMobile ? "none" : "block"}
+              className="text-sm font-semibold"
+            >
               {data ? data.firstName + " " + data.lastName : "Guest"}
             </Text>
           </Group>
@@ -338,19 +343,30 @@ function Navbar(props: any) {
 
   const btnState = data?.error || !data ? guestBtn() : userBtn(data, Logout);
 
-  const whichHomepage = "";
+  const whichHomepage = "home";
 
   return (
     <Grid align="center">
-      <Grid.Col span={{ base: 7, sm: 3.5 }} >
+      <Grid.Col span={{ base: 7, sm: 3.5 }}>
         <Flex align="center" justify="flex-start">
-          <Burger
-            ml="lg"
-            mr='md'
-            opened={props.opened}
+          <Button
+          display={props.isLandingPage?"none":"block"}
+            variant="subtle"
+            p={10}
+            ml='xs'
             onClick={props.setOpened}
-            size="sm"
-          />
+            size="lg"
+            radius={100}
+            
+          >
+            <IconMenu2
+              color={
+                localStorage.getItem("mantine-color-scheme-value") === "light"
+                  ? "black"
+                  : "white"
+              }
+            />
+          </Button>
           <NavLink to={whichHomepage}>
             <img
               className="h-12 w-36 overflow-hidden"
@@ -361,20 +377,24 @@ function Navbar(props: any) {
         </Flex>
       </Grid.Col>
 
-      <Grid.Col span={{ base: 11, sm: 5 }} offset={{ base: 0.5, sm: 0 }} order={{base:3,sm:2}}>
+      <Grid.Col
+        span={{ base: 11, sm: 5 }}
+        offset={{ base: 0.5, sm: 0 }}
+        order={{ base: 3, sm: 2 }}
+      >
         <GeneralSearchBar />
       </Grid.Col>
 
-      <Grid.Col span={{base:5,sm:3.5}}  order={{base:2,sm:3}}>
-        <Flex align='center' justify='flex-end' mx='md'>
-         
+      <Grid.Col span={{ base: 5, sm: 3.5 }} order={{ base: 2, sm: 3 }}>
+        <Flex align="center" justify="flex-end" mx="md">
           {data &&
             (data.role === "ADMIN" ||
               data.role === "STAFF" ||
               data.role === "USER")}
           <Group>{btnState}</Group>
- 
-          <DarkModeSwitch className="ml-5"
+
+          <DarkModeSwitch
+            className="ml-5"
             checked={colorScheme === "dark"}
             onChange={toggleColorScheme}
             size={25}
