@@ -364,7 +364,7 @@ function TableSubject() {
         }
     };
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const {name, value} = event.target;
         if (currentSubject) {
             setCurrentSubject({...currentSubject, [name]: value});

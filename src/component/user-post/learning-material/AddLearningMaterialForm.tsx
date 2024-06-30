@@ -132,7 +132,7 @@ export function AddLearningMaterialForm() {
         )
     );
 
-    const listData = files == null ? <List.Item><i>no files yet</i></List.Item> : files.map((file, index) => {
+    const listData = files == null ? <List.Item><i>no files yet</i></List.Item> : files.map((file) => {
         return <List.Item mb="xs">
             <Text onClick={() => handleDownloadFile(file)} td="underline" color="blue" type="button"
                   component="button">{file.name}</Text>

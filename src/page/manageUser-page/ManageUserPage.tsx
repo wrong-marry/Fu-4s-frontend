@@ -15,7 +15,7 @@ import DashboardSectionStaff from "../../component/staff-post/post-manage/Dashbo
 import {Pie} from "../../component/manageUser/chart/Pie.tsx";
 import {StatsGrid} from "../../component/manageUser/chart/Statistics.tsx";
 import TableSubject from "../../component/manage-subject/TableSubject.tsx";
-import TablePostStaff from "../../component/staff-post/post-manage/TablePostStaff.tsx";
+// import TablePostStaff from "../../component/staff-post/post-manage/TablePostStaff.tsx";
 import TableUser from "../../component/manageUser/manage-user/TableUser.tsx";
 
 export default function ManagePostForStaff() {
@@ -124,7 +124,7 @@ export default function ManagePostForStaff() {
                         </Tabs.Panel>
                         <Tabs.Panel value="Pending Posts">
                             <DashboardSectionStaff/>
-                            <TablePostStaff/>
+                            {/*<TablePostStaff/>*/}
                         </Tabs.Panel>
                         <Tabs.Panel value="Pending Comments">
                             Settings tab content
