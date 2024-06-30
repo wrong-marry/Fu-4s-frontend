@@ -55,7 +55,7 @@ const PostPage: React.FC = () => {
     );
     const fetchPost = async () => {
         const response: Post = (await axios.get(
-            `http://localhost:8080/api/v1/post/get?id=${id}`
+            `http://3.27.235.175:8080/api/v1/post/get?id=${id}`
         )).data;
         setPost(response);
         console.log("1" + post);
@@ -63,7 +63,7 @@ const PostPage: React.FC = () => {
     const fetchComments = async () => {
         try {
             const response: AxiosResponse<CommentData[]> = await axios.get(
-                `http://localhost:8080/api/v1/comments/post/${id}` + (isStaff ? "?isStaff=true" : ""), {
+                `http://3.27.235.175:8080/api/v1/comments/post/${id}` + (isStaff ? "?isStaff=true" : ""), {
                     headers: {
                         // Check login
                         Authorization: localStorage.getItem("username") !== null ? `Bearer ${localStorage.getItem("token")}` : ""
@@ -77,7 +77,7 @@ const PostPage: React.FC = () => {
     };
     const fetchMore = async () => {
         try {
-            const api = `http://localhost:8080/api/v1/comments/post/${id}` + (isStaff ? `?isStaff=true&` : `?`) +
+            const api = `http://3.27.235.175:8080/api/v1/comments/post/${id}` + (isStaff ? `?isStaff=true&` : `?`) +
                 `offset=` + (comments?.length ?? 0);
             const response: AxiosResponse<CommentData[]> = await axios.get(api, {
                 headers: {
@@ -139,7 +139,7 @@ const PostPage: React.FC = () => {
                     console.log(values);
                     try {
                         const response: AxiosResponse<{ message: string, id: number }> = await axios.post(
-                            `http://localhost:8080/api/v1/comments/upload/post-${id}`,
+                            `http://3.27.235.175:8080/api/v1/comments/upload/post-${id}`,
                             values,
                             {
                                 headers: {

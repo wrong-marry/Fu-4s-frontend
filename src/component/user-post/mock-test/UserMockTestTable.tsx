@@ -24,7 +24,7 @@ export function UserMockTestTable() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/questionSet/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
+                    `http://3.27.235.175:8080/api/v1/questionSet/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
                 );
                 const data = await response.json();
                 setPost(data)
@@ -37,7 +37,7 @@ export function UserMockTestTable() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/questionSet/getNum?username=${username}`
+                    `http://3.27.235.175:8080/api/v1/questionSet/getNum?username=${username}`
                 );
                 const data = await response.json();
                 setNumPage((data + 1) / pageSize)
@@ -99,7 +99,7 @@ export function UserMockTestTable() {
     return <>
         <section className="py-8">
             <div className="container px-4 mx-auto">
-            <div className="pt-6 bg-white shadow rounded">
+                <div className="pt-6 bg-white shadow rounded">
                     <div className="px-6 border-b">
                         <div className="flex flex-wrap items-center mb-6">
                             <h3 className="text-xl font-bold">Your uploaded posts</h3>
@@ -189,7 +189,7 @@ export function UserMockTestTable() {
                     </div>
                 </div>
                 <Center mt={"lg"}>
-                    <Pagination value={activePage} onChange={setPage} total={numPage} />
+                    <Pagination value={activePage} onChange={setPage} total={numPage}/>
                 </Center>
             </div>
         </section>

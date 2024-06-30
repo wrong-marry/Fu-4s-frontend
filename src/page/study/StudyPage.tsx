@@ -25,7 +25,7 @@ export default function StudyPage() {
         async function fetchData() {
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/subject/getAll`
+                    `http://3.27.235.175:8080/api/v1/subject/getAll`
                 );
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);

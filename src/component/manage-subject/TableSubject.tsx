@@ -71,7 +71,7 @@ function TableSubject() {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/admin/getNumSubject`,
+                    `http://3.27.235.175:8080/api/v1/admin/getNumSubject`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -89,7 +89,7 @@ function TableSubject() {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/admin/getNumSubjectsByType?isActive=true`,
+                    `http://3.27.235.175:8080/api/v1/admin/getNumSubjectsByType?isActive=true`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -107,7 +107,7 @@ function TableSubject() {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/admin/getNumSubjectsByType?isActive=false`,
+                    `http://3.27.235.175:8080/api/v1/admin/getNumSubjectsByType?isActive=false`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -131,7 +131,7 @@ function TableSubject() {
             try {
                 const token = localStorage.getItem("token");
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/subject/getAll`,
+                    `http://3.27.235.175:8080/api/v1/subject/getAll`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -219,7 +219,7 @@ function TableSubject() {
             try {
                 const token = localStorage.getItem("token");
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/admin/disableSubject?subjectCode=${subjectToDisable.code}`,
+                    `http://3.27.235.175:8080/api/v1/admin/disableSubject?subjectCode=${subjectToDisable.code}`,
                     {
                         method: "PUT",
                         headers: {
@@ -262,7 +262,7 @@ function TableSubject() {
             try {
                 const token = localStorage.getItem("token");
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/admin/activeSubject?subjectCode=${subjectToActivate.code}`,
+                    `http://3.27.235.175:8080/api/v1/admin/activeSubject?subjectCode=${subjectToActivate.code}`,
                     {
                         method: "PUT",
                         headers: {
@@ -309,7 +309,7 @@ function TableSubject() {
         if (currentSubject) {
             try {
                 const token = localStorage.getItem("token");
-                await fetch(`http://localhost:8080/api/v1/admin/updateSubject`, {
+                await fetch(`http://3.27.235.175:8080/api/v1/admin/updateSubject`, {
                     method: "PUT",
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -335,7 +335,7 @@ function TableSubject() {
             try {
                 const token = localStorage.getItem("token");
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/admin/createSubject`,
+                    `http://3.27.235.175:8080/api/v1/admin/createSubject`,
                     {
                         method: "POST",
                         headers: {

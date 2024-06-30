@@ -1,8 +1,8 @@
-import { Carousel } from "@mantine/carousel";
+import {Carousel} from "@mantine/carousel";
 import {Card, Text, Badge, Group, Stack, Avatar, ActionIcon, Flex} from "@mantine/core";
 import axios from "axios";
 import React, {useEffect, useState} from "react";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {IconDots} from "@tabler/icons-react";
 
 
@@ -16,13 +16,14 @@ export interface Post {
     subjectCode: string;
     // Add other properties as needed
 }
+
 function RecentPost() {
     const [recentPost, setRecentPost] = useState<Post[]>([]);
     const navigate = useNavigate();
 
     useEffect(() => {
         axios
-            .get(`http://localhost:8080/api/v1/post/recent`)
+            .get(`http://3.27.235.175:8080/api/v1/post/recent`)
             .then((res) => {
                 const sortedList =
                     res && res.data
@@ -47,7 +48,7 @@ function RecentPost() {
 
     function fetchMore(offset: number) {
         axios
-            .get(`http://localhost:8080/api/v1/post/recent?offset=${offset}`)
+            .get(`http://3.27.235.175:8080/api/v1/post/recent?offset=${offset}`)
             .then((res) => {
                 const sortedList =
                     res && res.data
@@ -69,6 +70,7 @@ function RecentPost() {
                 // Handle error gracefully, e.g., display an error message to the user
             });
     }
+
     return (
         <>
             {recentPost.length === 0 ? (
@@ -110,7 +112,7 @@ function RecentPost() {
                                             <Badge color="pink">Learning Material</Badge>
                                         )}
                                     </Stack>
-                                    <Group align="stretch" gap="sm" style={{marginBottom:'10px'}}>
+                                    <Group align="stretch" gap="sm" style={{marginBottom: '10px'}}>
                                         <Avatar
                                             variant="filled"
                                             radius="xl"
@@ -119,7 +121,7 @@ function RecentPost() {
                                                 height: '110%',
                                                 borderRadius: '50%',
                                                 objectFit: 'cover',
-                                                width : '10%'
+                                                width: '10%'
                                             }}
                                         />
                                         <Text size="sm">{test.username}</Text>
@@ -133,7 +135,7 @@ function RecentPost() {
                                                     fontSize: '12px',
                                                     fontWeight: '500',
                                                     textTransform: 'uppercase',
-                                                    width : '100%'
+                                                    width: '100%'
                                                 }}
                                             >
                                                 {test.subjectCode}

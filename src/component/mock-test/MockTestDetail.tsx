@@ -36,7 +36,7 @@ const MockTestDetail: React.FC = () => {
         const fetchPost = async () => {
             try {
                 const response: AxiosResponse<Post> = await axios.get(
-                    `http://localhost:8080/api/v1/questionSet/?id=${id}`
+                    `http://3.27.235.175:8080/api/v1/questionSet/?id=${id}`
                 );
                 setPost(response.data);
             } catch (error) {

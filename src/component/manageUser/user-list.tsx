@@ -41,7 +41,7 @@ function TableUser() {
         const fetchNum = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const baseURL = "http://localhost:8080/api/v1/admin";
+                const baseURL = "http://3.27.235.175:8080/api/v1/admin";
                 let url = "";
 
                 if (currentTab === "ALL") {
@@ -88,7 +88,7 @@ function TableUser() {
             }
         };
 
-        const baseURL = "http://localhost:8080/api/v1/admin";
+        const baseURL = "http://3.27.235.175:8080/api/v1/admin";
         let url = "";
 
         if (currentTab === "ALL") {

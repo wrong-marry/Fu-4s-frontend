@@ -47,7 +47,7 @@ export function CreateMockTestForm() {
     const [errorFile, setError] = useState<string | null>(null);
     const [fileData, setFileData] = useState<row[]>([]);
     const [errorAll, setErrorAll] = useState('');
-    const [opened, { open, close }] = useDisclosure(false);
+    const [opened, {open, close}] = useDisclosure(false);
     const navigate = useNavigate();
 
     const isExcelFile = (file: File) => {
@@ -60,18 +60,18 @@ export function CreateMockTestForm() {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-        if(e.target == null) {
+        if (e.target == null) {
             setError("Invalid file! Only accept Excel file!")
             throw new Error("Invalid");
         }
 
         const data = e.target.result;
-        const workbook = XLSX.read(data, { type: "array" });
+        const workbook = XLSX.read(data, {type: "array"});
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
 
-        const json : row[] = XLSX.utils.sheet_to_json(worksheet);
-        if(json.length == 0) {
+        const json: row[] = XLSX.utils.sheet_to_json(worksheet);
+        if (json.length == 0) {
             setError("Invalid file! Must have at least 1 question!");
             return;
         }
@@ -82,7 +82,7 @@ export function CreateMockTestForm() {
         const fetchSubject = async () => {
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/subject/getAll`
+                    `http://3.27.235.175:8080/api/v1/subject/getAll`
                 );
                 const data = await response.json();
                 //console.log(data);
@@ -96,8 +96,8 @@ export function CreateMockTestForm() {
     }, []);
 
     useEffect(() => {
-        if(file == null) return;
-        if(!isExcelFile(file)) {
+        if (file == null) return;
+        if (!isExcelFile(file)) {
             setError("Invalid file! Only accept Excel file!");
             return;
         }
@@ -125,12 +125,12 @@ export function CreateMockTestForm() {
         for (var row of fileData) {
             let answers: Answer[] = [];
 
-            if(parseInt(row.correct) > 4 || parseInt(row.correct) < 1) {
+            if (parseInt(row.correct) > 4 || parseInt(row.correct) < 1) {
                 setError("Invalid file format! Please read the instruction!");
                 return;
             }
 
-            if(!row.answer1) {
+            if (!row.answer1) {
                 console.log(row.answer1);
                 setError("Invalid file format! Please read the instruction!");
                 return;
@@ -140,7 +140,7 @@ export function CreateMockTestForm() {
             };
             answers.push(answer);
             console.log(row.answer2);
-            if(!row.answer2) {
+            if (!row.answer2) {
                 setError("Invalid file format! Please read the instruction!");
                 return;
             }
@@ -149,7 +149,7 @@ export function CreateMockTestForm() {
             };
             answers.push(answer);
 
-            if(!row.answer3) {
+            if (!row.answer3) {
                 setError("Invalid file format! Please read the instruction!");
                 return;
             }
@@ -158,7 +158,7 @@ export function CreateMockTestForm() {
             };
             answers.push(answer);
 
-            if(!row.answer4) {
+            if (!row.answer4) {
                 setError("Invalid file format! Please read the instruction!");
                 return;
             }
@@ -167,7 +167,7 @@ export function CreateMockTestForm() {
             };
             answers.push(answer);
 
-            if(!row.content) {
+            if (!row.content) {
                 console.log(1);
                 setError("Invalid file format! Please read the instruction!");
                 return;
@@ -179,13 +179,13 @@ export function CreateMockTestForm() {
             questions.push(question);
         }
 
-        fetch(`http://localhost:8080/api/v1/questionSet/addNew?title=${title}&subjectCode=${subject}&username=${localStorage.getItem('username')}`, {
-                method: "POST",
-                body: JSON.stringify(questions),
-                headers: {
-                    'Content-Type': 'application/json',
-                    //'Authorization': 'Bearer ' + localStorage.getItem('token')
-                }
+        fetch(`http://3.27.235.175:8080/api/v1/questionSet/addNew?title=${title}&subjectCode=${subject}&username=${localStorage.getItem('username')}`, {
+            method: "POST",
+            body: JSON.stringify(questions),
+            headers: {
+                'Content-Type': 'application/json',
+                //'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
         })
             .then((response: Response) => response.json())
             .then(() => {
@@ -197,12 +197,12 @@ export function CreateMockTestForm() {
     const downloadTemplate = () => {
         const fileName = 'questions.xlsx';
         const data = [{
-                content: "",
-                answer1: "",
-                answer2: "",
-                answer3: "",
-                answer4: "",
-                correct: "",
+            content: "",
+            answer1: "",
+            answer2: "",
+            answer3: "",
+            answer4: "",
+            correct: "",
         }];
 
         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
@@ -215,19 +215,21 @@ export function CreateMockTestForm() {
     return <>
         <Modal opened={opened} onClose={close} title="Import instruction">
             <Text size="sm">
-                <Divider my="md" />
+                <Divider my="md"/>
                 The system only accept excel (.xlsx) files. File must <b>strictly</b> be in the following format:
                 <Space h="sm"></Space>
                 <img src="/src/asset/excelFileFormat.png" alt=""/>
                 <Space h="sm"></Space>
                 <Space h="sm"></Space>
-                <b>Strictly</b> means it must in the <b>exact</b> same format with the picture (the same column name and no extra columns).
+                <b>Strictly</b> means it must in the <b>exact</b> same format with the picture (the same column name and
+                no extra columns).
                 <Space h="sm"></Space>
 
-                Please <Text td="underline" color="blue" component="button" type="button" onClick={downloadTemplate}>download the template</Text> for easier use.
+                Please <Text td="underline" color="blue" component="button" type="button" onClick={downloadTemplate}>download
+                the template</Text> for easier use.
                 <Space h="sm"></Space>
                 <Space h="sm"></Space>
-                <Divider my="md" />
+                <Divider my="md"/>
                 <b>Example:</b>
                 <Space h="sm"></Space>
 
@@ -253,12 +255,12 @@ export function CreateMockTestForm() {
                                 label="Title"
                                 description="Your mock test title"
                                 placeholder="Enter title"
-                                    onChange={(event) => setTitle(event.currentTarget.value)}
+                                onChange={(event) => setTitle(event.currentTarget.value)}
                                 required
                                 radius="md"
                             />
 
-                            <Space h="md" />
+                            <Space h="md"/>
 
                             <Select
                                 label="Subject"
@@ -274,7 +276,7 @@ export function CreateMockTestForm() {
                                 radius="md"
                             />
 
-                            <Space h="md" />
+                            <Space h="md"/>
 
                         </Grid.Col>
                         <Grid.Col span={2}></Grid.Col>
@@ -291,10 +293,13 @@ export function CreateMockTestForm() {
                                 onChange={setFile}
                                 accept={".xlsx"}
                             />
-                            <Text c="dimmed" size="xs">Only accept excel files. Import format instruction <Text td="underline" color="blue" component="button" onClick={open}>here</Text></Text>
-                            <Text c="dimmed" size="xs">Download template <Text td="underline" color="blue" type="button" component="button" onClick={downloadTemplate}>here</Text></Text>
+                            <Text c="dimmed" size="xs">Only accept excel files. Import format instruction <Text
+                                td="underline" color="blue" component="button" onClick={open}>here</Text></Text>
+                            <Text c="dimmed" size="xs">Download template <Text td="underline" color="blue" type="button"
+                                                                               component="button"
+                                                                               onClick={downloadTemplate}>here</Text></Text>
 
-                            <Space h="xs" />
+                            <Space h="xs"/>
 
                             <Grid>
                                 <Grid.Col span={6}>
@@ -303,7 +308,7 @@ export function CreateMockTestForm() {
                                     </Button>
                                 </Grid.Col>
                                 <Grid.Col span={6}>
-                                    <Button onClick={handleAdd}  mt="md" >
+                                    <Button onClick={handleAdd} mt="md">
                                         Create
                                     </Button>
                                 </Grid.Col>

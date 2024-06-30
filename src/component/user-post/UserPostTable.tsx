@@ -24,7 +24,7 @@ export function UserPostTable() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/post/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
+                    `http://3.27.235.175:8080/api/v1/post/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
                 );
                 const data = await response.json();
                 setPost(data)
@@ -37,7 +37,7 @@ export function UserPostTable() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/post/getNum?username=${username}`
+                    `http://3.27.235.175:8080/api/v1/post/getNum?username=${username}`
                 );
                 const data = await response.json();
                 setNumPage((data + 1) / pageSize)
@@ -87,7 +87,7 @@ export function UserPostTable() {
                 <td>
                     {post.test ?
                         'Mock Test'
-                    :
+                        :
                         'Learning Material'
                     }
                 </td>
@@ -194,7 +194,7 @@ export function UserPostTable() {
                     </div>
                 </div>
                 <Center mt={"lg"}>
-                    <Pagination value={activePage} onChange={setPage} total={numPage} />
+                    <Pagination value={activePage} onChange={setPage} total={numPage}/>
                 </Center>
             </div>
         </section>

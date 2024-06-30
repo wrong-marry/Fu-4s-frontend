@@ -45,7 +45,7 @@ interface Form {
 export const SEARCH_LOAD_SIZE = 4;
 const fetchSearchResultData = async (keywords: string) => {
     try {
-        let api = `http://localhost:8080/api/v1/search?keyword=${keywords}`;
+        let api = `http://3.27.235.175:8080/api/v1/search?keyword=${keywords}`;
         if (["STAFF", "ADMIN"].includes(localStorage.getItem("role") ?? "")) api += `&isStaff=true`;
         api += `&pageSize=${SEARCH_LOAD_SIZE}`;
         const res = await axios.get(api);
