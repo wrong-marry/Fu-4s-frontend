@@ -204,7 +204,6 @@ export const Comment = (props: CommentTagData) => {
                                         form.setFieldValue("content", values.content);
                                         form.setInitialValues({"content": values.content});
                                         setContentStack(defaultContentStack(values.content));
-                                        props.content = values.content;
                                         props.updateFunction(id, values.content);
                                     }
                                 })
