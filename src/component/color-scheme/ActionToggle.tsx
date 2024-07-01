@@ -23,7 +23,7 @@ export function ActionToggle() {
         const formData = new FormData();
         formData.append('image', file ?? "");
 
-        axios.post('http://3.27.235.175:8080/api/v1/user/avatar?username=' + localStorage.getItem("username"), formData, {
+        axios.post('https://api.fu4s.online.175:8080/api/v1/user/avatar?username=' + localStorage.getItem("username"), formData, {
             onUploadProgress: (e) => {
                 console.log((e?.progress ?? 0) * 100);
             },

@@ -13,7 +13,7 @@ export default function TestScore(prop: any) {
     useEffect(() => {
         const fetchLastScore = async () => {
             const result = await axios.get(
-                `http://3.27.235.175:8080/api/v1/test-result/get-last-score?username=${localStorage.getItem(
+                `https://api.fu4s.online.175:8080/api/v1/test-result/get-last-score?username=${localStorage.getItem(
                     "username"
                 )}&questionSetId=${prop.questionSetId}`
             );

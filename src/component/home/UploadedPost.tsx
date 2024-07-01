@@ -14,7 +14,7 @@ function UploadedPost() {
     const username = localStorage.getItem("username");
     useEffect(() => {
         axios
-            .get(`http://3.27.235.175:8080/api/v1/post/getAllByUsername?username=${username}&pageSize=6&pageNum=1`)
+            .get(`https://api.fu4s.online.175:8080/api/v1/post/getAllByUsername?username=${username}&pageSize=6&pageNum=1`)
             .then((res) => {
                 const sortedList =
                     res && res.data
@@ -39,7 +39,7 @@ function UploadedPost() {
 
     function fetchMore(pageNum: number) {
         axios
-            .get(`http://3.27.235.175:8080/api/v1/post/getAllByUsername?username=${username}&pageSize=6&pageNum=${pageNum}`)
+            .get(`https://api.fu4s.online.175:8080/api/v1/post/getAllByUsername?username=${username}&pageSize=6&pageNum=${pageNum}`)
             .then((res) => {
                 const sortedList =
                     res && res.data

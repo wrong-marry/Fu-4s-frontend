@@ -39,7 +39,7 @@ export function AddLearningMaterialForm() {
         const fetchSubject = async () => {
             try {
                 const response = await fetch(
-                    `http://3.27.235.175:8080/api/v1/subject/getAll`
+                    `https://api.fu4s.online.175:8080/api/v1/subject/getAll`
                 );
                 const data = await response.json();
                 setSubjectList(data);
@@ -78,7 +78,7 @@ export function AddLearningMaterialForm() {
             formData.append("files", file);
         });
 
-        fetch(`http://3.27.235.175:8080/api/v1/learningMaterial/addNew?title=${title}&content=${content}&username=${localStorage.getItem("username")}&subjectCode=${subject}`,
+        fetch(`https://api.fu4s.online.175:8080/api/v1/learningMaterial/addNew?title=${title}&content=${content}&username=${localStorage.getItem("username")}&subjectCode=${subject}`,
             {
                 method: "POST",
                 body: formData

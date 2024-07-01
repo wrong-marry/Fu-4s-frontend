@@ -49,7 +49,7 @@ function TablePostStaff() {
     //         try {
     //             const token = localStorage.getItem("token");
     //             const response = await fetch(
-    //                 `http://3.27.235.175:8080/api/v1/staff/approvedPost?id=${postToApproved.id}`,
+    //                 `https://api.fu4s.online.175:8080/api/v1/staff/approvedPost?id=${postToApproved.id}`,
     //                 {
     //                     method: "PUT",
     //                     headers: {
@@ -96,7 +96,7 @@ function TablePostStaff() {
     //         try {
     //             const token = localStorage.getItem("token");
     //             const response = await fetch(
-    //                 `http://3.27.235.175:8080/api/v1/staff/deniedPost?id=${postToDenied.id}`,
+    //                 `https://api.fu4s.online.175:8080/api/v1/staff/deniedPost?id=${postToDenied.id}`,
     //                 {
     //                     method: "PUT",
     //                     headers: {
@@ -142,7 +142,7 @@ function TablePostStaff() {
     //     const fetchNum = async () => {
     //         try {
     //             const token = localStorage.getItem("token");
-    //             const baseURL = "http://3.27.235.175:8080/api/v1/staff";
+    //             const baseURL = "https://api.fu4s.online.175:8080/api/v1/staff";
     //             let url = "";
     //
     //             if (currentTab === "All posts") {
@@ -204,7 +204,7 @@ function TablePostStaff() {
     //         }
     //     };
     //
-    //     const baseURL = "http://3.27.235.175:8080/api/v1/staff";
+    //     const baseURL = "https://api.fu4s.online.175:8080/api/v1/staff";
     //     let url = "";
     //
     //     if (currentTab === "All posts") {

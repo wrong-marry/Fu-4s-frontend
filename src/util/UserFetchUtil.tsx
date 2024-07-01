@@ -11,7 +11,7 @@ export const emptyUser = {
 
 export const fetchUser = async () => {
     const username = localStorage.getItem("username");
-    const api = "http://3.27.235.175:8080/api/v1/user?username=" + username;
+    const api = "https://api.fu4s.online.175:8080/api/v1/user?username=" + username;
     try {
         return await axios.get(api, {
             headers: {

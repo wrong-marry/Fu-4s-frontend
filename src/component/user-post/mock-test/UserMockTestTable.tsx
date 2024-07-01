@@ -24,7 +24,7 @@ export function UserMockTestTable() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `http://3.27.235.175:8080/api/v1/questionSet/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
+                    `https://api.fu4s.online.175:8080/api/v1/questionSet/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
                 );
                 const data = await response.json();
                 setPost(data)
@@ -37,7 +37,7 @@ export function UserMockTestTable() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `http://3.27.235.175:8080/api/v1/questionSet/getNum?username=${username}`
+                    `https://api.fu4s.online.175:8080/api/v1/questionSet/getNum?username=${username}`
                 );
                 const data = await response.json();
                 setNumPage((data + 1) / pageSize)

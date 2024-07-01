@@ -27,7 +27,7 @@ function PostList(props: { searchRequest: SearchRequest }) {
     useEffect(() => {
         async function fetchData() {
             try {
-                let api = `http://3.27.235.175:8080/api/v1/post/getAllPost?pageSize=` + POST_PAGE_SIZE;
+                let api = `https://api.fu4s.online.175:8080/api/v1/post/getAllPost?pageSize=` + POST_PAGE_SIZE;
                 if (searchRequest.isTest != null) api += `&isTest=${searchRequest.isTest}`;
                 if (searchRequest.subjectCode) api += `&subjectCode=${searchRequest.subjectCode}`;
                 if (currentPage) api += `&page=${currentPage}`;

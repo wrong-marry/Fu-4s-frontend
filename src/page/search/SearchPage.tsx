@@ -49,7 +49,7 @@ const SearchDrawer = (props: {
         async function fetchData() {
             try {
                 const response = await fetch(
-                    `http://3.27.235.175:8080/api/v1/subject/getAll`,
+                    `https://api.fu4s.online.175:8080/api/v1/subject/getAll`,
                 );
 
                 if (!response.ok) {
@@ -227,7 +227,7 @@ export enum SearchOrder {
 
 export async function advancedSearch(searchRequest: SearchRequest) {
     try {
-        let api = `http://3.27.235.175:8080/api/v1/search?pageSize=` + POST_PAGE_SIZE;
+        let api = `https://api.fu4s.online.175:8080/api/v1/search?pageSize=` + POST_PAGE_SIZE;
         if (searchRequest.username) api += `&username=${searchRequest.username}`;
         if (searchRequest.title) api += `&keyword=${searchRequest.title}`;
         if (searchRequest.isTest != null) api += `&isTest=${searchRequest.isTest}`;

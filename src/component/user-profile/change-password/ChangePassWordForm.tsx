@@ -15,10 +15,10 @@ export function ChangePassWordForm() {
     const navigate = useNavigate();
     const username = localStorage.getItem("username");
     const compareAPI =
-        "http://3.27.235.175:8080/api/v1/user/compare-password?username=" +
+        "https://api.fu4s.online.175:8080/api/v1/user/compare-password?username=" +
         username +
         "&confirmPassword=";
-    const changePassAPI = "http://3.27.235.175:8080/api/v1/user/change-password?username=" + username + "&newPassword=";
+    const changePassAPI = "https://api.fu4s.online.175:8080/api/v1/user/change-password?username=" + username + "&newPassword=";
     const form = useForm({
         initialValues: {
             oldPassWord: "",
@@ -48,7 +48,7 @@ export function ChangePassWordForm() {
         await axios.put(changePassAPI + newData.newPassWord).catch((err) => console.log(err));
         // await axios
         //   .put(
-        //     "http://3.27.235.175:8080/api/v1/user/edit-profile?username=" +
+        //     "https://api.fu4s.online.175:8080/api/v1/user/edit-profile?username=" +
         //       user.username,
         //     newData
         //   )

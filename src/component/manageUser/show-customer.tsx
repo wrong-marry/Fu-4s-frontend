@@ -12,7 +12,7 @@ const DashboardSection: React.FC = () => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `http://3.27.235.175:8080/api/v1/admin/getNumUser`,
+                    `https://api.fu4s.online.175:8080/api/v1/admin/getNumUser`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -29,7 +29,7 @@ const DashboardSection: React.FC = () => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `http://3.27.235.175:8080/api/v1/admin/getNumEachRole?userrole=ADMIN`,
+                    `https://api.fu4s.online.175:8080/api/v1/admin/getNumEachRole?userrole=ADMIN`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -46,7 +46,7 @@ const DashboardSection: React.FC = () => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `http://3.27.235.175:8080/api/v1/admin/getNumEachRole?userrole=STAFF`,
+                    `https://api.fu4s.online.175:8080/api/v1/admin/getNumEachRole?userrole=STAFF`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -63,7 +63,7 @@ const DashboardSection: React.FC = () => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `http://3.27.235.175:8080/api/v1/admin/getNumEachRole?userrole=USER`,
+                    `https://api.fu4s.online.175:8080/api/v1/admin/getNumEachRole?userrole=USER`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

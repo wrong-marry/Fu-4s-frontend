@@ -65,7 +65,7 @@ const LearningMaterialDetail: React.FC = () => {
         const fetchPost = async () => {
             try {
                 const response: AxiosResponse<Post> = await axios.get(
-                    `http://3.27.235.175:8080/api/v1/learningMaterial/getById?id=${id}`
+                    `https://api.fu4s.online.175:8080/api/v1/learningMaterial/getById?id=${id}`
                 );
                 setPost(response.data);
             } catch (error) {
@@ -82,7 +82,7 @@ const LearningMaterialDetail: React.FC = () => {
                 const urls: { [key: string]: string } = {};
                 for (const file of post.filenames) {
                     const response = await fetch(
-                        `http://3.27.235.175:8080/api/v1/learningMaterial/getFile?id=${id}&filename=${file}`
+                        `https://api.fu4s.online.175:8080/api/v1/learningMaterial/getFile?id=${id}&filename=${file}`
                     );
                     const blob = await response.blob();
                     const url = window.URL.createObjectURL(blob);
@@ -143,7 +143,7 @@ const LearningMaterialDetail: React.FC = () => {
 
     const fetchFileLink = async (filename: string): Promise<string> => {
         const response = await fetch(
-            `http://3.27.235.175:8080/api/v1/learningMaterial/getFile?id=${id}&filename=${filename}`
+            `https://api.fu4s.online.175:8080/api/v1/learningMaterial/getFile?id=${id}&filename=${filename}`
         );
         const file = await response.blob();
 
