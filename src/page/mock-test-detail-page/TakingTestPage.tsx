@@ -89,7 +89,7 @@ export default function TakingTestPage() {
         const fetchPost = async () => {
             try {
                 const response: AxiosResponse<Post> = await axios.get(
-                    `https://api.fu4s.online.175:8080/api/v1/post/get?id=${id}`
+                    `https://api.fu4s.online/api/v1/post/get?id=${id}`
                 );
                 setPost(response.data);
             } catch (error) {
@@ -139,7 +139,7 @@ export default function TakingTestPage() {
 
     const saveTestResult = async () => {
         await axios.post(
-            `https://api.fu4s.online.175:8080/api/v1/test-result/save?score=${
+            `https://api.fu4s.online/api/v1/test-result/save?score=${
                 (correctAnswers * 10) / Number(numberOfQuestion)
             }&username=${localStorage.getItem(
                 "username"
@@ -149,7 +149,7 @@ export default function TakingTestPage() {
 
     const increaseAttempts = async () => {
         await axios.put(
-            `https://api.fu4s.online.175:8080/api/v1/questionSet/increase-attempts?id=${id}`
+            `https://api.fu4s.online/api/v1/questionSet/increase-attempts?id=${id}`
         );
     };
 
@@ -165,7 +165,7 @@ export default function TakingTestPage() {
     const handleSubmit = async () => {
         if (personalized()) {
             await axios.put(
-                `https://api.fu4s.online.175:8080/api/v1/question-priority/update?username=${localStorage.getItem(
+                `https://api.fu4s.online/api/v1/question-priority/update?username=${localStorage.getItem(
                     "username"
                 )}`,
                 result

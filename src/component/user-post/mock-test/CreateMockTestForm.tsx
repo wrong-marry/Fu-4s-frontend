@@ -82,7 +82,7 @@ export function CreateMockTestForm() {
         const fetchSubject = async () => {
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online.175:8080/api/v1/subject/getAll`
+                    `https://api.fu4s.online/api/v1/subject/getAll`
                 );
                 const data = await response.json();
                 //console.log(data);
@@ -179,7 +179,7 @@ export function CreateMockTestForm() {
             questions.push(question);
         }
 
-        fetch(`https://api.fu4s.online.175:8080/api/v1/questionSet/addNew?title=${title}&subjectCode=${subject}&username=${localStorage.getItem('username')}`, {
+        fetch(`https://api.fu4s.online/api/v1/questionSet/addNew?title=${title}&subjectCode=${subject}&username=${localStorage.getItem('username')}`, {
             method: "POST",
             body: JSON.stringify(questions),
             headers: {

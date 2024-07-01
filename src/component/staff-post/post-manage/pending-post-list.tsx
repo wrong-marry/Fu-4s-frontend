@@ -30,7 +30,7 @@ function TablePost() {
             try {
                 const token = localStorage.getItem("token");
                 const response = await fetch(
-                    `https://api.fu4s.online.175:8080/api/v1/admin/getAllUser?pageNum=${activePage}&pageSize=${pageSize}`,
+                    `https://api.fu4s.online/api/v1/admin/getAllUser?pageNum=${activePage}&pageSize=${pageSize}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -56,7 +56,7 @@ function TablePost() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online.175:8080/api/v1/admin/getNumUser`
+                    `https://api.fu4s.online/api/v1/admin/getNumUser`
                 );
                 const data = await response.json();
                 setNumPage((data + 1) / pageSize);

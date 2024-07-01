@@ -14,7 +14,7 @@ const DashboardSection: React.FC = () => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online.175:8080/api/v1/post/getAllPost?pageSize=${pageSize}`,
+                    `https://api.fu4s.online/api/v1/post/getAllPost?pageSize=${pageSize}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -32,7 +32,7 @@ const DashboardSection: React.FC = () => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online.175:8080/api/v1/staff/getNumEachStatus?status=ACTIVE`,
+                    `https://api.fu4s.online/api/v1/staff/getNumEachStatus?status=ACTIVE`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -51,7 +51,7 @@ const DashboardSection: React.FC = () => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online.175:8080/api/v1/staff/getNumEachStatus?status=HIDDEN`,
+                    `https://api.fu4s.online/api/v1/staff/getNumEachStatus?status=HIDDEN`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -69,7 +69,7 @@ const DashboardSection: React.FC = () => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online.175:8080/api/v1/staff/getNumEachStatus?status=PENDING_APPROVE`,
+                    `https://api.fu4s.online/api/v1/staff/getNumEachStatus?status=PENDING_APPROVE`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

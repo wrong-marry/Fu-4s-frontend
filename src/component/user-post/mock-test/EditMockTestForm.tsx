@@ -86,7 +86,7 @@ export function EditMockTestForm() {
     useEffect(() => {
         const fetchSubject = async () => {
             try {
-                const response = await fetch(`https://api.fu4s.online.175:8080/api/v1/subject/getAll`);
+                const response = await fetch(`https://api.fu4s.online/api/v1/subject/getAll`);
                 const data = await response.json();
                 //console.log(data);
                 setList(data);
@@ -97,7 +97,7 @@ export function EditMockTestForm() {
 
         const fetchMockTest = async () => {
             try {
-                const response = await fetch(`https://api.fu4s.online.175:8080/api/v1/questionSet/getById?id=` + id);
+                const response = await fetch(`https://api.fu4s.online/api/v1/questionSet/getById?id=` + id);
                 const data = await response.json();
                 setTest(data);
                 setSubject(data.subjectCode);
@@ -196,7 +196,7 @@ export function EditMockTestForm() {
             questions.push(question);
         }
 
-        fetch(`https://api.fu4s.online.175:8080/api/v1/questionSet/edit?id=${id}&title=${title}&subjectCode=${subject}&username=${localStorage.getItem('username')}`, {
+        fetch(`https://api.fu4s.online/api/v1/questionSet/edit?id=${id}&title=${title}&subjectCode=${subject}&username=${localStorage.getItem('username')}`, {
             method: "PUT", body: JSON.stringify(questions), headers: {
                 'Content-Type': 'application/json', //'Authorization': 'Bearer ' + localStorage.getItem('token')
             }
@@ -253,7 +253,7 @@ export function EditMockTestForm() {
     }
 
     const handleRemove = () => {
-        fetch(`https://api.fu4s.online.175:8080/api/v1/questionSet/remove?id=${id}&username=${localStorage.getItem('username')}`, {
+        fetch(`https://api.fu4s.online/api/v1/questionSet/remove?id=${id}&username=${localStorage.getItem('username')}`, {
             method: "DELETE"
         }).then(() => {
             navigate(`/user/post/mock-test`);

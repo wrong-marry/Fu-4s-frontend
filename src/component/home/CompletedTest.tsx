@@ -20,7 +20,7 @@ function CompletedTest() {
     const username = localStorage.getItem("username");
     useEffect(() => {
         axios
-            .get(`https://api.fu4s.online.175:8080/api/v1/test-result?username=${username}&isPersonalized=true`)
+            .get(`https://api.fu4s.online/api/v1/test-result?username=${username}&isPersonalized=true`)
             .then((res) => {
                 const sortedList =
                     res && res.data
@@ -45,14 +45,14 @@ function CompletedTest() {
 
     const handleClickUpdateTime = async (testId: any) => {
         await axios.put(
-            `https://api.fu4s.online.175:8080/api/v1/test/update-time-test/${testId}`
+            `https://api.fu4s.online/api/v1/test/update-time-test/${testId}`
         );
         alert("Update successful!");
     };
 
     const handleClickIncreaseView = async (testId: any) => {
         await axios.put(
-            `https://api.fu4s.online.175:8080/api/v1/test/increase-view?test-id=${testId}`
+            `https://api.fu4s.online/api/v1/test/increase-view?test-id=${testId}`
         );
     };
     return (

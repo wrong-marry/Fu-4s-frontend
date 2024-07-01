@@ -41,7 +41,7 @@ function TableUser() {
         const fetchNum = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const baseURL = "https://api.fu4s.online.175:8080/api/v1/admin";
+                const baseURL = "https://api.fu4s.online/api/v1/admin";
                 let url = "";
 
                 if (currentTab === "ALL") {
@@ -88,7 +88,7 @@ function TableUser() {
             }
         };
 
-        const baseURL = "https://api.fu4s.online.175:8080/api/v1/admin";
+        const baseURL = "https://api.fu4s.online/api/v1/admin";
         let url = "";
 
         if (currentTab === "ALL") {

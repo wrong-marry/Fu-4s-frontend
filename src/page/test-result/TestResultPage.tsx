@@ -32,7 +32,7 @@ export default function TestResultPage() {
     useEffect(() => {
         const fecthResultRandom = async () => {
             const res = await axios.get(
-                `https://api.fu4s.online.175:8080/api/v1/test-result?username=${localStorage.getItem(
+                `https://api.fu4s.online/api/v1/test-result?username=${localStorage.getItem(
                     "username"
                 )}&isPersonalized=false`
             );
@@ -40,7 +40,7 @@ export default function TestResultPage() {
         };
         const fecthResultPersonalized = async () => {
             const res = await axios.get(
-                `https://api.fu4s.online.175:8080/api/v1/test-result?username=${localStorage.getItem(
+                `https://api.fu4s.online/api/v1/test-result?username=${localStorage.getItem(
                     "username"
                 )}&isPersonalized=true`
             );

@@ -23,7 +23,7 @@ function RecentPost() {
 
     useEffect(() => {
         axios
-            .get(`https://api.fu4s.online.175:8080/api/v1/post/recent`)
+            .get(`https://api.fu4s.online/api/v1/post/recent`)
             .then((res) => {
                 const sortedList =
                     res && res.data
@@ -48,7 +48,7 @@ function RecentPost() {
 
     function fetchMore(offset: number) {
         axios
-            .get(`https://api.fu4s.online.175:8080/api/v1/post/recent?offset=${offset}`)
+            .get(`https://api.fu4s.online/api/v1/post/recent?offset=${offset}`)
             .then((res) => {
                 const sortedList =
                     res && res.data

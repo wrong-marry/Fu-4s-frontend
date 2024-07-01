@@ -23,7 +23,7 @@ export function UserLearningMaterialTable() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online.175:8080/api/v1/learningMaterial/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
+                    `https://api.fu4s.online/api/v1/learningMaterial/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
                 );
                 const data = await response.json();
                 setPost(data)
@@ -36,7 +36,7 @@ export function UserLearningMaterialTable() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online.175:8080/api/v1/learningMaterial/getNum?username=${username}`
+                    `https://api.fu4s.online/api/v1/learningMaterial/getNum?username=${username}`
                 );
                 const data = await response.json();
                 setNumPage((data + 1) / pageSize)

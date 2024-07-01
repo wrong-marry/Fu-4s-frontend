@@ -52,7 +52,7 @@ export function EditLearningMaterialForm() {
         const fetchSubject = async () => {
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online.175:8080/api/v1/subject/getAll`
+                    `https://api.fu4s.online/api/v1/subject/getAll`
                 );
                 const data = await response.json();
                 setSubjectList(data);
@@ -64,7 +64,7 @@ export function EditLearningMaterialForm() {
         const fetchMaterial = async () => {
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online.175:8080/api/v1/learningMaterial/getById?id=${id}`
+                    `https://api.fu4s.online/api/v1/learningMaterial/getById?id=${id}`
                 );
                 const data = await response.json();
                 setMaterial(data);
@@ -129,7 +129,7 @@ export function EditLearningMaterialForm() {
     }
 
     const handleDownloadOldFile = async (filename: string) => {
-        const response = await fetch(`https://api.fu4s.online.175:8080/api/v1/learningMaterial/getFile?id=${id}&filename=${filename}`);
+        const response = await fetch(`https://api.fu4s.online/api/v1/learningMaterial/getFile?id=${id}&filename=${filename}`);
         const file = await response.blob();
 
         const url = window.URL.createObjectURL(
@@ -169,7 +169,7 @@ export function EditLearningMaterialForm() {
     }
 
     const handleRemove = () => {
-        fetch(`https://api.fu4s.online.175:8080/api/v1/learningMaterial/remove?id=${id}&username=${localStorage.getItem('username')}`, {
+        fetch(`https://api.fu4s.online/api/v1/learningMaterial/remove?id=${id}&username=${localStorage.getItem('username')}`, {
             method: "DELETE"
         }).then(() => {
             navigate(`/user/post/learning-material`);

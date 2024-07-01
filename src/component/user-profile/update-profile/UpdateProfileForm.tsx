@@ -44,7 +44,7 @@ export function UpdateProfileForm() {
         const newData = {...user, ...form.getValues()};
         await axios
             .put(
-                "https://api.fu4s.online.175:8080/api/v1/user/edit-profile?username=" +
+                "https://api.fu4s.online/api/v1/user/edit-profile?username=" +
                 user.username,
                 newData
             )

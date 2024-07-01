@@ -25,7 +25,7 @@ export default function StudyPage() {
         async function fetchData() {
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online.175:8080/api/v1/subject/getAll`
+                    `https://api.fu4s.online/api/v1/subject/getAll`
                 );
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
