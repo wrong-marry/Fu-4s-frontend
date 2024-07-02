@@ -58,7 +58,6 @@ export const loadingIndicator = (
 
 const router = createBrowserRouter(
     [
-
         {
             path: "/",
             loader: getAuthCredentials,
@@ -374,7 +373,8 @@ const router = createBrowserRouter(
                 },
             ],
         }
-    ]
+    ],
+    {basename: ``},
 );
 
 function App() {
