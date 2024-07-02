@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import {useNavigate} from "react-router-dom";
 import {Center, Pagination} from "@mantine/core";
+import {BASE_URL} from "../../common/constant.tsx";
 import {
     Group,
     ActionIcon,
@@ -41,7 +42,7 @@ function TableUser() {
         const fetchNum = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const baseURL = "https://api.fu4s.online/api/v1/admin";
+                const baseURL = `${BASE_URL}/api/v1/admin`;
                 let url = "";
 
                 if (currentTab === "ALL") {
@@ -88,7 +89,7 @@ function TableUser() {
             }
         };
 
-        const baseURL = "https://api.fu4s.online/api/v1/admin";
+        const baseURL = `${BASE_URL}/api/v1/admin`;
         let url = "";
 
         if (currentTab === "ALL") {

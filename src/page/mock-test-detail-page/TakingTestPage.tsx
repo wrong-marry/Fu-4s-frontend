@@ -29,6 +29,7 @@ import TestQuestion from "../../component/question/TestQuestion";
 import {HeroText} from "../../component/hero-text/HeroText";
 import {ProgressCardColored} from "../../component/progress-card/ProgressCard";
 import TestScore from "../../component/test-mark/TestScore";
+import {BASE_URL} from "../../common/constant.tsx";
 
 interface Result {
     correctAnswersId: number[];
@@ -89,7 +90,7 @@ export default function TakingTestPage() {
         const fetchPost = async () => {
             try {
                 const response: AxiosResponse<Post> = await axios.get(
-                    `https://api.fu4s.online/api/v1/post/get?id=${id}`
+                    `${BASE_URL}/api/v1/post/get?id=${id}`
                 );
                 setPost(response.data);
             } catch (error) {
@@ -139,7 +140,7 @@ export default function TakingTestPage() {
 
     const saveTestResult = async () => {
         await axios.post(
-            `https://api.fu4s.online/api/v1/test-result/save?score=${
+            `${BASE_URL}/api/v1/test-result/save?score=${
                 (correctAnswers * 10) / Number(numberOfQuestion)
             }&username=${localStorage.getItem(
                 "username"
@@ -149,7 +150,7 @@ export default function TakingTestPage() {
 
     const increaseAttempts = async () => {
         await axios.put(
-            `https://api.fu4s.online/api/v1/questionSet/increase-attempts?id=${id}`
+            `${BASE_URL}/api/v1/questionSet/increase-attempts?id=${id}`
         );
     };
 
@@ -165,7 +166,7 @@ export default function TakingTestPage() {
     const handleSubmit = async () => {
         if (personalized()) {
             await axios.put(
-                `https://api.fu4s.online/api/v1/question-priority/update?username=${localStorage.getItem(
+                `${BASE_URL}/api/v1/question-priority/update?username=${localStorage.getItem(
                     "username"
                 )}`,
                 result

@@ -13,6 +13,7 @@ import {useEffect, useState} from "react";
 import * as XLSX from 'xlsx'
 import {useNavigate} from "react-router-dom";
 import {useDisclosure} from "@mantine/hooks";
+import {BASE_URL} from "../../../common/constant.tsx";
 
 interface Subject {
     code: string;
@@ -82,7 +83,7 @@ export function CreateMockTestForm() {
         const fetchSubject = async () => {
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/subject/getAll`
+                    `${BASE_URL}/api/v1/subject/getAll`
                 );
                 const data = await response.json();
                 //console.log(data);
@@ -179,7 +180,7 @@ export function CreateMockTestForm() {
             questions.push(question);
         }
 
-        fetch(`https://api.fu4s.online/api/v1/questionSet/addNew?title=${title}&subjectCode=${subject}&username=${localStorage.getItem('username')}`, {
+        fetch(`${BASE_URL}/api/v1/questionSet/addNew?title=${title}&subjectCode=${subject}&username=${localStorage.getItem('username')}`, {
             method: "POST",
             body: JSON.stringify(questions),
             headers: {

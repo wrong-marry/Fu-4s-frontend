@@ -20,6 +20,7 @@ import {notifications} from "@mantine/notifications";
 import DisableSubjectModal from "./DisableSubjectModal";
 import ActivateSubjectModal from "./ActivateSubjectModal";
 import {loadingIndicator} from "../../App.tsx";
+import {BASE_URL} from "../../common/constant.tsx";
 
 export interface Subject {
     code: string;
@@ -71,7 +72,7 @@ function TableSubject() {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/admin/getNumSubject`,
+                    `${BASE_URL}/api/v1/admin/getNumSubject`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -89,7 +90,7 @@ function TableSubject() {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/admin/getNumSubjectsByType?isActive=true`,
+                    `${BASE_URL}/api/v1/admin/getNumSubjectsByType?isActive=true`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -107,7 +108,7 @@ function TableSubject() {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/admin/getNumSubjectsByType?isActive=false`,
+                    `${BASE_URL}/api/v1/admin/getNumSubjectsByType?isActive=false`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -131,7 +132,7 @@ function TableSubject() {
             try {
                 const token = localStorage.getItem("token");
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/subject/getAll`,
+                    `${BASE_URL}/api/v1/subject/getAll`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -219,7 +220,7 @@ function TableSubject() {
             try {
                 const token = localStorage.getItem("token");
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/admin/disableSubject?subjectCode=${subjectToDisable.code}`,
+                    `${BASE_URL}/api/v1/admin/disableSubject?subjectCode=${subjectToDisable.code}`,
                     {
                         method: "PUT",
                         headers: {
@@ -262,7 +263,7 @@ function TableSubject() {
             try {
                 const token = localStorage.getItem("token");
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/admin/activeSubject?subjectCode=${subjectToActivate.code}`,
+                    `${BASE_URL}/api/v1/admin/activeSubject?subjectCode=${subjectToActivate.code}`,
                     {
                         method: "PUT",
                         headers: {
@@ -309,7 +310,7 @@ function TableSubject() {
         if (currentSubject) {
             try {
                 const token = localStorage.getItem("token");
-                await fetch(`https://api.fu4s.online/api/v1/admin/updateSubject`, {
+                await fetch(`${BASE_URL}/api/v1/admin/updateSubject`, {
                     method: "PUT",
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -335,7 +336,7 @@ function TableSubject() {
             try {
                 const token = localStorage.getItem("token");
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/admin/createSubject`,
+                    `${BASE_URL}/api/v1/admin/createSubject`,
                     {
                         method: "POST",
                         headers: {

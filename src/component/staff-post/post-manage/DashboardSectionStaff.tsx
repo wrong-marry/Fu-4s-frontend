@@ -1,5 +1,6 @@
 import {Card} from "@mantine/core";
 import {useEffect, useState} from "react";
+import {BASE_URL} from "../../../common/constant.tsx";
 
 const DashboardSectionStaff: React.FC = () => {
     const [numOfPost, setNumOfPost] = useState(0);
@@ -13,7 +14,7 @@ const DashboardSectionStaff: React.FC = () => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/post/getAllPost?pageSize=${pageSize}`,
+                    `${BASE_URL}/api/v1/post/getAllPost?pageSize=${pageSize}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -31,7 +32,7 @@ const DashboardSectionStaff: React.FC = () => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/staff/getNumEachStatus?status=ACTIVE`,
+                    `${BASE_URL}/api/v1/staff/getNumEachStatus?status=ACTIVE`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -51,7 +52,7 @@ const DashboardSectionStaff: React.FC = () => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/staff/getNumEachStatus?status=HIDDEN`,
+                    `${BASE_URL}/api/v1/staff/getNumEachStatus?status=HIDDEN`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -69,7 +70,7 @@ const DashboardSectionStaff: React.FC = () => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/staff/getNumEachStatus?status=PENDING_APPROVE`,
+                    `${BASE_URL}/api/v1/staff/getNumEachStatus?status=PENDING_APPROVE`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

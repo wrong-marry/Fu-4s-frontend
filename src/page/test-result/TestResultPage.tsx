@@ -9,6 +9,7 @@ import {
 } from "@mantine/core";
 import axios from "axios";
 import {useEffect, useState} from "react";
+import {BASE_URL} from "../../common/constant.tsx";
 
 interface TestResult {
     id: number;
@@ -32,7 +33,7 @@ export default function TestResultPage() {
     useEffect(() => {
         const fecthResultRandom = async () => {
             const res = await axios.get(
-                `https://api.fu4s.online/api/v1/test-result?username=${localStorage.getItem(
+                `${BASE_URL}/api/v1/test-result?username=${localStorage.getItem(
                     "username"
                 )}&isPersonalized=false`
             );
@@ -40,7 +41,7 @@ export default function TestResultPage() {
         };
         const fecthResultPersonalized = async () => {
             const res = await axios.get(
-                `https://api.fu4s.online/api/v1/test-result?username=${localStorage.getItem(
+                `${BASE_URL}/api/v1/test-result?username=${localStorage.getItem(
                     "username"
                 )}&isPersonalized=true`
             );

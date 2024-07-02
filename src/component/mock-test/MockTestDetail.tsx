@@ -15,6 +15,8 @@ import {
 
 import {format} from "date-fns";
 import {useParams} from "react-router-dom";
+import {loadingIndicator} from "../../App.tsx";
+import {BASE_URL} from "../../common/constant.tsx";
 
 interface Post {
     id: number;
@@ -36,7 +38,7 @@ const MockTestDetail: React.FC = () => {
         const fetchPost = async () => {
             try {
                 const response: AxiosResponse<Post> = await axios.get(
-                    `https://api.fu4s.online/api/v1/questionSet/?id=${id}`
+                    `${BASE_URL}/api/v1/questionSet/?id=${id}`
                 );
                 setPost(response.data);
             } catch (error) {
@@ -48,7 +50,7 @@ const MockTestDetail: React.FC = () => {
     }, [id]);
 
     if (!post) {
-        return <div>Loading...</div>;
+        return loadingIndicator;
     }
 
     return (

@@ -3,6 +3,7 @@ import {Card, Text, Badge, Group, Stack, Avatar} from "@mantine/core";
 import axios from "axios";
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {BASE_URL} from "../../common/constant.tsx";
 
 function CompletedTest() {
     interface Test {
@@ -20,7 +21,7 @@ function CompletedTest() {
     const username = localStorage.getItem("username");
     useEffect(() => {
         axios
-            .get(`https://api.fu4s.online/api/v1/test-result?username=${username}&isPersonalized=true`)
+            .get(`${BASE_URL}/api/v1/test-result?username=${username}&isPersonalized=true`)
             .then((res) => {
                 const sortedList =
                     res && res.data
@@ -45,14 +46,14 @@ function CompletedTest() {
 
     const handleClickUpdateTime = async (testId: any) => {
         await axios.put(
-            `https://api.fu4s.online/api/v1/test/update-time-test/${testId}`
+            `${BASE_URL}/api/v1/test/update-time-test/${testId}`
         );
         alert("Update successful!");
     };
 
     const handleClickIncreaseView = async (testId: any) => {
         await axios.put(
-            `https://api.fu4s.online/api/v1/test/increase-view?test-id=${testId}`
+            `${BASE_URL}/api/v1/test/increase-view?test-id=${testId}`
         );
     };
     return (

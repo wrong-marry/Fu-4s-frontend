@@ -5,6 +5,7 @@ import {IconPencil} from "@tabler/icons-react";
 import {useNavigate} from "react-router-dom";
 import {Center, Pagination} from "@mantine/core";
 import {useDisclosure} from "@mantine/hooks";
+import {BASE_URL} from "../../common/constant.tsx";
 
 
 interface User {
@@ -31,7 +32,7 @@ function TableUser() {
             try {
                 const token = localStorage.getItem("token");
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/admin/getAllUser?pageNum=${activePage}&pageSize=${pageSize}`,
+                    `${BASE_URL}/api/v1/admin/getAllUser?pageNum=${activePage}&pageSize=${pageSize}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -57,7 +58,7 @@ function TableUser() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/admin/getNumUser`
+                    `${BASE_URL}/api/v1/admin/getNumUser`
                 );
                 const data = await response.json();
                 setNumPage((data + 1) / pageSize);
