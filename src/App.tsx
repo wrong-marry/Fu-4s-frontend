@@ -46,354 +46,354 @@ import LoginPage from "./page/authentication/LoginPage.tsx";
 
 
 export const loadingIndicator = (
-  <Box pos={"relative"} h={"100vh"} w={"100vw"}>
-    <LoadingOverlay
-      visible
-      zIndex={0}
-      overlayProps={{ radius: "sm", blur: 0, backgroundOpacity: 0 }}
-      loaderProps={{ color: "orange", type: "oval" }}
-    />
-  </Box>
+    <Box pos={"relative"} h={"100vh"} w={"100vw"}>
+        <LoadingOverlay
+            visible
+            zIndex={0}
+            overlayProps={{radius: "sm", blur: 0, backgroundOpacity: 0}}
+            loaderProps={{color: "blue", type: "oval"}}
+        />
+    </Box>
 );
 
 const router = createBrowserRouter(
-  [
+    [
 
-      {
-          path: "/",
-          loader: getAuthCredentials,
-          element: <Root/>,
-          errorElement: <ErrorPage/>,
-          children: [
-              {
-                  path: "",
-                  index: true,
-                  element: <LandingPage/>,
-              },
-              {
-                  path: "home",
-                  element: <HomePage/>,
-              },
-              {
-                  path: "search",
-                  element: (
-                      <Suspense fallback={loadingIndicator}>
-                          <SearchPage/>
-                      </Suspense>
-                  ),
-              },
-              {
-                  path: "post/:id",
-                  element: (
-                      <Suspense fallback={loadingIndicator}>
-                          <PostPage/>
-                      </Suspense>
-                  ),
-              },
-              {
-                  path: "test",
-                  element: (
-                      <Suspense fallback={loadingIndicator}>
-                          <TakingTestPage/>
-                      </Suspense>
-                  ),
-              },
-              {
-                  path: "learning-material/:id",
-                  element: (
-                      <Suspense fallback={loadingIndicator}>
-                          <LearningMaterialDetail/>
-                      </Suspense>
-                  ),
-              },
-              {
-                  path: "notifications",
-                  element: (
-                      <Suspense fallback={loadingIndicator}>
-                          <NotificationList/>
-                      </Suspense>
-                  ),
-              },
-              {
-                  path: "study",
-                  element: <StudyPage/>,
-              },
-              {
-                  path: "manage-user",
-                  element: <ManageUser/>,
-              },
-              {
-                  path: "staff-manage-post",
-                  element: <ManagePostForStaff/>,
-              },
-              {
-                  path: "manage-subject",
-                  element: <ManageSubjectPage/>,
-              },
-              {
-                  path: "change-password",
-                  element: <ChangePassWordForm/>,
-              },
-              {
-                  path: "logout",
-                  element: <Suspense fallback={loadingIndicator}></Suspense>,
-                  loader: Logout,
-              },
-              {
-                  path: "auth",
-                  children: [
-                      {
-                          index: true,
-                          path: "",
-                          loader: async () => redirect("/auth/login"),
-                      },
-                      {
-                          path: "login",
-                          loader: async () => {
-                              if (isLoggedIn()) return redirect("/home");
-                              else return "";
-                          },
-                          element: (
-                              <Suspense fallback={loadingIndicator}>
-                                  <LoginPage/>
-                              </Suspense>
-                          ),
-                      },
-                      {
-                          path: "register",
-                          loader: async () => {
-                              if (isLoggedIn()) return redirect("/home");
-                              else return "";
-                          },
-                          element: (
-                              <Suspense fallback={loadingIndicator}>
-                                  <RegisterPage/>
-                              </Suspense>
-                          ),
-                      },
-                      {
-                          path: "forgot-password",
-                          element: (
-                              <Suspense fallback={loadingIndicator}>
-                                  <ForgotPasswordPage/>
-                              </Suspense>
-                          ),
-                      },
-                      {
-                          path: "reset-password",
-                          element: (
-                              <Suspense fallback={loadingIndicator}>
-                                  <ResetPasswordPage/>
-                              </Suspense>
-                          ),
-                      },
-                  ],
-              },
-              {
-                  path: "user",
-                  children: [
-                      {
-                          index: true,
-                          path: "",
-                          loader: async () => redirect("/user/profile"),
-                      },
-                      {
-                          path: "profile",
-                          element: (
-                              <Suspense fallback={loadingIndicator}>
-                                  <UserProfilePage/>
-                              </Suspense>
-                          ),
-                          loader: () => {
-                              if (!isLoggedIn()) return redirect("/forbidden");
-                              return null;
-                          },
-                      },
-                      {
-                          path: "post",
-                          children: [
-                              {
-                                  path: "",
-                                  element: (
-                                      <Suspense fallback={loadingIndicator}>
-                                          <UserPostPage/>
-                                      </Suspense>
-                                  ),
-                                  loader: () => {
-                                      if (!isLoggedIn()) return redirect("/forbidden");
-                                      return null;
-                                  },
-                              },
-                              {
-                                  path: "mock-test",
-                                  element: (
-                                      <Suspense fallback={loadingIndicator}>
-                                          <UserMockTestPage/>
-                                      </Suspense>
-                                  ),
-                                  loader: () => {
-                                      if (!isLoggedIn()) return redirect("/forbidden");
-                                      return null;
-                                  },
-                              },
-                              {
-                                  path: "learning-material",
-                                  element: (
-                                      <Suspense fallback={loadingIndicator}>
-                                          <UserLearningMaterialPage/>
-                                      </Suspense>
-                                  ),
-                                  loader: () => {
-                                      if (!isLoggedIn()) return redirect("/forbidden");
-                                      return null;
-                                  },
-                              },
-                          ],
-                      },
-                  ],
-              },
-              {
-                  path: "admin",
-                  children: [
-                      {
-                          path: "manage-user",
-                          loader: async () => {
-                              if (!isLoggedIn()) return redirect("/forbidden");
-                              else return "";
-                          },
-                          element: (
-                              <Suspense fallback={loadingIndicator}>
-                                  <ManageUser/>
-                              </Suspense>
-                          ),
-                      },
-                      {
-                          path: "calendar",
-                          loader: async () => {
-                              if (!isLoggedIn()) return redirect("/forbidden");
-                              else return "";
-                          },
-                          element: (
-                              <Suspense fallback={loadingIndicator}>
-                                  <Calendar/>
-                              </Suspense>
-                          ),
-                      },
-                  ],
-              },
-              {
-                  path: "staff",
-                  children: [
-                      {
-                          path: "manage-post",
-                          loader: async () => {
-                              if (!isLoggedIn()) return redirect("/forbidden");
-                              else return "";
-                          },
-                          element: (
-                              <Suspense fallback={loadingIndicator}>
-                                  <ManagePostForStaff/>
-                              </Suspense>
-                          ),
-                      },
-                  ],
-              },
-              {
-                  path: "update-profile",
-                  element: (
-                      <Suspense fallback={loadingIndicator}>
-                          <UpdateProfilePage/>
-                      </Suspense>
-                  ),
-              },
-              {
-                  path: "create-mock-test",
-                  loader: () => {
-                      if (!isLoggedIn()) return redirect("/forbidden");
-                      return null;
-                  },
-                  element: (
-                      <Suspense fallback={loadingIndicator}>
-                          <CreateMockTestPage/>
-                      </Suspense>
+        {
+            path: "/",
+            loader: getAuthCredentials,
+            element: <Root/>,
+            errorElement: <ErrorPage/>,
+            children: [
+                {
+                    path: "",
+                    index: true,
+                    element: <LandingPage/>,
+                },
+                {
+                    path: "home",
+                    element: <HomePage/>,
+                },
+                {
+                    path: "search",
+                    element: (
+                        <Suspense fallback={loadingIndicator}>
+                            <SearchPage/>
+                        </Suspense>
+                    ),
+                },
+                {
+                    path: "post/:id",
+                    element: (
+                        <Suspense fallback={loadingIndicator}>
+                            <PostPage/>
+                        </Suspense>
+                    ),
+                },
+                {
+                    path: "test",
+                    element: (
+                        <Suspense fallback={loadingIndicator}>
+                            <TakingTestPage/>
+                        </Suspense>
+                    ),
+                },
+                {
+                    path: "learning-material/:id",
+                    element: (
+                        <Suspense fallback={loadingIndicator}>
+                            <LearningMaterialDetail/>
+                        </Suspense>
+                    ),
+                },
+                {
+                    path: "notifications",
+                    element: (
+                        <Suspense fallback={loadingIndicator}>
+                            <NotificationList/>
+                        </Suspense>
+                    ),
+                },
+                {
+                    path: "study",
+                    element: <StudyPage/>,
+                },
+                {
+                    path: "manage-user",
+                    element: <ManageUser/>,
+                },
+                {
+                    path: "staff-manage-post",
+                    element: <ManagePostForStaff/>,
+                },
+                {
+                    path: "manage-subject",
+                    element: <ManageSubjectPage/>,
+                },
+                {
+                    path: "change-password",
+                    element: <ChangePassWordForm/>,
+                },
+                {
+                    path: "logout",
+                    element: <Suspense fallback={loadingIndicator}></Suspense>,
+                    loader: Logout,
+                },
+                {
+                    path: "auth",
+                    children: [
+                        {
+                            index: true,
+                            path: "",
+                            loader: async () => redirect("/auth/login"),
+                        },
+                        {
+                            path: "login",
+                            loader: async () => {
+                                if (isLoggedIn()) return redirect("/home");
+                                else return "";
+                            },
+                            element: (
+                                <Suspense fallback={loadingIndicator}>
+                                    <LoginPage/>
+                                </Suspense>
+                            ),
+                        },
+                        {
+                            path: "register",
+                            loader: async () => {
+                                if (isLoggedIn()) return redirect("/home");
+                                else return "";
+                            },
+                            element: (
+                                <Suspense fallback={loadingIndicator}>
+                                    <RegisterPage/>
+                                </Suspense>
+                            ),
+                        },
+                        {
+                            path: "forgot-password",
+                            element: (
+                                <Suspense fallback={loadingIndicator}>
+                                    <ForgotPasswordPage/>
+                                </Suspense>
+                            ),
+                        },
+                        {
+                            path: "reset-password",
+                            element: (
+                                <Suspense fallback={loadingIndicator}>
+                                    <ResetPasswordPage/>
+                                </Suspense>
+                            ),
+                        },
+                    ],
+                },
+                {
+                    path: "user",
+                    children: [
+                        {
+                            index: true,
+                            path: "",
+                            loader: async () => redirect("/user/profile"),
+                        },
+                        {
+                            path: "profile",
+                            element: (
+                                <Suspense fallback={loadingIndicator}>
+                                    <UserProfilePage/>
+                                </Suspense>
+                            ),
+                            loader: () => {
+                                if (!isLoggedIn()) return redirect("/forbidden");
+                                return null;
+                            },
+                        },
+                        {
+                            path: "post",
+                            children: [
+                                {
+                                    path: "",
+                                    element: (
+                                        <Suspense fallback={loadingIndicator}>
+                                            <UserPostPage/>
+                                        </Suspense>
+                                    ),
+                                    loader: () => {
+                                        if (!isLoggedIn()) return redirect("/forbidden");
+                                        return null;
+                                    },
+                                },
+                                {
+                                    path: "mock-test",
+                                    element: (
+                                        <Suspense fallback={loadingIndicator}>
+                                            <UserMockTestPage/>
+                                        </Suspense>
+                                    ),
+                                    loader: () => {
+                                        if (!isLoggedIn()) return redirect("/forbidden");
+                                        return null;
+                                    },
+                                },
+                                {
+                                    path: "learning-material",
+                                    element: (
+                                        <Suspense fallback={loadingIndicator}>
+                                            <UserLearningMaterialPage/>
+                                        </Suspense>
+                                    ),
+                                    loader: () => {
+                                        if (!isLoggedIn()) return redirect("/forbidden");
+                                        return null;
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    path: "admin",
+                    children: [
+                        {
+                            path: "manage-user",
+                            loader: async () => {
+                                if (!isLoggedIn()) return redirect("/forbidden");
+                                else return "";
+                            },
+                            element: (
+                                <Suspense fallback={loadingIndicator}>
+                                    <ManageUser/>
+                                </Suspense>
+                            ),
+                        },
+                        {
+                            path: "calendar",
+                            loader: async () => {
+                                if (!isLoggedIn()) return redirect("/forbidden");
+                                else return "";
+                            },
+                            element: (
+                                <Suspense fallback={loadingIndicator}>
+                                    <Calendar/>
+                                </Suspense>
+                            ),
+                        },
+                    ],
+                },
+                {
+                    path: "staff",
+                    children: [
+                        {
+                            path: "manage-post",
+                            loader: async () => {
+                                if (!isLoggedIn()) return redirect("/forbidden");
+                                else return "";
+                            },
+                            element: (
+                                <Suspense fallback={loadingIndicator}>
+                                    <ManagePostForStaff/>
+                                </Suspense>
+                            ),
+                        },
+                    ],
+                },
+                {
+                    path: "update-profile",
+                    element: (
+                        <Suspense fallback={loadingIndicator}>
+                            <UpdateProfilePage/>
+                        </Suspense>
+                    ),
+                },
+                {
+                    path: "create-mock-test",
+                    loader: () => {
+                        if (!isLoggedIn()) return redirect("/forbidden");
+                        return null;
+                    },
+                    element: (
+                        <Suspense fallback={loadingIndicator}>
+                            <CreateMockTestPage/>
+                        </Suspense>
 
-                  ),
-              },
-              {
-                  path: "/test-result",
-                  element: (
-                      <Suspense fallback={loadingIndicator}>
-                          <TestResultPage/>
-                      </Suspense>
+                    ),
+                },
+                {
+                    path: "/test-result",
+                    element: (
+                        <Suspense fallback={loadingIndicator}>
+                            <TestResultPage/>
+                        </Suspense>
 
-                  ),
-              },
-              {
-                  path: "/edit-mock-test/:id",
-                  loader: () => {
-                      if (!isLoggedIn()) return redirect("/forbidden");
-                      return null;
-                  },
-                  element: (
-                      <Suspense fallback={loadingIndicator}>
-                          <EditMockTestPage/>
-                      </Suspense>
-                  ),
-              },
-              {
-                  path: "create-learning-material",
-                  loader: () => {
-                      if (!isLoggedIn()) return redirect("/forbidden");
-                      return null;
-                  },
-                  element: (
-                      <Suspense fallback={loadingIndicator}>
-                          <AddLearningMaterialPage/>
-                      </Suspense>
-                  ),
-              },
-              {
-                  path: "edit-learning-material/:id",
-                  loader: () => {
-                      if (!isLoggedIn()) return redirect("/forbidden");
-                      return null;
-                  },
-                  element: (
-                      <Suspense fallback={loadingIndicator}>
-                          <EditLearningMaterialPage/>
-                      </Suspense>
-                  ),
-              },
-              {
-                  path: "/forbidden",
-                  element: (
-                      <Suspense fallback={loadingIndicator}>
-                          <ForbiddenPage/>
-                      </Suspense>
-                  ),
-              },
-          ],
-      }
-  ]
+                    ),
+                },
+                {
+                    path: "/edit-mock-test/:id",
+                    loader: () => {
+                        if (!isLoggedIn()) return redirect("/forbidden");
+                        return null;
+                    },
+                    element: (
+                        <Suspense fallback={loadingIndicator}>
+                            <EditMockTestPage/>
+                        </Suspense>
+                    ),
+                },
+                {
+                    path: "create-learning-material",
+                    loader: () => {
+                        if (!isLoggedIn()) return redirect("/forbidden");
+                        return null;
+                    },
+                    element: (
+                        <Suspense fallback={loadingIndicator}>
+                            <AddLearningMaterialPage/>
+                        </Suspense>
+                    ),
+                },
+                {
+                    path: "edit-learning-material/:id",
+                    loader: () => {
+                        if (!isLoggedIn()) return redirect("/forbidden");
+                        return null;
+                    },
+                    element: (
+                        <Suspense fallback={loadingIndicator}>
+                            <EditLearningMaterialPage/>
+                        </Suspense>
+                    ),
+                },
+                {
+                    path: "/forbidden",
+                    element: (
+                        <Suspense fallback={loadingIndicator}>
+                            <ForbiddenPage/>
+                        </Suspense>
+                    ),
+                },
+            ],
+        }
+    ]
 );
 
 function App() {
-  return (
-    <>
-      <ToastContainer
-        position="bottom-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-      <RouterProvider router={router} />
-    </>
-  ) as React.ReactElement;
+    return (
+        <>
+            <ToastContainer
+                position="bottom-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                draggable
+                pauseOnHover
+                theme="light"
+            />
+            <RouterProvider router={router}/>
+        </>
+    ) as React.ReactElement;
 }
 
 export default App;

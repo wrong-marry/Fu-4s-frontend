@@ -35,6 +35,7 @@ import {
 import "yet-another-react-lightbox/plugins/captions.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import {loadingIndicator} from "../../../App.tsx";
+import {BASE_URL} from "../../../common/constant.tsx";
 
 interface Post {
     id: number;
@@ -65,7 +66,7 @@ const LearningMaterialDetail: React.FC = () => {
         const fetchPost = async () => {
             try {
                 const response: AxiosResponse<Post> = await axios.get(
-                    `https://api.fu4s.online/api/v1/learningMaterial/getById?id=${id}`
+                    `${BASE_URL}/api/v1/learningMaterial/getById?id=${id}`
                 );
                 setPost(response.data);
             } catch (error) {
@@ -82,7 +83,7 @@ const LearningMaterialDetail: React.FC = () => {
                 const urls: { [key: string]: string } = {};
                 for (const file of post.filenames) {
                     const response = await fetch(
-                        `https://api.fu4s.online/api/v1/learningMaterial/getFile?id=${id}&filename=${file}`
+                        `${BASE_URL}/api/v1/learningMaterial/getFile?id=${id}&filename=${file}`
                     );
                     const blob = await response.blob();
                     const url = window.URL.createObjectURL(blob);
@@ -143,7 +144,7 @@ const LearningMaterialDetail: React.FC = () => {
 
     const fetchFileLink = async (filename: string): Promise<string> => {
         const response = await fetch(
-            `https://api.fu4s.online/api/v1/learningMaterial/getFile?id=${id}&filename=${filename}`
+            `${BASE_URL}/api/v1/learningMaterial/getFile?id=${id}&filename=${filename}`
         );
         const file = await response.blob();
 

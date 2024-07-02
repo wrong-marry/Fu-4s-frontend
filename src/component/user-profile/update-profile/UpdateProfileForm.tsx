@@ -11,6 +11,7 @@ import {emptyUser, fetchUser} from "../../../util/UserFetchUtil";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import {isEmail, useForm} from "@mantine/form";
+import {BASE_URL} from "../../../common/constant.tsx";
 
 export function UpdateProfileForm() {
     const [user, setUser] = useState(emptyUser);
@@ -44,7 +45,7 @@ export function UpdateProfileForm() {
         const newData = {...user, ...form.getValues()};
         await axios
             .put(
-                "https://api.fu4s.online/api/v1/user/edit-profile?username=" +
+                `${BASE_URL}/api/v1/user/edit-profile?username=` +
                 user.username,
                 newData
             )

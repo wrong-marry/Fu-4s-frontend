@@ -4,6 +4,7 @@ import axios from "axios";
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {IconDots} from "@tabler/icons-react";
+import {BASE_URL} from "../../common/constant.tsx";
 
 
 export interface Post {
@@ -23,7 +24,7 @@ function RecentPost() {
 
     useEffect(() => {
         axios
-            .get(`https://api.fu4s.online/api/v1/post/recent`)
+            .get(`${BASE_URL}/api/v1/post/recent`)
             .then((res) => {
                 const sortedList =
                     res && res.data
@@ -48,7 +49,7 @@ function RecentPost() {
 
     function fetchMore(offset: number) {
         axios
-            .get(`https://api.fu4s.online/api/v1/post/recent?offset=${offset}`)
+            .get(`${BASE_URL}/api/v1/post/recent?offset=${offset}`)
             .then((res) => {
                 const sortedList =
                     res && res.data

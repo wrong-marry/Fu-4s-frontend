@@ -20,6 +20,7 @@ import {
 import {useNavigate} from "react-router-dom";
 import {Center, Pagination} from "@mantine/core";
 import {IconDots, IconTrash, IconNote} from "@tabler/icons-react";
+import {BASE_URL} from "../../common/constant.tsx";
 
 interface Notification {
     id: string;
@@ -48,7 +49,7 @@ function NotificationList() {
         const fetchNoti = async () => {
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/notification/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
+                    `${BASE_URL}/api/v1/notification/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
                 );
                 const data = await response.json();
                 setNotifications(data);
@@ -63,7 +64,7 @@ function NotificationList() {
         const fetchUnSeenNoti = async () => {
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/notification/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}&seen=false`
+                    `${BASE_URL}/api/v1/notification/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}&seen=false`
                 );
                 const data = await response.json();
                 setUnSeenNotifications(data);
@@ -78,7 +79,7 @@ function NotificationList() {
         const fetchNum = async () => {
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/notification/getNum?username=${username}`
+                    `${BASE_URL}/api/v1/notification/getNum?username=${username}`
                 );
                 const data = await response.json();
                 setNumPage(Math.ceil(data / pageSize));
@@ -96,7 +97,7 @@ function NotificationList() {
     const markAsUnread = async (id: string) => {
         try {
             const response = await fetch(
-                `https://api.fu4s.online/api/v1/notification/${id}/unseen`,
+                `${BASE_URL}/api/v1/notification/${id}/unseen`,
                 {
                     method: "PUT",
                 }
@@ -115,7 +116,7 @@ function NotificationList() {
     const markAsRead = async (id: string) => {
         try {
             const response = await fetch(
-                `https://api.fu4s.online/api/v1/notification/${id}/seen`,
+                `${BASE_URL}/api/v1/notification/${id}/seen`,
                 {
                     method: "PUT",
                 }
@@ -183,7 +184,7 @@ function NotificationList() {
             if (shouldDelete) {
                 try {
                     await fetch(
-                        `https://api.fu4s.online/api/v1/notification/${id}`,
+                        `${BASE_URL}/api/v1/notification/${id}`,
                         {
                             method: "DELETE",
                         }
@@ -200,7 +201,7 @@ function NotificationList() {
     const handleMarkAllAsRead = async () => {
         try {
             setConfirmModalOpen(false);
-            await fetch(`https://api.fu4s.online/api/v1/notification/markAllAsRead`, {
+            await fetch(`${BASE_URL}/api/v1/notification/markAllAsRead`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

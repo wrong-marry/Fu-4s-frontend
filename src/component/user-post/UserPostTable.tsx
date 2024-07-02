@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {Center, Pagination} from "@mantine/core";
+import {BASE_URL} from "../../common/constant.tsx";
 
 interface Post {
     id: string;
@@ -24,7 +25,7 @@ export function UserPostTable() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/post/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
+                    `${BASE_URL}/api/v1/post/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
                 );
                 const data = await response.json();
                 setPost(data)
@@ -37,7 +38,7 @@ export function UserPostTable() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/post/getNum?username=${username}`
+                    `${BASE_URL}/api/v1/post/getNum?username=${username}`
                 );
                 const data = await response.json();
                 setNumPage((data + 1) / pageSize)

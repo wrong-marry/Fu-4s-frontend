@@ -1,5 +1,6 @@
 import {Card} from "@mantine/core";
 import {useEffect, useState} from "react";
+import {BASE_URL} from "../../../common/constant.tsx";
 
 const DashboardSection: React.FC = () => {
     const [numOfUser, setNumOfUser] = useState(0);
@@ -11,7 +12,7 @@ const DashboardSection: React.FC = () => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/admin/getNumUser`,
+                    `${BASE_URL}/api/v1/admin/getNumUser`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -28,7 +29,7 @@ const DashboardSection: React.FC = () => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/admin/getNumEachRole?userrole=ADMIN`,
+                    `${BASE_URL}/api/v1/admin/getNumEachRole?userrole=ADMIN`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -45,7 +46,7 @@ const DashboardSection: React.FC = () => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/admin/getNumEachRole?userrole=STAFF`,
+                    `${BASE_URL}/api/v1/admin/getNumEachRole?userrole=STAFF`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -62,7 +63,7 @@ const DashboardSection: React.FC = () => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/admin/getNumEachRole?userrole=USER`,
+                    `${BASE_URL}/api/v1/admin/getNumEachRole?userrole=USER`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

@@ -2,6 +2,7 @@ import {Box, Button, ButtonGroup, Container, Group, NativeSelect, Text} from "@m
 import PostTypeTab from "../../component/subject-posting/PostTypeTab.tsx";
 import React, {useEffect} from "react";
 import {Subject} from "../../component/manage-subject/TableSubject.tsx";
+import {BASE_URL} from "../../common/constant.tsx";
 
 
 export default function StudyPage() {
@@ -25,7 +26,7 @@ export default function StudyPage() {
         async function fetchData() {
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/subject/getAll`
+                    `${BASE_URL}/api/v1/subject/getAll`
                 );
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);

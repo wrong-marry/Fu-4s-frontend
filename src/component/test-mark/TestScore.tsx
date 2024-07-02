@@ -3,6 +3,7 @@ import {IconArrowDownRight, IconArrowUpRight} from "@tabler/icons-react";
 import classes from "./StatsGridIcons.module.css";
 import {useEffect, useState} from "react";
 import axios from "axios";
+import {BASE_URL} from "../../common/constant.tsx";
 
 export default function TestScore(prop: any) {
     const [lastScore, setLastScore] = useState(0);
@@ -13,7 +14,7 @@ export default function TestScore(prop: any) {
     useEffect(() => {
         const fetchLastScore = async () => {
             const result = await axios.get(
-                `https://api.fu4s.online/api/v1/test-result/get-last-score?username=${localStorage.getItem(
+                `${BASE_URL}/api/v1/test-result/get-last-score?username=${localStorage.getItem(
                     "username"
                 )}&questionSetId=${prop.questionSetId}`
             );

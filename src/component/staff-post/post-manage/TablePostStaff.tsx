@@ -49,7 +49,7 @@ function TablePostStaff() {
     //         try {
     //             const token = localStorage.getItem("token");
     //             const response = await fetch(
-    //                 `https://api.fu4s.online/api/v1/staff/approvedPost?id=${postToApproved.id}`,
+    //                 `${BASE_URL}/api/v1/staff/approvedPost?id=${postToApproved.id}`,
     //                 {
     //                     method: "PUT",
     //                     headers: {
@@ -96,7 +96,7 @@ function TablePostStaff() {
     //         try {
     //             const token = localStorage.getItem("token");
     //             const response = await fetch(
-    //                 `https://api.fu4s.online/api/v1/staff/deniedPost?id=${postToDenied.id}`,
+    //                 `${BASE_URL}/api/v1/staff/deniedPost?id=${postToDenied.id}`,
     //                 {
     //                     method: "PUT",
     //                     headers: {
@@ -142,7 +142,7 @@ function TablePostStaff() {
     //     const fetchNum = async () => {
     //         try {
     //             const token = localStorage.getItem("token");
-    //             const baseURL = "https://api.fu4s.online/api/v1/staff";
+    //             const baseURL = "${BASE_URL}/api/v1/staff";
     //             let url = "";
     //
     //             if (currentTab === "All posts") {
@@ -204,7 +204,7 @@ function TablePostStaff() {
     //         }
     //     };
     //
-    //     const baseURL = "https://api.fu4s.online/api/v1/staff";
+    //     const baseURL = "${BASE_URL}/api/v1/staff";
     //     let url = "";
     //
     //     if (currentTab === "All posts") {

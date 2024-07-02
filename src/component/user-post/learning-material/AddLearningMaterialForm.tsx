@@ -15,6 +15,7 @@ import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import {BASE_URL} from "../../../common/constant.tsx";
 
 interface Subject {
     code: string;
@@ -39,7 +40,7 @@ export function AddLearningMaterialForm() {
         const fetchSubject = async () => {
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/subject/getAll`
+                    `${BASE_URL}/api/v1/subject/getAll`
                 );
                 const data = await response.json();
                 setSubjectList(data);
@@ -78,7 +79,7 @@ export function AddLearningMaterialForm() {
             formData.append("files", file);
         });
 
-        fetch(`https://api.fu4s.online/api/v1/learningMaterial/addNew?title=${title}&content=${content}&username=${localStorage.getItem("username")}&subjectCode=${subject}`,
+        fetch(`${BASE_URL}/api/v1/learningMaterial/addNew?title=${title}&content=${content}&username=${localStorage.getItem("username")}&subjectCode=${subject}`,
             {
                 method: "POST",
                 body: formData

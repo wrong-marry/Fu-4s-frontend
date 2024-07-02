@@ -3,6 +3,7 @@ import React, {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import {POST_PAGE_SIZE, SearchRequest} from "../../page/search/SearchPage.tsx";
 import axios from "axios";
+import {BASE_URL} from "../../common/constant.tsx";
 
 interface Post {
     id: string;
@@ -27,7 +28,7 @@ function PostList(props: { searchRequest: SearchRequest }) {
     useEffect(() => {
         async function fetchData() {
             try {
-                let api = `https://api.fu4s.online/api/v1/post/getAllPost?pageSize=` + POST_PAGE_SIZE;
+                let api = `${BASE_URL}/api/v1/post/getAllPost?pageSize=` + POST_PAGE_SIZE;
                 if (searchRequest.isTest != null) api += `&isTest=${searchRequest.isTest}`;
                 if (searchRequest.subjectCode) api += `&subjectCode=${searchRequest.subjectCode}`;
                 if (currentPage) api += `&page=${currentPage}`;

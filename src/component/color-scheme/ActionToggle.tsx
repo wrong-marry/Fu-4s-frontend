@@ -2,6 +2,7 @@ import {ActionIcon, FileButton, Group} from '@mantine/core';
 import {IconCamera} from '@tabler/icons-react';
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import {BASE_URL} from "../../common/constant.tsx";
 
 export function ActionToggle() {
     const [file, setFile] = useState<File | null>(null);
@@ -23,7 +24,7 @@ export function ActionToggle() {
         const formData = new FormData();
         formData.append('image', file ?? "");
 
-        axios.post('https://api.fu4s.online/api/v1/user/avatar?username=' + localStorage.getItem("username"), formData, {
+        axios.post(`${BASE_URL}/api/v1/user/avatar?username=` + localStorage.getItem("username"), formData, {
             onUploadProgress: (e) => {
                 console.log((e?.progress ?? 0) * 100);
             },

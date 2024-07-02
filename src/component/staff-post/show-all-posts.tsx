@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import {BASE_URL} from "../../common/constant.tsx";
 
 
 const DashboardSection: React.FC = () => {
@@ -14,7 +15,7 @@ const DashboardSection: React.FC = () => {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/post/getAllPost?pageSize=${pageSize}`
+                    `${BASE_URL}/api/v1/post/getAllPost?pageSize=${pageSize}`
                 );
                 const data = await response.json();
                 setNumOfPost(data.total)
@@ -27,7 +28,7 @@ const DashboardSection: React.FC = () => {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/staff/getNumEachStatus?status=ACTIVE`
+                    `${BASE_URL}/api/v1/staff/getNumEachStatus?status=ACTIVE`
                 );
                 const data = await response.json();
                 console.log(data);
@@ -41,7 +42,7 @@ const DashboardSection: React.FC = () => {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/staff/getNumEachStatus?status=HIDDEN`
+                    `${BASE_URL}/api/v1/staff/getNumEachStatus?status=HIDDEN`
                 );
                 const data = await response.json();
                 setNumOfHidden(data);
@@ -54,7 +55,7 @@ const DashboardSection: React.FC = () => {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `https://api.fu4s.online/api/v1/staff/getNumEachStatus?status=PENDING_APPROVE`
+                    `${BASE_URL}/api/v1/staff/getNumEachStatus?status=PENDING_APPROVE`
                 );
                 const data = await response.json();
                 setNumOfPending(data);

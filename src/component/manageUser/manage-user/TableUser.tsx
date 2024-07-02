@@ -24,6 +24,7 @@ import {
 import BanAccountModal from "./BanAccountModal";
 import * as XLSX from "xlsx";
 import {FaFileExcel} from "react-icons/fa";
+import {BASE_URL} from "../../../common/constant.tsx";
 
 interface User {
     username: string;
@@ -63,8 +64,8 @@ function TableUser() {
                 const token = localStorage.getItem("token");
                 const url =
                     userToBan.status === "ACTIVE"
-                        ? `https://api.fu4s.online/api/v1/admin/banUser?username=${userToBan.username}`
-                        : `https://api.fu4s.online/api/v1/admin/activateUser?username=${userToBan.username}`;
+                        ? `${BASE_URL}/api/v1/admin/banUser?username=${userToBan.username}`
+                        : `${BASE_URL}/api/v1/admin/activateUser?username=${userToBan.username}`;
 
                 const response = await fetch(url, {
                     method: "PUT",
@@ -111,7 +112,7 @@ function TableUser() {
         const fetchNum = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const baseURL = "https://api.fu4s.online/api/v1/admin";
+                const baseURL = `${BASE_URL}/api/v1/admin`;
                 let url = "";
 
                 if (currentTab === "ALL") {
@@ -174,7 +175,7 @@ function TableUser() {
             }
         };
 
-        const baseURL = "https://api.fu4s.online/api/v1/admin";
+        const baseURL = `${BASE_URL}/api/v1/admin`;
         let url = "";
 
         if (currentTab === "ALL") {

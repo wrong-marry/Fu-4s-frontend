@@ -1,4 +1,5 @@
 import axios from "axios";
+import {BASE_URL} from "../common/constant.tsx";
 
 export const emptyUser = {
     username: "",
@@ -11,7 +12,7 @@ export const emptyUser = {
 
 export const fetchUser = async () => {
     const username = localStorage.getItem("username");
-    const api = "https://api.fu4s.online/api/v1/user?username=" + username;
+    const api = `${BASE_URL}/api/v1/user?username=` + username;
     try {
         return await axios.get(api, {
             headers: {

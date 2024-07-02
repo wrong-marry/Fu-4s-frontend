@@ -9,6 +9,7 @@ import {forEach} from "lodash";
 import {useForm} from "@mantine/form";
 import LearningMaterialDetail from "../../component/user-post/learning-material/LearningMaterialDetail";
 import {useDisclosure} from "@mantine/hooks";
+import {BASE_URL} from "../../common/constant.tsx";
 
 export interface Post {
     id: number;
@@ -55,7 +56,7 @@ const PostPage: React.FC = () => {
     );
     const fetchPost = async () => {
         const response: Post = (await axios.get(
-            `https://api.fu4s.online/api/v1/post/get?id=${id}`
+            `${BASE_URL}/api/v1/post/get?id=${id}`
         )).data;
         setPost(response);
         console.log("1" + post);
@@ -63,7 +64,7 @@ const PostPage: React.FC = () => {
     const fetchComments = async () => {
         try {
             const response: AxiosResponse<CommentData[]> = await axios.get(
-                `https://api.fu4s.online/api/v1/comments/post/${id}` + (isStaff ? "?isStaff=true" : ""), {
+                `${BASE_URL}/api/v1/comments/post/${id}` + (isStaff ? "?isStaff=true" : ""), {
                     headers: {
                         // Check login
                         Authorization: localStorage.getItem("username") !== null ? `Bearer ${localStorage.getItem("token")}` : ""
@@ -77,7 +78,7 @@ const PostPage: React.FC = () => {
     };
     const fetchMore = async () => {
         try {
-            const api = `https://api.fu4s.online/api/v1/comments/post/${id}` + (isStaff ? `?isStaff=true&` : `?`) +
+            const api = `${BASE_URL}/api/v1/comments/post/${id}` + (isStaff ? `?isStaff=true&` : `?`) +
                 `offset=` + (comments?.length ?? 0);
             const response: AxiosResponse<CommentData[]> = await axios.get(api, {
                 headers: {
@@ -139,7 +140,7 @@ const PostPage: React.FC = () => {
                     console.log(values);
                     try {
                         const response: AxiosResponse<{ message: string, id: number }> = await axios.post(
-                            `https://api.fu4s.online/api/v1/comments/upload/post-${id}`,
+                            `${BASE_URL}/api/v1/comments/upload/post-${id}`,
                             values,
                             {
                                 headers: {

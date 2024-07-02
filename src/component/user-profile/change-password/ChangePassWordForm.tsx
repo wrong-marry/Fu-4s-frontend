@@ -10,15 +10,16 @@ import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import {useForm} from "@mantine/form";
 import {notifications} from "@mantine/notifications";
+import {BASE_URL} from "../../../common/constant.tsx";
 
 export function ChangePassWordForm() {
     const navigate = useNavigate();
     const username = localStorage.getItem("username");
     const compareAPI =
-        "https://api.fu4s.online/api/v1/user/compare-password?username=" +
+        "${BASE_URL}/api/v1/user/compare-password?username=" +
         username +
         "&confirmPassword=";
-    const changePassAPI = "https://api.fu4s.online/api/v1/user/change-password?username=" + username + "&newPassword=";
+    const changePassAPI = `${BASE_URL}/api/v1/user/change-password?username=` + username + "&newPassword=";
     const form = useForm({
         initialValues: {
             oldPassWord: "",
@@ -48,7 +49,7 @@ export function ChangePassWordForm() {
         await axios.put(changePassAPI + newData.newPassWord).catch((err) => console.log(err));
         // await axios
         //   .put(
-        //     "https://api.fu4s.online/api/v1/user/edit-profile?username=" +
+        //     "${BASE_URL}/api/v1/user/edit-profile?username=" +
         //       user.username,
         //     newData
         //   )
