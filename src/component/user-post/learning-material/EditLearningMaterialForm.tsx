@@ -8,7 +8,7 @@ import {
     Space,
     TextInput, ThemeIcon,
     Title,
-    Text, Select, Modal
+    Text, Select, Modal, Checkbox
 } from "@mantine/core";
 import classes from "../../user-profile/update-profile/AuthenticationTitle.module.css";
 import {useEffect, useState} from "react";
@@ -42,8 +42,11 @@ export function EditLearningMaterialForm() {
     const [subjectList, setSubjectList] = useState<Subject[]>([]);
 
     const [removePopup, setRemovePopup] = useState(false);
+    const [editPopup, setEditPopup] = useState(false);
+    const [deleteAllFiles, setDeleteAllFiles] = useState(false);
 
     const [error, setError] = useState<string>("");
+    const [errorAll, setErrorAll] = useState<string>("");
 
     useEffect(() =>{
         const fetchSubject = async () => {
@@ -93,8 +96,28 @@ export function EditLearningMaterialForm() {
         toolbar: toolbarOptions,
     };
 
-    const handleEdit = () => {
+    const handleEditBtn = () => {
+        if (title == "" || content == "") {
+            setErrorAll("Some fields are required!");
+            return;
+        }
+        setErrorAll("");
+        setError("");
+        setEditPopup(true);
+    }
 
+    const handleEdit = () => {
+        const formData = new FormData();
+        if(files != null) files.forEach((file: File) => {
+            formData.append("files", file);
+        });
+
+        fetch(`http://localhost:8080/api/v1/learningMaterial/edit?title=${title}&content=${content}&username=${localStorage.getItem("username")}&subjectCode=${subject}&id=${id}&deleteAllFiles=${deleteAllFiles}`, {
+            method: "PUT",
+            body: formData
+        }).then(() => {
+            navigate(`/user/post/learning-material`);
+        })
     }
 
     const handleDownloadNewFile = (file: File) => {
@@ -211,6 +234,29 @@ export function EditLearningMaterialForm() {
             </Grid>
         </Modal>
 
+        <Modal opened={editPopup} onClose={() => setEditPopup(false)} title="Are you sure">
+            <Text size="md">
+                Are you sure you want to edit this question? The action cannot be undone
+            </Text>
+            <Grid >
+                <Grid.Col span={3} offset={5}>
+                    <Center>
+                        <Button variant="default" onClick={() => setEditPopup(false)} mt="sm">
+                            Cancel
+                        </Button>
+                    </Center>
+                </Grid.Col>
+
+                <Grid.Col span={4}>
+                    <Center>
+                        <Button onClick={handleEdit} mt="sm" color="blue">
+                            Edit
+                        </Button>
+                    </Center>
+                </Grid.Col>
+            </Grid>
+        </Modal>
+
         <Container size={900} my={40}>
             <Title ta="center" className={classes.title} order={2}>
                 Edit Learning Material
@@ -275,6 +321,15 @@ export function EditLearningMaterialForm() {
                             />
                         </Grid.Col>
                     </Grid>
+                    <Space h="xs"/>
+                    {material.filenames.length > 0 ? <Checkbox
+                        size="xs"
+                        checked={deleteAllFiles}
+                        onChange={(event) => setDeleteAllFiles(event.currentTarget.checked)}
+                        label={"Remove all files"}
+                        description="This will remove all your attached files"
+                        color="red"
+                    /> : <></>}
 
                     <Space h="xs"/>
 
@@ -310,12 +365,19 @@ export function EditLearningMaterialForm() {
 
                         <Grid.Col span={2}>
                             <Center>
-                                <Button onClick={handleEdit} color="blue">
+                                <Button onClick={handleEditBtn} color="blue">
                                     Edit
                                 </Button>
                             </Center>
                         </Grid.Col>
                     </Grid>
+
+                    <Grid>
+                        <Grid.Col span={4} offset={8}>
+                            <Text size="xs" color="red">{errorAll}</Text>
+                        </Grid.Col>
+                    </Grid>
+
                 </form>
             </Paper>
         </Container>
