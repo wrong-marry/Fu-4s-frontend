@@ -178,95 +178,94 @@ const LearningMaterialDetail: React.FC = () => {
 
 	return (
 		<Center>
-			<Container size={"xl"} mt={"xl"}>
-				<Card withBorder shadow="sm" padding="xl">
-					<CardSection>
-						<Title order={2} ta={"center"} component="div" mb={2} p={"md"}>
-							{post.title}
-						</Title>
-					</CardSection>
-					<Divider size="xs" />
-					<Group justify="space-between">
-						<Text fw={700} size="lg">
-							{post.username}
-						</Text>
-						<Text c="dimmed" p={"md"}>
-							{format(new Date(post.postTime), "dd/MM/yyyy HH:mm")}
-						</Text>
-					</Group>
+			<Card
+				withBorder
+				shadow="sm"
+				padding="xl"
+				mt={"xl"}
+				style={{ width: "100%" }}
+			>
+				<CardSection>
+					<Title order={2} ta={"center"} component="div" mb={2} p={"md"}>
+						{post.title}
+					</Title>
+				</CardSection>
+				<Divider size="xs" />
+				<Group justify="space-between">
+					<Text fw={700} size="lg">
+						{post.username}
+					</Text>
+					<Text c="dimmed" p={"md"}>
+						{format(new Date(post.postTime), "dd/MM/yyyy HH:mm")}
+					</Text>
+				</Group>
 
-					<CardSection>
-						<Box w={600}>
-							<Text fw={400} size="lg" p={"lg"} m="20">
-								<ReactQuill
-									value={post.content}
-									readOnly={true}
-									theme="bubble"
-								/>
-							</Text>
-							{post.filenames.length > 0 && (
-								<>
-									<Divider my="sm" variant="dotted" />
-									<Group display="flex" justify="space-between" m={2}>
-										<Text size="l" fw={800} m="20">
-											Attachments
-										</Text>
+				<CardSection>
+					<Text fw={400} size="lg" p={"lg"} m="20">
+						<ReactQuill value={post.content} readOnly={true} theme="bubble" />
+					</Text>
+					{post.filenames.length > 0 && (
+						<>
+							<Divider my="sm" variant="dotted" />
+							<Box m="20">
+								<Group display="flex" justify="space-between" m={2}>
+									<Text size="l" fw={800} m="20">
+										Attachments
+									</Text>
 
-										<Button
-											onClick={() =>
-												handleDownloadMultipleFilesAsZip(post.filenames)
-											}
-											variant="light"
-											size="xs"
+									<Button
+										onClick={() =>
+											handleDownloadMultipleFilesAsZip(post.filenames)
+										}
+										variant="light"
+										size="xs"
+									>
+										Download All
+									</Button>
+								</Group>
+								<div className="images-container">
+									{imageList.map((image, idx) => (
+										<div
+											key={idx}
+											className="image"
+											onClick={() => setIndex(idx)}
 										>
-											Download All
-										</Button>
-									</Group>
-									<div className="images-container">
-										{imageList.map((image, idx) => (
-											<div
-												key={idx}
-												className="image"
-												onClick={() => setIndex(idx)}
+											<img src={image.src} alt={image.title} />
+										</div>
+									))}
+								</div>
+
+								<List>
+									{fileList.map((file, index) => (
+										<ListItem key={index} mb="xs">
+											<Button
+												leftSection={<IconFile size={14} />}
+												onClick={() => handleDownloadOldFile(file)}
 											>
-												<img src={image.src} alt={image.title} />
-											</div>
-										))}
-									</div>
-									<Box m="20">
-										<List>
-											{fileList.map((file, index) => (
-												<ListItem key={index} mb="xs">
-													<Button
-														leftSection={<IconFile size={14} />}
-														onClick={() => handleDownloadOldFile(file)}
-													>
-														{file}
-													</Button>
-												</ListItem>
-											))}
-										</List>
-									</Box>
-									<Lightbox
-										plugins={[Captions, Download, Fullscreen, Zoom, Thumbnails]}
-										captions={{
-											showToggle: true,
-											descriptionTextAlign: "end",
-										}}
-										index={index}
-										open={index >= 0}
-										close={() => setIndex(-1)}
-										slides={imageList}
-									/>
-								</>
-							)}
-						</Box>
-					</CardSection>
-					<Divider my="sm" variant="dotted" />
-					<Badge color="pink">Learning material</Badge>
-					<Text mt="xs" c="dimmed" size="sm"></Text>
-				</Card>
-			</Container>
+												{file}
+											</Button>
+										</ListItem>
+									))}
+								</List>
+								<Lightbox
+									plugins={[Captions, Download, Fullscreen, Zoom, Thumbnails]}
+									captions={{
+										showToggle: true,
+										descriptionTextAlign: "end",
+									}}
+									index={index}
+									open={index >= 0}
+									close={() => setIndex(-1)}
+									slides={imageList}
+								/>
+							</Box>
+						</>
+					)}
+				</CardSection>
+				<Divider my="sm" variant="dotted" />
+				<Badge color="pink">Learning material</Badge>
+				<Text mt="xs" c="dimmed" size="sm"></Text>
+			</Card>
 		</Center>
 	);
 };

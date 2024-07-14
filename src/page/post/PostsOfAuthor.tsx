@@ -8,13 +8,12 @@ import {
 	Avatar,
 	ActionIcon,
 	Flex,
-	Title,
 } from "@mantine/core";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconDots } from "@tabler/icons-react";
-import { BASE_URL } from "../../../common/constant";
+import { BASE_URL } from "../../common/constant";
 
 export interface Post {
 	id: number;

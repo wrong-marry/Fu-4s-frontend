@@ -20,7 +20,8 @@ import { useForm } from "@mantine/form";
 import LearningMaterialDetail from "../../component/user-post/learning-material/LearningMaterialDetail";
 import { useDisclosure } from "@mantine/hooks";
 import { BASE_URL } from "../../common/constant.tsx";
-import PostsOfAuthor from "../../component/user-post/learning-material/PostsOfAuthor.tsx";
+import PostsOfAuthor from "./PostsOfAuthor.tsx";
+import PostsOfSubject from "./PostsOfSubject.tsx";
 
 export interface Post {
 	id: number;
@@ -162,11 +163,13 @@ const PostPage: React.FC = () => {
 			<Container>
 				{!post?.test && <LearningMaterialDetail />}
 				{post?.test && <MockTestDetailPage {...post} />}
-				<Space h={"md"} />
-				<Space h={"md"} />
-				<Title order={2}>{authorname}'s Post</Title>
+				<Space h={"xl"} />
+				<Title order={2}>Posts of {authorname}</Title>
 				<PostsOfAuthor authorname={authorname ?? ""} />
-				<Space h={"md"} />
+				<Space h={"xl"} />
+				<Title order={2}>Posts in {post?.subjectCode}</Title>
+				<PostsOfSubject thisSubject={post?.subjectCode ?? ""} />
+				<Space h={"xl"} />
 				<Title order={2}>Comment section</Title>
 				{comments == null || comments?.length == 0 ? (
 					<Text>No comments</Text>
