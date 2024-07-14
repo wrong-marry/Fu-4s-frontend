@@ -194,83 +194,76 @@ const LearningMaterialDetail: React.FC = () => {
 							{format(new Date(post.postTime), "dd/MM/yyyy HH:mm")}
 						</Text>
 					</Group>
+
 					<CardSection>
 						<Box w={600}>
-							<Text fw={400} size="lg" mt="md" p={"lg"} m="20">
+							<Text fw={400} size="lg" p={"lg"} m="20">
 								<ReactQuill
 									value={post.content}
 									readOnly={true}
 									theme="bubble"
 								/>
 							</Text>
+							{post.filenames.length > 0 && (
+								<>
+									<Divider my="sm" variant="dotted" />
+									<Group display="flex" justify="space-between" m={2}>
+										<Text size="l" fw={800} m="20">
+											Attachments
+										</Text>
 
-							<Divider my="sm" variant="dotted" />
-
-							<Group display="flex" justify="space-between" m={2}>
-								<Text size="l" fw={800} m="20">
-									Attachments
-								</Text>
-
-								<Button
-									onClick={() =>
-										handleDownloadMultipleFilesAsZip(post.filenames)
-									}
-									variant="light"
-									size="xs"
-								>
-									Download All
-								</Button>
-							</Group>
-
-							<div className="images-container">
-								{imageList.map((image, idx) => (
-									<div
-										key={idx}
-										className="image"
-										onClick={() => setIndex(idx)}
-									>
-										<img src={image.src} alt={image.title} />
-									</div>
-								))}
-							</div>
-
-							<Box m="20">
-								<List>
-									{fileList.map((file, index) => (
-										<ListItem key={index} mb="xs">
-											<Button
-												leftSection={<IconFile size={14} />} // leftSection thành leftIcon trong Chakra UI
-												onClick={() => handleDownloadOldFile(file)}
+										<Button
+											onClick={() =>
+												handleDownloadMultipleFilesAsZip(post.filenames)
+											}
+											variant="light"
+											size="xs"
+										>
+											Download All
+										</Button>
+									</Group>
+									<div className="images-container">
+										{imageList.map((image, idx) => (
+											<div
+												key={idx}
+												className="image"
+												onClick={() => setIndex(idx)}
 											>
-												{file}
-											</Button>
-										</ListItem>
-									))}
-								</List>
-							</Box>
-
-							<Lightbox
-								plugins={[Captions, Download, Fullscreen, Zoom, Thumbnails]}
-								captions={{
-									showToggle: true,
-									descriptionTextAlign: "end",
-								}}
-								index={index}
-								open={index >= 0}
-								close={() => setIndex(-1)}
-								slides={imageList}
-							/>
+												<img src={image.src} alt={image.title} />
+											</div>
+										))}
+									</div>
+									<Box m="20">
+										<List>
+											{fileList.map((file, index) => (
+												<ListItem key={index} mb="xs">
+													<Button
+														leftSection={<IconFile size={14} />}
+														onClick={() => handleDownloadOldFile(file)}
+													>
+														{file}
+													</Button>
+												</ListItem>
+											))}
+										</List>
+									</Box>
+									<Lightbox
+										plugins={[Captions, Download, Fullscreen, Zoom, Thumbnails]}
+										captions={{
+											showToggle: true,
+											descriptionTextAlign: "end",
+										}}
+										index={index}
+										open={index >= 0}
+										close={() => setIndex(-1)}
+										slides={imageList}
+									/>
+								</>
+							)}
 						</Box>
 					</CardSection>
 					<Divider my="sm" variant="dotted" />
-
-					<Group justify="space-between">
-						{post.test ? (
-							<Badge color="indigo">Mock Test</Badge>
-						) : (
-							<Badge color="pink">Learning material</Badge>
-						)}
-					</Group>
+					<Badge color="pink">Learning material</Badge>
 					<Text mt="xs" c="dimmed" size="sm"></Text>
 				</Card>
 			</Container>
