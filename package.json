@@ -52,6 +52,7 @@
     "dayjs": "^1.11.10",
     "embla-carousel-autoplay": "^7.1.0",
     "embla-carousel-react": "^7.1.0",
+    "formik": "^2.4.6",
     "jszip": "^3.10.1",
     "localforage": "^1.10.0",
     "lottie-react": "^2.4.0",
@@ -77,6 +78,7 @@
     "vite-plugin-svgr": "^4.2.0",
     "xlsx": "^0.18.5",
     "yet-another-react-lightbox": "^3.19.0",
+    "yup": "^1.4.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
