@@ -18,9 +18,7 @@ const PostsListBySubject: React.FC = () => {
 	useEffect(() => {
 		const fetchSubject = async () => {
 			try {
-				const response = await fetch(
-					`http://localhost:8080/api/v1/subject/${code}`
-				);
+				const response = await fetch(`${BASE_URL}/api/v1/subject/${code}`);
 				if (!response.ok) {
 					// Nếu phản hồi không OK, điều hướng tới trang 404
 					navigate("/404");
