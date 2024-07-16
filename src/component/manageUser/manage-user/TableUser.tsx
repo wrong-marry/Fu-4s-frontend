@@ -291,39 +291,14 @@ function TableUser({ flag2, setFlag2 }: TableUserProps) {
 	}, [currentTab]);
 
 	useEffect(() => {
-        const fetchDataExport = async () => {
-					try {
-						const token = localStorage.getItem("token");
-						const response = await fetch(
-							"http://localhost:8080/api/v1/admin/getAllUser?pageNum=1&pageSize=1000",
-							{
-								method: "GET",
-								headers: {
-									Authorization: `Bearer ${token}`,
-									"Content-Type": "application/json",
-								},
-							}
-						);
-						if (response.ok) {
-							const data = await response.json();
-							setAllUserList(data);
-						} else {
-							// Xử 	const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {		console.error("Failed to fetch subject codes");
-						}
-					} catch (error) {
-						console.error("Error fetching subject codes:", error);
-					}
-				};
-fetchDataExport();
 
 		let filtered = allUserList;
-        console.log("allUserList", allUserList);
 
 		if (search) {
 			filtered = filtered.filter(
 				(user) =>
-					user.email.toLowerCase().includes(search.toLowerCase()) ||
-					user.username.toLowerCase().includes(search.toLowerCase())
+					user.email?.toLowerCase().includes(search.toLowerCase()) ||
+					user.username?.toLowerCase().includes(search.toLowerCase())
 			);
 		}
 
