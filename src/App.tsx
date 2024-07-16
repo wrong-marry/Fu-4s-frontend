@@ -46,8 +46,8 @@ import TestResultPage from "./page/test-result/TestResultPage.tsx";
 import { AddLearningMaterialPage } from "./page/user-post/learning-material/AddLearningMaterialPage.tsx";
 import { EditLearningMaterialPage } from "./page/user-post/learning-material/EditLearningMaterialPage.tsx";
 import LoginPage from "./page/authentication/LoginPage.tsx";
-import PostsOfSubject from "./page/post/PostsOfSubject.tsx";
 import PostsListBySubject from "./page/list/PostListBySubject.tsx";
+import SubjectsListBySemester from "./page/list/SubjectsListBySemester.tsx";
 
 export const loadingIndicator = (
 	<Box pos={"relative"} h={"100vh"} w={"100vw"}>
@@ -98,6 +98,14 @@ const router = createBrowserRouter(
 					element: (
 						<Suspense fallback={loadingIndicator}>
 							<PostsListBySubject />
+						</Suspense>
+					),
+				},
+				{
+					path: "semester/:semester",
+					element: (
+						<Suspense fallback={loadingIndicator}>
+							<SubjectsListBySemester />
 						</Suspense>
 					),
 				},

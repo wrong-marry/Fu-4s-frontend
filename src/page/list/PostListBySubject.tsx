@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Center, Title } from "@mantine/core";
+import { Center, Title, Anchor } from "@mantine/core";
 import PostTypeTab from "../../component/subject-posting/PostTypeTab";
 import { useParams, useNavigate } from "react-router-dom";
-
+import { IconChevronsRight } from "@tabler/icons-react";
 export interface Subject {
 	code: string;
 	name: string;
@@ -47,6 +47,12 @@ const PostsListBySubject: React.FC = () => {
 
 	return (
 		<Center style={{ flexDirection: "column" }}>
+			<Center style={{ display: "flex", gap: "10px" }}>
+				<Anchor href="/">FU4S</Anchor> <IconChevronsRight size={20} />
+				<Anchor href={`/semester/${subject?.semester ?? ""}`}>
+					Semester {subject?.semester}
+				</Anchor>
+			</Center>
 			<Title order={1} m="20">
 				{(subject?.code ?? "") + " " + (subject?.name ?? "")}
 			</Title>
