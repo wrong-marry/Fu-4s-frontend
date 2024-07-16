@@ -10,6 +10,7 @@ import {
 } from "@tabler/icons-react";
 import classes from "./StatsGrid.module.css";
 import { useEffect, useState } from "react";
+import { BASE_URL } from "../../../common/constant";
 
 const dataTemplate = [
 	{ title: "Web users", icon: IconUserPlus, value: 0, diff: 0 },

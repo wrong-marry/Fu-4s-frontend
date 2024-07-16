@@ -35,6 +35,7 @@ import {
 } from "yet-another-react-lightbox/plugins";
 import "yet-another-react-lightbox/plugins/captions.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
+import { BASE_URL } from "../../../common/constant";
 
 interface Post {
 	id: number;
