@@ -10,10 +10,12 @@ import {
 	Anchor,
 	Modal,
 	Group,
+	Center,
 } from "@mantine/core";
+import { IconChevronsRight } from "@tabler/icons-react";
 
 import { Comment } from "../../component/comment/CommentTag";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import MockTestDetailPage from "../mock-test-detail-page/MockTestDetailPage";
 import { forEach } from "lodash";
 import { useForm } from "@mantine/form";
@@ -22,6 +24,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { BASE_URL } from "../../common/constant.tsx";
 import PostsOfAuthor from "./PostsOfAuthor.tsx";
 import PostsOfSubject from "./PostsOfSubject.tsx";
+import { Subject } from "../list/PostListBySubject.tsx";
 
 export interface Post {
 	id: number;
@@ -47,6 +50,7 @@ export interface CommentData {
 const PostPage: React.FC = () => {
 	const { id } = useParams<{ id: string }>();
 	const [opened, toggle] = useDisclosure(false);
+	const navigate = useNavigate();
 	const form = useForm({
 		mode: "uncontrolled",
 		initialValues: {
@@ -63,6 +67,7 @@ const PostPage: React.FC = () => {
 	const [post, setPost] = useState<Post | null>(null);
 	const [comments, setComments] = useState<CommentData[] | null>([]);
 	const [authorname, setAuthorname] = useState<string | null>(null);
+	const [subject, setSubject] = useState<Subject | null>(null);
 
 	const isStaff = ["STAFF", "ADMIN"].includes(
 		localStorage.getItem("role") + ""
@@ -82,6 +87,14 @@ const PostPage: React.FC = () => {
 		setAuthorname(response);
 		console.log("1" + post);
 	};
+
+	const fetchSubject = async () => {
+		const response: Subject = (
+			await axios.get(`${BASE_URL}/api/v1/subject/${post?.subjectCode ?? ""}`)
+		).data;
+		setSubject(response);
+	};
+
 	const fetchComments = async () => {
 		try {
 			const response: AxiosResponse<CommentData[]> = await axios.get(
@@ -130,8 +143,9 @@ const PostPage: React.FC = () => {
 			.then(() => console.log(post))
 			.finally(() => {});
 		fetchAuthorname();
+		fetchSubject();
 		fetchComments().catch();
-	}, [id]);
+	});
 
 	function updateCommentWithId(id: number, content: string) {
 		setComments(
@@ -161,6 +175,16 @@ const PostPage: React.FC = () => {
 			</Modal>
 
 			<Container>
+				<Center style={{ display: "flex", gap: "10px" }}>
+					<Anchor href="/">FU4S</Anchor> <IconChevronsRight size={20} />
+					<Anchor href={`/semester/${subject?.semester ?? ""}`}>
+						Semester {subject?.semester}
+					</Anchor>{" "}
+					<IconChevronsRight size={20} />
+					<Anchor href={`/subject/${post?.subjectCode ?? ""}`}>
+						{post?.subjectCode ?? ""}
+					</Anchor>
+				</Center>
 				{!post?.test && <LearningMaterialDetail />}
 				{post?.test && <MockTestDetailPage {...post} />}
 				<Space h={"xl"} />
