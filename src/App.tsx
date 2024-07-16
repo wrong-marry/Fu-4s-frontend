@@ -46,7 +46,6 @@ import TestResultPage from "./page/test-result/TestResultPage.tsx";
 import { AddLearningMaterialPage } from "./page/user-post/learning-material/AddLearningMaterialPage.tsx";
 import { EditLearningMaterialPage } from "./page/user-post/learning-material/EditLearningMaterialPage.tsx";
 import LoginPage from "./page/authentication/LoginPage.tsx";
-import { red } from "@mui/material/colors";
 import PostsListBySubject from "./page/list/PostListBySubject.tsx";
 import SubjectsListBySemester from "./page/list/SubjectsListBySemester.tsx";
 

@@ -104,7 +104,6 @@ function NotificationList() {
 			);
 
 			if (response.ok) {
-				const data = await response.json();
 				setNotifications((prev) =>
 					prev.map((noti) => (noti.id === id ? { ...noti, seen: false } : noti))
 				);

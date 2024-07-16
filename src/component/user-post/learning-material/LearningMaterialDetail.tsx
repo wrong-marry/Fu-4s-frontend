@@ -4,7 +4,6 @@ import { IconFile } from "@tabler/icons-react";
 import JSZip from "jszip";
 
 import {
-	Image,
 	Text,
 	Group,
 	Badge,
@@ -13,7 +12,6 @@ import {
 	CardSection,
 	Divider,
 	Center,
-	Container,
 	Title,
 	List,
 	ListItem,
