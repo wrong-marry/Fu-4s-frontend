@@ -8,7 +8,6 @@ import {
     Avatar,
     ActionIcon,
     Flex,
-    Title,
 } from "@mantine/core";
 import axios from "axios";
 import React, {useEffect, useState} from "react";
