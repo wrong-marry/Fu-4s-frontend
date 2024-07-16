@@ -381,6 +381,14 @@ const router = createBrowserRouter(
 						</Suspense>
 					),
 				},
+				{
+					path: "/404",
+					element: (
+						<Suspense fallback={loadingIndicator}>
+							<ErrorPage />
+						</Suspense>
+					),
+				},
 			],
 		},
 	],

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { Center, Title } from "@mantine/core";
 import PostTypeTab from "../../component/subject-posting/PostTypeTab";
+import { useParams, useNavigate } from "react-router-dom";
 
 export interface Subject {
 	code: string;
@@ -13,6 +13,7 @@ export interface Subject {
 const PostsListBySubject: React.FC = () => {
 	const { code } = useParams<{ code: string }>();
 	const [subject, setSubject] = useState<Subject | null>(null);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchSubject = async () => {
@@ -20,6 +21,11 @@ const PostsListBySubject: React.FC = () => {
 				const response = await fetch(
 					`http://localhost:8080/api/v1/subject/${code}`
 				);
+				if (!response.ok) {
+					// Nếu phản hồi không OK, điều hướng tới trang 404
+					navigate("/404");
+					return;
+				}
 				const data: Subject = await response.json();
 				setSubject(data);
 				document.title = `${data.code} - ${data.name}`;
