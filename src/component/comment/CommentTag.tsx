@@ -305,24 +305,24 @@ export const Comment = (props: CommentTagData) => {
                             }
                         })}
                     >
+                        <Collapse in={replyOpened}>
+                            <Textarea
+                                radius={"xl"}
+                                size={"md"}
+                                my={"md"}
+                                placeholder={"Reply"}
+                                autosize
+                                maxRows={4}
+                                key={replyForm.key("content")}
+                                {...replyForm.getInputProps("content")}
+                                rightSection={
+                                    <ActionIcon size={32} radius="xl" variant="filled" type={"submit"}>
+                                        <IconMessageReply style={{width: rem(18), height: rem(18)}} stroke={1.5}/>
+                                    </ActionIcon>
+                                }
+                            ></Textarea>
+                        </Collapse>
                     </form>
-                    <Collapse in={replyOpened}>
-                        <Textarea
-                            radius={"xl"}
-                            size={"md"}
-                            my={"md"}
-                            placeholder={"Reply"}
-                            autosize
-                            maxRows={4}
-                            key={replyForm.key("content")}
-                            {...replyForm.getInputProps("content")}
-                            rightSection={
-                                <ActionIcon size={32} radius="xl" variant="filled" type={"submit"}>
-                                    <IconMessageReply style={{width: rem(18), height: rem(18)}} stroke={1.5}/>
-                                </ActionIcon>
-                            }
-                        ></Textarea>
-                    </Collapse>
                     {children?.map((item) => (
                         <Comment id={item.id} date={item.date} account={item.account}
                                  username={item.username} content={item.content}
