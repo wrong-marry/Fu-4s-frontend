@@ -39,7 +39,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
 	useEffect(() => {
 		const username = localStorage.getItem("username");
 		if (username) {
-			const url = `http://localhost:8080/api/v1/user/getAvatar?username=${username}`;
+			const url = `${BASE_URL}/api/v1/user/getAvatar?username=${username}`;
 			setAvatarUrl(url);
 			setSrc(url);
 		}
@@ -65,14 +65,14 @@ export function ProfileCard({ user }: ProfileCardProps) {
 					formData.append("username", username);
 				}
 
-				fetch("http://localhost:8080/api/v1/user/avatar", {
+				fetch("${BASE_URL}/api/v1/user/avatar", {
 					method: "POST",
 					body: formData,
 				})
 					.then((response) => response.json())
 					.then(() => {
 						if (username) {
-							const url = `http://localhost:8080/api/v1/user/getAvatar?username=${username}`;
+							const url = `${BASE_URL}/api/v1/user/getAvatar?username=${username}`;
 							setAvatarUrl(url);
 							setSrc(url);
 						}
