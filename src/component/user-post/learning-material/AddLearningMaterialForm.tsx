@@ -3,10 +3,10 @@ import {
     Center,
     Container,
     FileInput,
-    Grid, List, ListItem,
+    Grid, List,
     Paper,
     Space,
-    TextInput, ThemeIcon,
+    TextInput,
     Title,
     Text, Select
 } from "@mantine/core";
@@ -15,6 +15,7 @@ import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import {BASE_URL} from "../../../common/constant.tsx";
 
 interface Subject {
     code: string;
@@ -24,7 +25,7 @@ interface Subject {
 
 export function AddLearningMaterialForm() {
     const navigate = useNavigate();
-        const maxSize = 2 * 1024 * 1024 * 1024;
+    const maxSize = 2 * 1024 * 1024 * 1024;
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
@@ -35,11 +36,11 @@ export function AddLearningMaterialForm() {
     const [error, setError] = useState<string>("");
     const [errorAll, setErrorAll] = useState<string>("");
 
-    useEffect(() =>{
+    useEffect(() => {
         const fetchSubject = async () => {
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/subject/getAll`
+                    `${BASE_URL}/api/v1/subject/getAll`
                 );
                 const data = await response.json();
                 setSubjectList(data);
@@ -53,14 +54,14 @@ export function AddLearningMaterialForm() {
 
     var toolbarOptions = [
         ['bold', 'italic', 'underline', 'strike'],
-        [{ 'header': 1 }, { 'header': 2 }],
-        [{ 'align': [] }],
-        [{ 'color': [] }],
+        [{'header': 1}, {'header': 2}],
+        [{'align': []}],
+        [{'color': []}],
         ['blockquote', 'code-block'],
-        [{ 'direction': 'rtl' }],
-        [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-        [{ 'indent': '-1'}, { 'indent': '+1' }],
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+        [{'direction': 'rtl'}],
+        [{'script': 'sub'}, {'script': 'super'}],      // superscript/subscript
+        [{'indent': '-1'}, {'indent': '+1'}],
+        [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}],
         ['clean'],
     ];
     const module = {
@@ -68,22 +69,22 @@ export function AddLearningMaterialForm() {
     };
 
     const handleAdd = () => {
-        if(title == "" || content == "" || subject == null) {
+        if (title == "" || content == "" || subject == null) {
             setErrorAll("Please fill all required fields!");
             return;
         }
 
         const formData = new FormData();
-        if(files != null) files.forEach((file: File) => {
+        if (files != null) files.forEach((file: File) => {
             formData.append("files", file);
         });
 
-        fetch(`http://localhost:8080/api/v1/learningMaterial/addNew?title=${title}&content=${content}&username=${localStorage.getItem("username")}&subjectCode=${subject}`,
+        fetch(`${BASE_URL}/api/v1/learningMaterial/addNew?title=${title}&content=${content}&username=${localStorage.getItem("username")}&subjectCode=${subject}`,
             {
                 method: "POST",
                 body: formData
             }).then(() => {
-                navigate('/user/post/learning-material');
+            navigate('/user/post/learning-material');
         })
     }
 
@@ -108,20 +109,19 @@ export function AddLearningMaterialForm() {
     const handleSetFiles = (fs: File[]) => {
         var check: boolean = false;
         fs.forEach(f => {
-            if(f.size > maxSize)
-            {
+            if (f.size > maxSize) {
                 setError("Files must be smaller than 2GB!");
                 check = true;
             }
         });
 
-        if(check) {
+        if (check) {
             setFiles(null);
             return;
         }
 
         setError("");
-        if(fs.length == 0) setFiles(null);
+        if (fs.length == 0) setFiles(null);
         else setFiles(fs);
     }
 
@@ -133,10 +133,11 @@ export function AddLearningMaterialForm() {
         )
     );
 
-    const listData = files == null ? <List.Item><i>no files yet</i></List.Item> : files.map((file, index) => {
+    const listData = files == null ? <List.Item><i>no files yet</i></List.Item> : files.map((file) => {
         return <List.Item mb="xs">
-                <Text onClick={() => handleDownloadFile(file)} td="underline" color="blue" type="button" component="button">{file.name}</Text>
-            </List.Item>
+            <Text onClick={() => handleDownloadFile(file)} td="underline" color="blue" type="button"
+                  component="button">{file.name}</Text>
+        </List.Item>
 
     })
     return <>
@@ -182,7 +183,8 @@ export function AddLearningMaterialForm() {
                     <p className="m_fe47ce59 mantine-InputWrapper-description mantine-TextInput-description"
                        id="mantine-sjauq2siu-description">Your material content</p>
                     <Space h="xs"/>
-                    <ReactQuill modules={module} theme="snow" onChange={setContent} value={content} style={{height: "60vh"}}/>
+                    <ReactQuill modules={module} theme="snow" onChange={setContent} value={content}
+                                style={{height: "60vh"}}/>
 
                     <Space mb='md' h="lg"/>
                     <Space h="md"/>

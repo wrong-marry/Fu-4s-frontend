@@ -11,11 +11,11 @@ import {
   GridCol,
   Flex,
   Burger,
-  em,
+  em
 } from "@mantine/core";
 import logo from "../../asset/logo.png";
 import darkLogo from "../../asset/darkLogo.png";
-import { NavLink, useLoaderData, useNavigate } from "react-router-dom";
+import {NavLink, useLoaderData, useNavigate} from "react-router-dom";
 import {
   IconPhoto,
   IconLibraryPlus,
@@ -29,8 +29,8 @@ import {
   IconMenu2,
 } from "@tabler/icons-react";
 
-import { DarkModeSwitch } from "react-toggle-dark-mode";
-import React, { useContext, useEffect } from "react";
+import {DarkModeSwitch} from "react-toggle-dark-mode";
+import React, {useContext, useEffect} from "react";
 import {
   UserCredentials,
   UserCredentialsContext,
@@ -38,7 +38,7 @@ import {
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
 
-import { Logout } from "../../util/loader/Auth.tsx";
+import {Logout} from "../../util/loader/Auth.tsx";
 
 import NotificationCard from "../notification/NotificationCard.tsx";
 

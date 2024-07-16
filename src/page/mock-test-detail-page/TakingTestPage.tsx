@@ -2,8 +2,8 @@ import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import QuestionDetail, {
   Question,
 } from "../../component/question/QuestionDetail";
-import { fetchQuestion, fetchRandomQuestion } from "../../util/QuestionUtil";
-import { useEffect, useRef, useState } from "react";
+import {fetchRandomQuestion} from "../../util/QuestionUtil";
+import {useEffect, useRef, useState} from "react";
 import {
   Affix,
   AppShell,
@@ -68,106 +68,112 @@ export default function TakingTestPage() {
     else throw new Response("Wrong mode", { status: 404 });
   };
 
-  const addToCorrectAnswers = (id: number) => {
-    setCorrectAnswersId([...correctAnswersId, id]);
-    setWrongAnswersId(wrongAnswersId.filter((i) => i != id));
-  };
+interface Result {
+    correctAnswersId: number[];
+    wrongAnswersId: number[];
+}
 
-  const addToWrongAnswers = (id: number) => {
-    setWrongAnswersId([...wrongAnswersId, id]);
-    setCorrectAnswersId(correctAnswersId.filter((i) => i != id));
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (id != null && numberOfQuestion != null) {
-        const res = await fetchRandomQuestion(
-          id,
-          Number(numberOfQuestion),
-          personalized()
-        );
-        setQuestions(res.data);
-        const idsArray: number[] = res.data.map(
-          (question: Question) => question.id
-        );
-        setWrongAnswersId(idsArray);
-      } else navigate("/forbidden");
+export default function TakingTestPage() {
+    const [searchParam,] = useSearchParams();
+    const id = searchParam.get("id");
+    const numberOfQuestion = searchParam.get("number-of-questions");
+    const mode = searchParam.get("mode");
+    const navigate = useNavigate();
+    const [questions, setQuestions] = useState([]);
+    const [scroll, scrollTo] = useWindowScroll();
+    const [post, setPost] = useState<Post | null>(null);
+    const [numberOfQuestionChecked, setNumberOfQuestionsChecked] = useState(0);
+    const bottom = useRef<HTMLElement | null>(null);
+    const [correctAnswers, setCorrectAnswers] = useState(0);
+    const [reviewing, setReviewing] = useState(false);
+    const [submitFormOpened, setSubmitFormOpened] = useState(false);
+    const [congratulationOpened, setCongratulationOpened] = useState(false);
+    const [correctAnswersId, setCorrectAnswersId] = useState<number[]>([]);
+    const [wrongAnswersId, setWrongAnswersId] = useState<number[]>([]);
+    const [result, setResult] = useState<Result | null>(null);
+    const [displayProgress, SetDisplayProgress] = useState<boolean>(true);
+    let questionIndex = 0;
+    const personalized = () => {
+        if (mode === "personalized") return true;
+        else if (mode === "random") return false;
+        else throw new Response("Wrong mode", {status: 404});
     };
-    const fetchPost = async () => {
-      try {
-        const response: AxiosResponse<Post> = await axios.get(
-          `http://localhost:8080/api/v1/post/get?id=${id}`
-        );
-        setPost(response.data);
-      } catch (error) {
-        console.error("Error fetching post:", error);
-      }
+
+    const addToCorrectAnswers = (id: number) => {
+        setCorrectAnswersId([...correctAnswersId, id]);
+        setWrongAnswersId(wrongAnswersId.filter((i) => i != id));
     };
-    fetchPost();
-    fetchData();
-    personalized();
-  }, []);
 
-  const increaseNumberOfQuestionsChecked = () => {
-    setNumberOfQuestionsChecked(numberOfQuestionChecked + 1);
-  };
+    const addToWrongAnswers = (id: number) => {
+        setWrongAnswersId([...wrongAnswersId, id]);
+        setCorrectAnswersId(correctAnswersId.filter((i) => i != id));
+    };
 
-  const decreaseNumberOfQuestionsChecked = () => {
-    setNumberOfQuestionsChecked(numberOfQuestionChecked - 1);
-  };
+    useEffect(() => {
+        const fetchData = async () => {
+            if (id != null && numberOfQuestion != null) {
+                const res = await fetchRandomQuestion(
+                    id,
+                    Number(numberOfQuestion),
+                    personalized()
+                );
+                setQuestions(res.data);
+                const idsArray: number[] = res.data.map(
+                    (question: Question) => question.id
+                );
+                setWrongAnswersId(idsArray);
+            } else navigate("/forbidden");
+        };
+        const fetchPost = async () => {
+            try {
+                const response: AxiosResponse<Post> = await axios.get(
+                    `${BASE_URL}/api/v1/post/get?id=${id}`
+                );
+                setPost(response.data);
+            } catch (error) {
+                console.error("Error fetching post:", error);
+            }
+        };
+        fetchPost();
+        fetchData();
+        personalized();
+    }, []);
 
-  const modifyNumberOfCorrectAnswers = (isAdd: boolean) => {
-    isAdd
-      ? setCorrectAnswers(correctAnswers + 1)
-      : setCorrectAnswers(correctAnswers - 1);
-  };
+    const increaseNumberOfQuestionsChecked = () => {
+        setNumberOfQuestionsChecked(numberOfQuestionChecked + 1);
+    };
 
-  const questionsDisplay = questions.map((question: Question) => {
-    ++questionIndex;
-    return (
-      <TestQuestion
-        reviewing={reviewing}
-        key={question.id}
-        question={question}
-        questionIndex={questionIndex}
-        modifyNumberOfCorrectAnswers={modifyNumberOfCorrectAnswers}
-        increaseNumberOfQuestionsChecked={increaseNumberOfQuestionsChecked}
-        decreaseNumberOfQuestionsChecked={decreaseNumberOfQuestionsChecked}
-        addToCorrectAnswers={addToCorrectAnswers}
-        addToWrongAnswers={addToWrongAnswers}
-      />
-    );
-  });
-  const date = () => {
-    if (post != null)
-      return format(new Date(post.postTime), "dd/MM/yyyy HH:mm");
-    else return "";
-  };
+    const decreaseNumberOfQuestionsChecked = () => {
+        setNumberOfQuestionsChecked(numberOfQuestionChecked - 1);
+    };
 
-  const saveTestResult = async () => {
-    await axios.post(
-      `http://localhost:8080/api/v1/test-result/save?score=${
-        (correctAnswers * 10) / Number(numberOfQuestion)
-      }&username=${localStorage.getItem(
-        "username"
-      )}&questionSetId=${id}&isPersonalized=${personalized()}`
-    );
-  };
+    const modifyNumberOfCorrectAnswers = (isAdd: boolean) => {
+        isAdd
+            ? setCorrectAnswers(correctAnswers + 1)
+            : setCorrectAnswers(correctAnswers - 1);
+    };
 
-  const increaseAttempts = async () => {
-    await axios.put(
-      `http://localhost:8080/api/v1/questionSet/increase-attempts?id=${id}`
-    );
-  };
-
-  const handleClickSubmit = () => {
-    setResult({
-      correctAnswersId: correctAnswersId,
-      wrongAnswersId: wrongAnswersId,
+    const questionsDisplay = questions.map((question: Question) => {
+        ++questionIndex;
+        return (
+            <TestQuestion
+                reviewing={reviewing}
+                key={question.id}
+                question={question}
+                questionIndex={questionIndex}
+                modifyNumberOfCorrectAnswers={modifyNumberOfCorrectAnswers}
+                increaseNumberOfQuestionsChecked={increaseNumberOfQuestionsChecked}
+                decreaseNumberOfQuestionsChecked={decreaseNumberOfQuestionsChecked}
+                addToCorrectAnswers={addToCorrectAnswers}
+                addToWrongAnswers={addToWrongAnswers}
+            />
+        );
     });
-    setSubmitFormOpened(true);
-    SetDisplayProgress(false);
-  };
+    const date = () => {
+        if (post != null)
+            return format(new Date(post.postTime), "dd/MM/yyyy HH:mm");
+        else return "";
+    };
 
   const handleSubmit = async () => {
     if (personalized()) {

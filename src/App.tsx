@@ -1,7 +1,7 @@
 import {
-  createBrowserRouter,
-  redirect,
-  RouterProvider,
+	createBrowserRouter,
+	redirect,
+	RouterProvider,
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -47,16 +47,18 @@ import { AddLearningMaterialPage } from "./page/user-post/learning-material/AddL
 import { EditLearningMaterialPage } from "./page/user-post/learning-material/EditLearningMaterialPage.tsx";
 import LoginPage from "./page/authentication/LoginPage.tsx";
 import { red } from "@mui/material/colors";
+import PostsListBySubject from "./page/list/PostListBySubject.tsx";
+import SubjectsListBySemester from "./page/list/SubjectsListBySemester.tsx";
 
 export const loadingIndicator = (
-  <Box pos={"relative"} h={"100vh"} w={"100vw"}>
-    <LoadingOverlay
-      visible
-      zIndex={0}
-      overlayProps={{ radius: "sm", blur: 0, backgroundOpacity: 0 }}
-      loaderProps={{ color: "orange", type: "oval" }}
-    />
-  </Box>
+	<Box pos={"relative"} h={"100vh"} w={"100vw"}>
+		<LoadingOverlay
+			visible
+			zIndex={0}
+			overlayProps={{ radius: "sm", blur: 0, backgroundOpacity: 0 }}
+			loaderProps={{ color: "blue", type: "oval" }}
+		/>
+	</Box>
 );
 
 const router = createBrowserRouter([
@@ -377,22 +379,22 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return (
-    <>
-      <ToastContainer
-        position="bottom-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-      <RouterProvider router={router} />
-    </>
-  ) as React.ReactElement;
+	return (
+		<>
+			<ToastContainer
+				position="bottom-right"
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				draggable
+				pauseOnHover
+				theme="light"
+			/>
+			<RouterProvider router={router} />
+		</>
+	) as React.ReactElement;
 }
 
 export default App;
