@@ -29,12 +29,12 @@ export function HeroContent() {
 
       <div className="h-full flex justify-start items-center w-[80%] mx-auto">
         <div className="basis-1/2">
-          <Title >Welcome to FU-4S Forum!</Title>
-          <Text className="text-left" size="xl" mt="xl">
+          <Title c='black' >Welcome to FU-4S Forum!</Title>
+          <Text c='black' className="text-left" size="xl" mt="xl">
             A dedicated platform for FPT University students majoring in
             Software Engineering.
           </Text>
-          <Text className="text-left" size="xl">
+          <Text c='black' className="text-left" size="xl">
             Join the community to get your educational journey enhanced with
             valuable resources and interactive discussions!
           </Text>
@@ -59,7 +59,7 @@ export function HeroContent2() {
       >
         {color == "dark" && <Overlay
             gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
-            opacity={0.3}
+            opacity={0.6}
             zIndex={0}
         />}
 
