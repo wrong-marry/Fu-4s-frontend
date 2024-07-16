@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import SearchIcon from "@mui/icons-material/Search";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {
-  Button,
-  Card,
-  Center,
-  Pagination,
-  Table,
-  Text,
-  TextInput,
+    Button,
+    Card,
+    Center,
+    Pagination,
+    Table,
+    Text,
+    TextInput,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { Group, ActionIcon, Menu, rem } from "@mantine/core";
+import {useDisclosure} from "@mantine/hooks";
+import {notifications} from "@mantine/notifications";
+import {Group, ActionIcon, Menu, rem} from "@mantine/core";
 import {
   IconMessages,
   IconReportAnalytics,
@@ -578,4 +578,5 @@ fetchDataExport();
 		</section>
 	);
 }
+
 export default TableUser;

@@ -7,19 +7,20 @@ import {
 	Text,
 	useMantineColorScheme,
 	useComputedColorScheme,
+	Grid,
+	Flex,
+	em,
 } from "@mantine/core";
 import logo from "../../asset/logo.png";
 import darkLogo from "../../asset/darkLogo.png";
 import { NavLink, useLoaderData, useNavigate } from "react-router-dom";
 import {
-	IconPhoto,
-	IconLibraryPlus,
-	IconSquarePlus,
 	IconSettings,
 	IconUserCircle,
 	IconPremiumRights,
 	IconLogout,
 	IconDeviceLaptop,
+	IconMenu2,
 } from "@tabler/icons-react";
 
 import { DarkModeSwitch } from "react-toggle-dark-mode";
@@ -28,14 +29,13 @@ import {
 	UserCredentials,
 	UserCredentialsContext,
 } from "../../store/user-credentials-context";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
 
 import { Logout } from "../../util/loader/Auth.tsx";
 
-import NotificationCard from "../notification/NotificationCard.tsx";
-
 const userBtn = (data: LoaderData, handleLogout: () => void) => {
+	const isMobile = useMediaQuery(`(max-width: ${em(500)})`);
 	return (
 		<>
 			<Menu shadow="md" width={200}>
@@ -48,7 +48,10 @@ const userBtn = (data: LoaderData, handleLogout: () => void) => {
 							className="cursor-pointer"
 							// src={data?.avatar}
 						/>
-						<Text className="text-sm font-semibold">
+						<Text
+							display={isMobile ? "none" : "block"}
+							className="text-sm font-semibold"
+						>
 							{data ? data.firstName + " " + data.lastName : "Guest"}
 						</Text>
 					</Group>
@@ -304,7 +307,7 @@ export interface LoaderData {
     status: string;
 }
 
-function Navbar() {
+function Navbar(props: any) {
 	const [, { open }] = useDisclosure(false);
 
 	const { assignUserCredentials } = useContext(UserCredentialsContext);
@@ -331,104 +334,66 @@ function Navbar() {
 		setColorScheme(computedColorScheme === "dark" ? "light" : "dark");
 	};
 
-	const btnState =
-		data?.error || !data
-			? guestBtn()
-			: data.role === "ADMIN"
-			? adminBtn(data, Logout)
-			: data.role === "STAFF"
-			? staffBtn(data, Logout)
-			: userBtn(data, Logout);
+	const btnState = data?.error || !data ? guestBtn() : userBtn(data, Logout);
 
-	const whichHomepage = "";
+	const whichHomepage = "home";
 
 	return (
-		<>
-			<header className="w-full h-16 flex items-center justify-between sticky top-0 z-20 shadow-sm bg-[--mantine-color-body]">
-				<div className="flex items-center w-full">
-					<NavLink to={whichHomepage} className="w-32 mx-5">
+		<Grid align="center">
+			<Grid.Col span={{ base: 7, sm: 3.5 }}>
+				<Flex align="center" justify="flex-start">
+					<Button
+						display={props.isLandingPage ? "none" : "block"}
+						variant="subtle"
+						p={10}
+						ml="xs"
+						onClick={props.setOpened}
+						size="lg"
+						radius={100}
+					>
+						<IconMenu2
+							color={
+								localStorage.getItem("mantine-color-scheme-value") === "light"
+									? "black"
+									: "white"
+							}
+						/>
+					</Button>
+					<NavLink to={whichHomepage}>
 						<img
+							className="h-12 w-36 overflow-hidden"
 							src={computedColorScheme === "dark" ? darkLogo : logo}
 							alt="Dark FU4S logo"
 						/>
 					</NavLink>
+				</Flex>
+			</Grid.Col>
 
-					<div className="ml-5 flex items-center">
-						<NavLink to="/home" className="no-underline">
-							{({ isActive }) => (
-								<Button
-									autoContrast
-									color="indigo"
-									variant={isActive ? "light" : "subtle"}
-								>
-									Home
-								</Button>
-							)}
-						</NavLink>
-						<NavLink to="/study" className="no-underline">
-							{({ isActive }) => (
-								<Button
-									autoContrast
-									color="indigo"
-									variant={isActive ? "light" : "subtle"}
-								>
-									Study
-								</Button>
-							)}
-						</NavLink>
-					</div>
+			<Grid.Col
+				span={{ base: 11, sm: 5 }}
+				offset={{ base: 0.5, sm: 0 }}
+				order={{ base: 3, sm: 2 }}
+			>
+				<GeneralSearchBar />
+			</Grid.Col>
 
-					<div className="ml-5 grow">
-						<GeneralSearchBar />
-					</div>
+			<Grid.Col span={{ base: 5, sm: 3.5 }} order={{ base: 2, sm: 3 }}>
+				<Flex align="center" justify="flex-end" mx="md">
+					{data &&
+						(data.role === "ADMIN" ||
+							data.role === "STAFF" ||
+							data.role === "USER")}
+					<Group>{btnState}</Group>
 
-					<Group className="mx-5">
-						<DarkModeSwitch
-							checked={colorScheme === "dark"}
-							onChange={toggleColorScheme}
-							size={20}
-						/>
-						<Menu trigger="hover" shadow="md" width={200}>
-							<Menu.Target>
-								<IconSquarePlus className="w-5 h-auto" />
-							</Menu.Target>
-
-							<Menu.Dropdown>
-								<Menu.Label>Create</Menu.Label>
-								<NavLink to={"/create-mock-test"}>
-									<Menu.Item
-										leftSection={
-											<IconLibraryPlus
-												style={{ width: rem(14), height: rem(14) }}
-											/>
-										}
-									>
-										Mock Test
-									</Menu.Item>
-								</NavLink>
-
-								<NavLink to={"/create-learning-material"}>
-									<Menu.Item
-										onClick={open}
-										leftSection={
-											<IconPhoto style={{ width: rem(14), height: rem(14) }} />
-										}
-									>
-										Learning material
-									</Menu.Item>
-								</NavLink>
-							</Menu.Dropdown>
-						</Menu>
-
-						{data &&
-							(data.role === "ADMIN" ||
-								data.role === "STAFF" ||
-								data.role === "USER") && <NotificationCard />}
-						<Group>{btnState}</Group>
-					</Group>
-				</div>
-			</header>
-		</>
+					<DarkModeSwitch
+						className="ml-5"
+						checked={colorScheme === "dark"}
+						onChange={toggleColorScheme}
+						size={25}
+					/>
+				</Flex>
+			</Grid.Col>
+		</Grid>
 	);
 }
 

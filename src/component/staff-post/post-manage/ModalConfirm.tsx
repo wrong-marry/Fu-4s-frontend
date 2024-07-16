@@ -1,13 +1,13 @@
 import React from "react";
-import { Modal, Button, Text, Center } from "@mantine/core";
+import {Modal, Button, Text, Center} from "@mantine/core";
 
 interface Post {
-	subjectCode: string;
-	title: string;
-	id: string;
-	test: string;
-	postTime: string;
-	status: string;
+    subjectCode: string;
+    title: string;
+    id: string;
+    test: string;
+    postTime: string;
+    status: string;
 }
 
 interface DisableModalProps {

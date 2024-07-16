@@ -4,13 +4,13 @@ import {
   IconChartBar,
   IconUsers,
 } from "@tabler/icons-react";
-import { Area } from "../../component/manageUser/chart/Area.tsx";
-import { Bar } from "../../component/manageUser/chart/Bar.tsx";
+import {Area} from "../../component/manageUser/chart/Area.tsx";
+import {Bar} from "../../component/manageUser/chart/Bar.tsx";
 import "@mantine/charts/styles.css";
 import DashboardSection from "../../component/manageUser/manage-user/show-customer.tsx";
 import DashboardSectionStaff from "../../component/staff-post/post-manage/DashboardSectionStaff.tsx";
-import { Pie } from "../../component/manageUser/chart/Pie.tsx";
-import { StatsGrid } from "../../component/manageUser/chart/Statistics.tsx";
+import {Pie} from "../../component/manageUser/chart/Pie.tsx";
+import {StatsGrid} from "../../component/manageUser/chart/Statistics.tsx";
 import TableSubject from "../../component/manage-subject/TableSubject.tsx";
 import TableUser from "../../component/manageUser/manage-user/TableUser.tsx";
 import { useState } from "react";

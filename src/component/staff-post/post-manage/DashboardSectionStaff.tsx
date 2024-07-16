@@ -1,5 +1,6 @@
-import { Card } from "@mantine/core";
-import { useEffect, useState } from "react";
+import {Card} from "@mantine/core";
+import {useEffect, useState} from "react";
+import {BASE_URL} from "../../../common/constant.tsx";
 
 
 interface ComponentProps {

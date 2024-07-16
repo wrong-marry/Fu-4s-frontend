@@ -28,40 +28,36 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import "./styles.css";
 import {
-  Captions,
-  Download,
-  Fullscreen,
-  Thumbnails,
-  Zoom,
+	Captions,
+	Download,
+	Fullscreen,
+	Thumbnails,
+	Zoom,
 } from "yet-another-react-lightbox/plugins";
 import "yet-another-react-lightbox/plugins/captions.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
+import { BASE_URL } from "../../../common/constant";
 
 interface Post {
-  id: number;
-  postTime: string;
-  title: string;
-  status: string | null;
-  username: string;
-  subjectCode: string;
-  test: boolean;
-  content: string;
-  filenames: string[];
+	id: number;
+	postTime: string;
+	title: string;
+	status: string | null;
+	username: string;
+	subjectCode: string;
+	test: boolean;
+	content: string;
+	filenames: string[];
 }
 
 interface ImageItem {
-  src: string;
-  title: string;
-  description: string | null;
+	src: string;
+	title: string;
+	description: string | null;
 }
 
-interface LearningMaterialDetailProps {
-	id?: number; // Thêm prop id tùy chọn
-}
-
-const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({id,}) => {
-	const { id: paramId } = useParams<{ id: string }>();
-	const effectiveId = id || paramId; // Sử dụng id từ props nếu có, nếu không thì lấy từ useParams
+const LearningMaterialDetail: React.FC = () => {
+	const { id } = useParams<{ id: string }>();
 
 	const [post, setPost] = useState<Post | null>(null);
 	const [fileUrls, setFileUrls] = useState<{ [key: string]: string }>({});
@@ -71,7 +67,7 @@ const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({id,}) =>
 		const fetchPost = async () => {
 			try {
 				const response: AxiosResponse<Post> = await axios.get(
-					`http://localhost:8080/api/v1/learningMaterial/getById?id=${effectiveId}`
+					`${BASE_URL}/api/v1/learningMaterial/getById?id=${id}`
 				);
 				setPost(response.data);
 			} catch (error) {
@@ -80,7 +76,7 @@ const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({id,}) =>
 		};
 
 		fetchPost();
-	}, [effectiveId]);
+	}, [id]);
 
 	useEffect(() => {
 		const fetchFileLinks = async () => {
@@ -88,7 +84,7 @@ const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({id,}) =>
 				const urls: { [key: string]: string } = {};
 				for (const file of post.filenames) {
 					const response = await fetch(
-						`http://localhost:8080/api/v1/learningMaterial/getFile?id=${effectiveId}&filename=${file}`
+						`${BASE_URL}/api/v1/learningMaterial/getFile?id=${id}&filename=${file}`
 					);
 					const blob = await response.blob();
 					const url = window.URL.createObjectURL(blob);
@@ -99,7 +95,7 @@ const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({id,}) =>
 		};
 
 		fetchFileLinks();
-	}, [post, effectiveId]);
+	}, [post, id]);
 
 	if (!post) {
 		return <div>Loading...</div>;
@@ -149,7 +145,7 @@ const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({id,}) =>
 
 	const fetchFileLink = async (filename: string): Promise<string> => {
 		const response = await fetch(
-			`http://localhost:8080/api/v1/learningMaterial/getFile?id=${effectiveId}&filename=${filename}`
+			`${BASE_URL}/api/v1/learningMaterial/getFile?id=${id}&filename=${filename}`
 		);
 		const file = await response.blob();
 
@@ -184,68 +180,68 @@ const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({id,}) =>
 
 	return (
 		<Center>
-			<Container size={"xl"} mt={"xl"}>
-				<Card withBorder shadow="sm" padding="xl">
-					<CardSection>
-						<Title order={2} ta={"center"} component="div" mb={2} p={"md"}>
-							{post.title}
-						</Title>
-					</CardSection>
-					<Divider size="xs" />
-					<Group justify="space-between">
-						<Text fw={700} size="lg">
-							{post.username}
-						</Text>
-						<Text c="dimmed" p={"md"}>
-							{format(new Date(post.postTime), "dd/MM/yyyy HH:mm")}
-						</Text>
-					</Group>
-					<CardSection>
-						<Box w={600}>
-							<TypographyStylesProvider fw={400} fs="lg" mt="md" p={"lg"} m="20">
-								<ReactQuill
-									value={post.content}
-									readOnly={true}
-									theme="bubble"
-								/>
-							</TypographyStylesProvider>
+			<Card
+				withBorder
+				shadow="sm"
+				padding="xl"
+				mt={"xl"}
+				style={{ width: "100%" }}
+			>
+				<CardSection>
+					<Title order={2} ta={"center"} component="div" mb={2} p={"md"}>
+						{post.title}
+					</Title>
+				</CardSection>
+				<Divider size="xs" />
+				<Group justify="space-between">
+					<Text fw={700} size="lg">
+						{post.username}
+					</Text>
+					<Text c="dimmed" p={"md"}>
+						{format(new Date(post.postTime), "dd/MM/yyyy HH:mm")}
+					</Text>
+				</Group>
 
+				<CardSection>
+					<Text fw={400} size="lg" p={"lg"} m="20">
+						<ReactQuill value={post.content} readOnly={true} theme="bubble" />
+					</Text>
+					{post.filenames.length > 0 && (
+						<>
 							<Divider my="sm" variant="dotted" />
-
-							<Group display="flex" justify="space-between" m={2}>
-								<Text size="l" fw={800} m="20">
-									Attachments
-								</Text>
-
-								<Button
-									onClick={() =>
-										handleDownloadMultipleFilesAsZip(post.filenames)
-									}
-									variant="light"
-									size="xs"
-								>
-									Download All
-								</Button>
-							</Group>
-
-							<div className="images-container">
-								{imageList.map((image, idx) => (
-									<div
-										key={idx}
-										className="image"
-										onClick={() => setIndex(idx)}
-									>
-										<img src={image.src} alt={image.title} />
-									</div>
-								))}
-							</div>
-
 							<Box m="20">
+								<Group display="flex" justify="space-between" m={2}>
+									<Text size="l" fw={800} m="20">
+										Attachments
+									</Text>
+
+									<Button
+										onClick={() =>
+											handleDownloadMultipleFilesAsZip(post.filenames)
+										}
+										variant="light"
+										size="xs"
+									>
+										Download All
+									</Button>
+								</Group>
+								<div className="images-container">
+									{imageList.map((image, idx) => (
+										<div
+											key={idx}
+											className="image"
+											onClick={() => setIndex(idx)}
+										>
+											<img src={image.src} alt={image.title} />
+										</div>
+									))}
+								</div>
+
 								<List>
 									{fileList.map((file, index) => (
 										<ListItem key={index} mb="xs">
 											<Button
-												leftSection={<IconFile size={14} />} // leftSection thành leftIcon trong Chakra UI
+												leftSection={<IconFile size={14} />}
 												onClick={() => handleDownloadOldFile(file)}
 											>
 												{file}
@@ -253,45 +249,25 @@ const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({id,}) =>
 										</ListItem>
 									))}
 								</List>
+								<Lightbox
+									plugins={[Captions, Download, Fullscreen, Zoom, Thumbnails]}
+									captions={{
+										showToggle: true,
+										descriptionTextAlign: "end",
+									}}
+									index={index}
+									open={index >= 0}
+									close={() => setIndex(-1)}
+									slides={imageList}
+								/>
 							</Box>
-
-							<Lightbox
-								plugins={[Captions, Download, Fullscreen, Zoom, Thumbnails]}
-								captions={{
-									showToggle: true,
-									descriptionTextAlign: "end",
-								}}
-								index={index}
-								open={index >= 0}
-								close={() => setIndex(-1)}
-								slides={imageList}
-							/>
-						</Box>
-					</CardSection>
-					<Divider my="sm" variant="dotted" />
-
-					<Group justify="space-between">
-						{post.test ? (
-							<Badge color="indigo">Mock Test</Badge>
-						) : (
-							<Badge color="pink">Learning material</Badge>
-						)}
-
-						<Box>
-							<Text variant="body2" ml={1}>
-								Love
-							</Text>
-							<Text variant="body2" ml={1}>
-								Comment
-							</Text>
-							<Text variant="body2" ml={1}>
-								Share
-							</Text>
-						</Box>
-					</Group>
-					<Text mt="xs" c="dimmed" size="sm"></Text>
-				</Card>
-			</Container>
+						</>
+					)}
+				</CardSection>
+				<Divider my="sm" variant="dotted" />
+				<Badge color="pink">Learning material</Badge>
+				<Text mt="xs" c="dimmed" size="sm"></Text>
+			</Card>
 		</Center>
 	);
 };
