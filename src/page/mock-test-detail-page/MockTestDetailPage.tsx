@@ -1,4 +1,3 @@
-import { useSearchParams } from "react-router-dom";
 import QuestionDetail, {
   Question,
 } from "../../component/question/QuestionDetail";
@@ -23,7 +22,6 @@ import { IconArrowUp } from "@tabler/icons-react";
 import { format } from "date-fns";
 import QuizIcon from "@mui/icons-material/Quiz";
 import { isLoggedIn } from "../../util/loader/Auth";
-import LearningMaterialDetail from "../../component/learning-material/LearningMaterialDetail";
 import CustomizeTestModal from "../../component/test-modals/CustomizeTestModal";
 
 export default function MockTestDetailPage(post: any) {

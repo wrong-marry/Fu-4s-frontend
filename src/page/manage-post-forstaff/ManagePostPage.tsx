@@ -3,6 +3,8 @@ import { IconMessageCircle, IconNotes,IconSettings } from "@tabler/icons-react";
 import "@mantine/charts/styles.css";
 import TablePostStaff from "../../component/staff-post/post-manage/TablePostStaff.tsx";
 import DashboardSectionStaff from "../../component/staff-post/post-manage/DashboardSectionStaff.tsx";
+import PostPage1 from "../../component/staff-post/post-manage/PendingPost.tsx";
+import { useState } from "react";
 
 export default function ManagePostForStaff() {
 	// Sử dụng useMediaQuery để xác định kích thước màn hình
@@ -13,7 +15,7 @@ export default function ManagePostForStaff() {
 		height: rem(30),
 		color: "rgb(34, 139, 230)", // Set the color of the icons to light blue
 	};
-	
+	 const [flag, setFlag] = useState(false);
 
 	return (
 		<>
@@ -44,31 +46,17 @@ export default function ManagePostForStaff() {
 							>
 								Posts Manage
 							</Tabs.Tab>
-							<Tabs.Tab
-								value="Comments Manage"
-								leftSection={<IconMessageCircle style={iconStyle} />}
-								style={{ color: "rgb(34, 139, 230)" }}
-							>
-								Comments Manage
-							</Tabs.Tab>
-							<Tabs.Tab
-								value="settings"
-								leftSection={<IconSettings style={iconStyle} />}
-								style={{ color: "rgb(34, 139, 230)" }}
-							>
-								Settings
-							</Tabs.Tab>
 						</Tabs.List>
 					</Grid.Col>
 					<Grid.Col span={9}>
 						<Tabs.Panel value="Posts Manage">
-							<DashboardSectionStaff />
-							<TablePostStaff />
+							<DashboardSectionStaff flag={flag} setFlag={setFlag} />
+							<br />
+							<br />
+							<PostPage1 flag={flag} setFlag={setFlag} />
+							<br />
+							<TablePostStaff flag={flag} setFlag={setFlag} />
 						</Tabs.Panel>
-
-						<Tabs.Panel value="Comments Manage">dgugf</Tabs.Panel>
-
-						<Tabs.Panel value="settings">Settings tab content</Tabs.Panel>
 					</Grid.Col>
 				</Tabs>
 			</Grid>

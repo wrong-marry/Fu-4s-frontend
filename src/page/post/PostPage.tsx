@@ -5,10 +5,8 @@ import { Text, Container, Title, Space, Textarea, Button, Anchor } from "@mantin
 import { Comment } from "../../component/comment/CommentTag";
 import { useParams } from "react-router-dom";
 import MockTestDetailPage from "../mock-test-detail-page/MockTestDetailPage";
-import MockTestDetail from "../../component/mock-test/MockTestDetail";
 import { forEach } from "lodash";
 import { useForm } from "@mantine/form";
-import { format } from "date-fns";
 import LearningMaterialDetail from "../../component/user-post/learning-material/LearningMaterialDetail";
 
 export interface Post {
@@ -20,6 +18,7 @@ export interface Post {
   subjectCode: string;
   test: boolean;
 }
+
 
 export interface CommentData {
   id: number;
@@ -86,16 +85,16 @@ const PostPage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    fetchPost().then(
-      () => console.log(post)
-    ).finally(() => {
-      if (!post) {
-        throw Error("Post not found.");
-      }
-    });
-    fetchComments().catch();
-  }, [id]);
+ useEffect(() => {
+		(async () => {
+			await fetchPost();
+			console.log(post);
+			if (!post) {
+				throw Error("Post not found.");
+			}
+		})();
+		fetchComments().catch();
+ }, [id]);
 
   function updateCommentWithId(id: number, content: string) {
     setComments(

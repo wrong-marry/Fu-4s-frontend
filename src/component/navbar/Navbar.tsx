@@ -301,6 +301,7 @@ export interface LoaderData {
 	lastName?: string;
 	email: string;
 	role: string;
+    status: string;
 }
 
 function Navbar() {

@@ -16,26 +16,16 @@ interface DisableModalProps {
 	onConfirm: () => void;
 }
 
-const ModalConfirm: React.FC<DisableModalProps> = ({
+const ModalDelete: React.FC<DisableModalProps> = ({
 	opened,
 	onClose,
 	onConfirm,
 }) => {
-	
 	return (
-		<Modal
-			opened={opened}
-			onClose={onClose}
-			title={`Confirm Pending Status`}
-		>
-			<Text>
-				Are you sure to update status for this post?
-			</Text>
+		<Modal opened={opened} onClose={onClose} title={`Confirm Pending Status`}>
+			<Text>Are you sure to update status for this post?</Text>
 			<Center mt={"lg"}>
-				<Button
-					color="yellow" 
-					onClick={onConfirm}
-				>
+				<Button color="yellow" onClick={onConfirm}>
 					UPDATE
 				</Button>
 				<Button ml="sm" onClick={onClose}>
@@ -46,4 +36,4 @@ const ModalConfirm: React.FC<DisableModalProps> = ({
 	);
 };
 
-export default ModalConfirm;
+export default ModalDelete;
