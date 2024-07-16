@@ -186,7 +186,7 @@ export function StatsGrid() {
 		};
 		fetchNumOfUser();
 	}, []);
-
+  
 	const stats = data1.map((stat) => {
 		const Icon = stat.icon;
 		const DiffIcon = stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight;
