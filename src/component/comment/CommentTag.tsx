@@ -22,6 +22,7 @@ import {useForm} from "@mantine/form";
 import {useDisclosure} from "@mantine/hooks";
 import {CommentButtonSwitch} from "../comment-button-switch/CommentButtonSwitch.tsx";
 import {IconMessageReply} from "@tabler/icons-react";
+import {BASE_URL} from "../../common/constant.tsx";
 
 interface CommentTagData extends CommentData {
     updateFunction: (id: number, content: string) => void;
@@ -70,7 +71,7 @@ export const Comment = (props: CommentTagData) => {
     }
 
     function getChildren() {
-        const response = axios.get(`http://localhost:8080/api/v1/comments/children/comment-${id}`);
+        const response = axios.get(`${BASE_URL}/api/v1/comments/children/comment-${id}`);
         response.then(data => {
             setChildren([...data.data] as CommentData[]);
         }).catch(error => console.log(error))
@@ -108,7 +109,7 @@ export const Comment = (props: CommentTagData) => {
                             ["STAFF", "ADMIN"].includes((localStorage.getItem("role") + "")) &&
                             <Anchor fz={"sm"} mx={"sm"}
                                     onClick={() => {
-                                        const response = axios.put(`http://localhost:8080/api/v1/comments/status/${id}`,
+                                        const response = axios.put(`${BASE_URL}/api/v1/comments/status/${id}`,
                                             {
                                                 headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
                                             }
@@ -128,7 +129,7 @@ export const Comment = (props: CommentTagData) => {
     const deleteComment = async (id: number) => {
         try {
             const response = await axios.delete(
-                "http://localhost:8080/api/v1/comments/" + id,
+                `${BASE_URL}/api/v1/comments/` + id,
                 {
                     headers: {
                         "Authorization": "Bearer " + localStorage.getItem("token")
@@ -191,7 +192,7 @@ export const Comment = (props: CommentTagData) => {
                     <CardSection inheritPadding py="xs" pt={0}>
                         <form onSubmit={form.onSubmit((values) => {
                             axios.put(
-                                `http://localhost:8080/api/v1/comments/update/${id}`,
+                                `${BASE_URL}/api/v1/comments/update/${id}`,
                                 values,
                                 {
                                     headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
@@ -204,7 +205,6 @@ export const Comment = (props: CommentTagData) => {
                                         form.setFieldValue("content", values.content);
                                         form.setInitialValues({"content": values.content});
                                         setContentStack(defaultContentStack(values.content));
-                                        props.content = values.content;
                                         props.updateFunction(id, values.content);
                                     }
                                 })
@@ -274,7 +274,7 @@ export const Comment = (props: CommentTagData) => {
                             console.log(values);
                             try {
                                 const response: AxiosResponse<{ message: string, id: number }> = await axios.post(
-                                    `http://localhost:8080/api/v1/comments/upload/comment-${id}`,
+                                    `${BASE_URL}/api/v1/comments/upload/comment-${id}`,
                                     values,
                                     {
                                         headers: {

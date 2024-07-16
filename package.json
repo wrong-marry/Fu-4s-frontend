@@ -1,5 +1,6 @@
 {
   "name": "frontend-public",
+  "homepage": "",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -93,5 +94,8 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.8"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.9.5"
   }
 }

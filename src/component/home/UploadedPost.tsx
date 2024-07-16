@@ -1,11 +1,12 @@
-import { Carousel } from "@mantine/carousel";
+import {Carousel} from "@mantine/carousel";
 import {Card, Text, Badge, Group, Stack, Avatar, Flex, ActionIcon} from "@mantine/core";
 import axios from "axios";
 import React, {useEffect, useState} from "react";
 import classes from "./Carousel.module.css";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {Post} from "./RecentPost"
 import {IconDots} from "@tabler/icons-react";
+import {BASE_URL} from "../../common/constant.tsx";
 
 function UploadedPost() {
 
@@ -14,7 +15,7 @@ function UploadedPost() {
     const username = localStorage.getItem("username");
     useEffect(() => {
         axios
-            .get(`http://localhost:8080/api/v1/post/getAllByUsername?username=${username}&pageSize=6&pageNum=1`)
+            .get(`${BASE_URL}/api/v1/post/getAllByUsername?username=${username}&pageSize=6&pageNum=1`)
             .then((res) => {
                 const sortedList =
                     res && res.data
@@ -39,7 +40,7 @@ function UploadedPost() {
 
     function fetchMore(pageNum: number) {
         axios
-            .get(`http://localhost:8080/api/v1/post/getAllByUsername?username=${username}&pageSize=6&pageNum=${pageNum}`)
+            .get(`${BASE_URL}/api/v1/post/getAllByUsername?username=${username}&pageSize=6&pageNum=${pageNum}`)
             .then((res) => {
                 const sortedList =
                     res && res.data
@@ -61,6 +62,7 @@ function UploadedPost() {
                 // Handle error gracefully, e.g., display an error message to the user
             });
     }
+
     return (
         <>
             {uploadedPost.length === 0 ? (

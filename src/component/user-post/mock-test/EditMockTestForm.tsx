@@ -6,6 +6,7 @@ import {useEffect, useState} from "react";
 import * as XLSX from 'xlsx'
 import {useNavigate, useParams} from "react-router-dom";
 import {useDisclosure} from "@mantine/hooks";
+import {BASE_URL} from "../../../common/constant.tsx";
 
 interface MockTest {
     id: string;
@@ -76,7 +77,7 @@ export function EditMockTestForm() {
         const worksheet = workbook.Sheets[sheetName];
 
         const json: row[] = XLSX.utils.sheet_to_json(worksheet);
-        if(json.length == 0) {
+        if (json.length == 0) {
             setError("Invalid file! Must have at least 1 question!");
             return;
         }
@@ -86,7 +87,7 @@ export function EditMockTestForm() {
     useEffect(() => {
         const fetchSubject = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/v1/subject/getAll`);
+                const response = await fetch(`${BASE_URL}/api/v1/subject/getAll`);
                 const data = await response.json();
                 //console.log(data);
                 setList(data);
@@ -97,7 +98,7 @@ export function EditMockTestForm() {
 
         const fetchMockTest = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/v1/questionSet/getById?id=` + id);
+                const response = await fetch(`${BASE_URL}/api/v1/questionSet/getById?id=` + id);
                 const data = await response.json();
                 setTest(data);
                 setSubject(data.subjectCode);
@@ -124,8 +125,8 @@ export function EditMockTestForm() {
     }, [file])
 
     const dataSubject = subjectList.map((subject) => ({
-            value: subject.code, label: subject.code + " - " + subject.name + " - Semester: " + subject.semester,
-        }));
+        value: subject.code, label: subject.code + " - " + subject.name + " - Semester: " + subject.semester,
+    }));
 
     const handleEditBtn = () => {
         if (file == null || !isExcelFile(file) || title == "" || subject == "") {
@@ -142,12 +143,12 @@ export function EditMockTestForm() {
         for (var row of fileData) {
             let answers: Answer[] = [];
 
-            if(parseInt(row.correct) > 4 || parseInt(row.correct) < 1) {
+            if (parseInt(row.correct) > 4 || parseInt(row.correct) < 1) {
                 setError("Invalid file format! Please read the instruction!");
                 return;
             }
 
-            if(!row.answer1) {
+            if (!row.answer1) {
                 console.log(row.answer1);
                 setError("Invalid file format! Please read the instruction!");
                 return;
@@ -157,7 +158,7 @@ export function EditMockTestForm() {
             };
             answers.push(answer);
 
-            if(!row.answer2) {
+            if (!row.answer2) {
                 setError("Invalid file format! Please read the instruction!");
                 return;
             }
@@ -166,7 +167,7 @@ export function EditMockTestForm() {
             };
             answers.push(answer);
 
-            if(!row.answer3) {
+            if (!row.answer3) {
                 setError("Invalid file format! Please read the instruction!");
                 return;
             }
@@ -175,7 +176,7 @@ export function EditMockTestForm() {
             };
             answers.push(answer);
 
-            if(!row.answer4) {
+            if (!row.answer4) {
                 setError("Invalid file format! Please read the instruction!");
                 return;
             }
@@ -184,7 +185,7 @@ export function EditMockTestForm() {
             };
             answers.push(answer);
 
-            if(!row.content) {
+            if (!row.content) {
                 console.log(1);
                 setError("Invalid file format! Please read the instruction!");
                 return;
@@ -196,7 +197,7 @@ export function EditMockTestForm() {
             questions.push(question);
         }
 
-        fetch(`http://localhost:8080/api/v1/questionSet/edit?id=${id}&title=${title}&subjectCode=${subject}&username=${localStorage.getItem('username')}`, {
+        fetch(`${BASE_URL}/api/v1/questionSet/edit?id=${id}&title=${title}&subjectCode=${subject}&username=${localStorage.getItem('username')}`, {
             method: "PUT", body: JSON.stringify(questions), headers: {
                 'Content-Type': 'application/json', //'Authorization': 'Bearer ' + localStorage.getItem('token')
             }
@@ -253,7 +254,7 @@ export function EditMockTestForm() {
     }
 
     const handleRemove = () => {
-        fetch(`http://localhost:8080/api/v1/questionSet/remove?id=${id}&username=${localStorage.getItem('username')}`, {
+        fetch(`${BASE_URL}/api/v1/questionSet/remove?id=${id}&username=${localStorage.getItem('username')}`, {
             method: "DELETE"
         }).then(() => {
             navigate(`/user/post/mock-test`);
@@ -263,19 +264,21 @@ export function EditMockTestForm() {
     return <>
         <Modal opened={opened} onClose={close} title="Import instruction">
             <Text size="sm">
-                <Divider my="md" />
+                <Divider my="md"/>
                 The system only accept excel (.xlsx) files. File must <b>strictly</b> be in the following format:
                 <Space h="sm"></Space>
                 <img src="/src/asset/excelFileFormat.png" alt=""/>
                 <Space h="sm"></Space>
                 <Space h="sm"></Space>
-                <b>Strictly</b> means it must in the <b>exact</b> same format with the picture (the same column name and no extra columns).
+                <b>Strictly</b> means it must in the <b>exact</b> same format with the picture (the same column name and
+                no extra columns).
                 <Space h="sm"></Space>
 
-                Please <Text td="underline" color="blue" component="button" type="button" onClick={downloadTemplate}>download the template</Text> for easier use.
+                Please <Text td="underline" color="blue" component="button" type="button" onClick={downloadTemplate}>download
+                the template</Text> for easier use.
                 <Space h="sm"></Space>
                 <Space h="sm"></Space>
-                <Divider my="md" />
+                <Divider my="md"/>
                 <b>Example:</b>
                 <Space h="sm"></Space>
 
@@ -293,7 +296,7 @@ export function EditMockTestForm() {
             <Text size="md">
                 Are you sure you want to remove this question? The action cannot be undone
             </Text>
-            <Grid >
+            <Grid>
                 <Grid.Col span={3} offset={5}>
                     <Center>
                         <Button variant="default" onClick={() => setRemovePopup(false)} mt="sm">
@@ -316,7 +319,7 @@ export function EditMockTestForm() {
             <Text size="md">
                 Are you sure you want to edit this question? The action cannot be undone
             </Text>
-            <Grid >
+            <Grid>
                 <Grid.Col span={3} offset={5}>
                     <Center>
                         <Button variant="default" onClick={() => setEditPopup(false)} mt="sm">
@@ -398,7 +401,8 @@ export function EditMockTestForm() {
 
                             <Grid>
                                 <Grid.Col span={4}>
-                                    <Button color="black" variant="outline" onClick={() => navigate("/user/post/mock-test")} mt="md">
+                                    <Button color="black" variant="outline"
+                                            onClick={() => navigate("/user/post/mock-test")} mt="md">
                                         Back
                                     </Button>
                                 </Grid.Col>
