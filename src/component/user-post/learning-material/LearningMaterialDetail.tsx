@@ -210,9 +210,9 @@ const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({
 				</Group>
 
 				<CardSection>
-					<Text fw={400} size="lg" p={"lg"} m="20">
+					<TypographyStylesProvider fw={400} fs="lg" p={"lg"} m="20">
 						<ReactQuill value={post.content} readOnly={true} theme="bubble" />
-					</Text>
+					</TypographyStylesProvider>
 					{post.filenames.length > 0 && (
 						<>
 							<Divider my="sm" variant="dotted" />
