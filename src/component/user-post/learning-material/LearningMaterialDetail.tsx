@@ -4,18 +4,21 @@ import { IconFile } from "@tabler/icons-react";
 import JSZip from "jszip";
 
 import {
-	Text,
-	Group,
-	Badge,
-	Box,
-	Card,
-	CardSection,
-	Divider,
-	Center,
-	Title,
-	List,
-	ListItem,
-	Button,
+  Image,
+  Text,
+  Group,
+  Badge,
+  Box,
+  Card,
+  CardSection,
+  Divider,
+  Center,
+  Container,
+  Title,
+  List,
+  ListItem,
+  Button,
+  TypographyStylesProvider,
 } from "@mantine/core";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -53,8 +56,15 @@ interface ImageItem {
 	description: string | null;
 }
 
-const LearningMaterialDetail: React.FC = () => {
-	const { id } = useParams<{ id: string }>();
+interface LearningMaterialDetailProps {
+	id?: number; // Thêm prop id tùy chọn
+}
+
+const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({
+	id,
+}) => {
+	const { id: paramId } = useParams<{ id: string }>();
+	const effectiveId = id || paramId; // Sử dụng id từ props nếu có, nếu không thì lấy từ useParams
 
 	const [post, setPost] = useState<Post | null>(null);
 	const [fileUrls, setFileUrls] = useState<{ [key: string]: string }>({});
@@ -64,7 +74,7 @@ const LearningMaterialDetail: React.FC = () => {
 		const fetchPost = async () => {
 			try {
 				const response: AxiosResponse<Post> = await axios.get(
-					`${BASE_URL}/api/v1/learningMaterial/getById?id=${id}`
+					`${BASE_URL}/api/v1/learningMaterial/getById?id=${effectiveId}`
 				);
 				setPost(response.data);
 			} catch (error) {
@@ -73,7 +83,7 @@ const LearningMaterialDetail: React.FC = () => {
 		};
 
 		fetchPost();
-	}, [id]);
+	}, [effectiveId]);
 
 	useEffect(() => {
 		const fetchFileLinks = async () => {
@@ -81,7 +91,7 @@ const LearningMaterialDetail: React.FC = () => {
 				const urls: { [key: string]: string } = {};
 				for (const file of post.filenames) {
 					const response = await fetch(
-						`${BASE_URL}/api/v1/learningMaterial/getFile?id=${id}&filename=${file}`
+						`${BASE_URL}/api/v1/learningMaterial/getFile?id=${effectiveId}&filename=${file}`
 					);
 					const blob = await response.blob();
 					const url = window.URL.createObjectURL(blob);
@@ -92,7 +102,7 @@ const LearningMaterialDetail: React.FC = () => {
 		};
 
 		fetchFileLinks();
-	}, [post, id]);
+	}, [post, effectiveId]);
 
 	if (!post) {
 		return <div>Loading...</div>;
@@ -142,7 +152,7 @@ const LearningMaterialDetail: React.FC = () => {
 
 	const fetchFileLink = async (filename: string): Promise<string> => {
 		const response = await fetch(
-			`${BASE_URL}/api/v1/learningMaterial/getFile?id=${id}&filename=${filename}`
+			`${BASE_URL}/api/v1/learningMaterial/getFile?id=${effectiveId}&filename=${filename}`
 		);
 		const file = await response.blob();
 

@@ -36,6 +36,7 @@ export interface Post {
 	test: boolean;
 }
 
+
 export interface CommentData {
 	id: number;
 	date: Date;

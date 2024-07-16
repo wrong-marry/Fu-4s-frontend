@@ -35,7 +35,6 @@ import { UserMockTestPage } from "./page/user-post/mock-test/UserMockTestPage.ts
 import ManageSubjectPage from "./page/manage-subject/ManageSubjectPage.tsx";
 import TakingTestPage from "./page/mock-test-detail-page/TakingTestPage.tsx";
 
-import Calendar from "./component/manageUser/calendar/calendar.tsx";
 
 import CreateMockTestPage from "./page/user-post/mock-test/CreateMockTestPage.tsx";
 import EditMockTestPage from "./page/user-post/mock-test/EditMockTestPage.tsx";
@@ -46,6 +45,8 @@ import TestResultPage from "./page/test-result/TestResultPage.tsx";
 import { AddLearningMaterialPage } from "./page/user-post/learning-material/AddLearningMaterialPage.tsx";
 import { EditLearningMaterialPage } from "./page/user-post/learning-material/EditLearningMaterialPage.tsx";
 import LoginPage from "./page/authentication/LoginPage.tsx";
+import { BannedPage } from "./page/banned/banned.tsx";
+
 import PostsListBySubject from "./page/list/PostListBySubject.tsx";
 import SubjectsListBySemester from "./page/list/SubjectsListBySemester.tsx";
 
@@ -286,18 +287,6 @@ const router = createBrowserRouter([
 							</Suspense>
 						),
 					},
-					{
-						path: "calendar",
-						loader: async () => {
-							if (!isLoggedIn()) return redirect("/forbidden");
-							else return "";
-						},
-						element: (
-							<Suspense fallback={loadingIndicator}>
-								<Calendar />
-							</Suspense>
-						),
-					},
 				],
 			},
 			{
@@ -386,6 +375,14 @@ const router = createBrowserRouter([
 				element: (
 					<Suspense fallback={loadingIndicator}>
 						<ForbiddenPage />
+					</Suspense>
+				),
+			},
+			{
+				path: "/banned",
+				element: (
+					<Suspense fallback={loadingIndicator}>
+						<BannedPage />
 					</Suspense>
 				),
 			},
