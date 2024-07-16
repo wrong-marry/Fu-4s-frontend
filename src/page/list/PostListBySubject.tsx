@@ -3,6 +3,7 @@ import { Center, Title, Anchor } from "@mantine/core";
 import PostTypeTab from "../../component/subject-posting/PostTypeTab";
 import { useParams, useNavigate } from "react-router-dom";
 import { IconChevronsRight } from "@tabler/icons-react";
+import { BASE_URL } from "../../common/constant";
 export interface Subject {
 	code: string;
 	name: string;
@@ -20,7 +21,6 @@ const PostsListBySubject: React.FC = () => {
 			try {
 				const response = await fetch(`${BASE_URL}/api/v1/subject/${code}`);
 				if (!response.ok) {
-					// Nếu phản hồi không OK, điều hướng tới trang 404
 					navigate("/404");
 					return;
 				}
@@ -52,7 +52,7 @@ const PostsListBySubject: React.FC = () => {
 				</Anchor>
 			</Center>
 			<Title order={1} m="20">
-				{(subject?.code ?? "") + " " + (subject?.name ?? "")}
+				{(subject?.code ?? "") + " - " + (subject?.name ?? "")}
 			</Title>
 			<div>{code && <PostTypeTab subject={code} key={code} />}</div>
 		</Center>
