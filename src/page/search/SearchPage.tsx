@@ -20,6 +20,7 @@ import {DateInput} from "@mantine/dates";
 import {useForm} from "@mantine/form";
 import dayjs from 'dayjs';
 import {Subject} from '../../component/manage-subject/TableSubject';
+import {BASE_URL} from "../../common/constant.tsx";
 
 const SearchDrawer = (props: {
     searchRequest: SearchRequest,
@@ -48,14 +49,8 @@ const SearchDrawer = (props: {
     useEffect(() => {
         async function fetchData() {
             try {
-                const token = localStorage.getItem("token");
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/subject/getAll`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
+                    `${BASE_URL}/api/v1/subject/getAll`,
                 );
 
                 if (!response.ok) {
@@ -233,13 +228,14 @@ export enum SearchOrder {
 
 export async function advancedSearch(searchRequest: SearchRequest) {
     try {
-        let api = `http://localhost:8080/api/v1/search?pageSize=` + POST_PAGE_SIZE;
+        let api = `${BASE_URL}/api/v1/search?pageSize=` + POST_PAGE_SIZE;
         if (searchRequest.username) api += `&username=${searchRequest.username}`;
         if (searchRequest.title) api += `&keyword=${searchRequest.title}`;
         if (searchRequest.isTest != null) api += `&isTest=${searchRequest.isTest}`;
         if (searchRequest.subjectCode) api += `&subjectCode=${searchRequest.subjectCode}`;
         if (searchRequest.semester) api += `&semester=${searchRequest.semester}`;
         if (searchRequest.postTime) api += `&postTime=${dayjs(searchRequest.postTime).format('YYYY-MM-DDTHH:mm:ssZ[Z]')}`;
+        if (["STAFF", "ADMIN"].includes(localStorage.getItem("role") ?? "")) api += `&isStaff=true`;
         api += `&order=${searchRequest.order}`;
 
         api += `&page=${searchRequest.currentPage}`;

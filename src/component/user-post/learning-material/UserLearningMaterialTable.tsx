@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {Center, Pagination} from "@mantine/core";
+import {BASE_URL} from "../../../common/constant.tsx";
 
 interface Post {
     id: string;
@@ -23,7 +24,7 @@ export function UserLearningMaterialTable() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/learningMaterial/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
+                    `${BASE_URL}/api/v1/learningMaterial/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
                 );
                 const data = await response.json();
                 setPost(data)
@@ -36,7 +37,7 @@ export function UserLearningMaterialTable() {
             // ${localStorage.getItem('username')}
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/learningMaterial/getNum?username=${username}`
+                    `${BASE_URL}/api/v1/learningMaterial/getNum?username=${username}`
                 );
                 const data = await response.json();
                 setNumPage((data + 1) / pageSize)
@@ -94,7 +95,7 @@ export function UserLearningMaterialTable() {
     return <>
         <section className="py-8">
             <div className="container px-4 mx-auto">
-            <div className="pt-6 bg-white shadow rounded">
+                <div className="pt-6 bg-white shadow rounded">
                     <div className="px-6 border-b">
                         <div className="flex flex-wrap items-center mb-6">
                             <h3 className="text-xl font-bold">Your uploaded posts</h3>
@@ -180,7 +181,7 @@ export function UserLearningMaterialTable() {
                     </div>
                 </div>
                 <Center mt={"lg"}>
-                    <Pagination value={activePage} onChange={setPage} total={numPage} />
+                    <Pagination value={activePage} onChange={setPage} total={numPage}/>
                 </Center>
             </div>
         </section>

@@ -22,6 +22,7 @@ import {useForm} from "@mantine/form";
 import {useDisclosure} from "@mantine/hooks";
 import {CommentButtonSwitch} from "../comment-button-switch/CommentButtonSwitch.tsx";
 import {IconMessageReply} from "@tabler/icons-react";
+import {BASE_URL} from "../../common/constant.tsx";
 
 interface CommentTagData extends CommentData {
     updateFunction: (id: number, content: string) => void;
@@ -42,12 +43,15 @@ export const Comment = (props: CommentTagData) => {
     const [children, setChildren] = useState<CommentData[]>();
     useEffect(() => {
         setHideText(status == "ACTIVE" ? "Hide" : "Unhide");
-        console.log("Hide text set to: " + hideText);
     }, [status]);
 
     const [contentStack, setContentStack] = useState(
-        defaultContentStack(content)
+        defaultContentStack(content, hideText)
     );
+
+    useEffect(() => {
+        setContentStack(defaultContentStack(content, hideText));
+    }, [hideText]);
 
     useEffect(() => {
         form.setInitialValues({"content": content});
@@ -70,13 +74,25 @@ export const Comment = (props: CommentTagData) => {
     }
 
     function getChildren() {
-        const response = axios.get(`http://localhost:8080/api/v1/comments/children/comment-${id}`);
+        const response = axios.get(`${BASE_URL}/api/v1/comments/children/comment-${id}`);
         response.then(data => {
             setChildren([...data.data] as CommentData[]);
         }).catch(error => console.log(error))
     }
 
-    function defaultContentStack(newContent: string) {
+    function defaultContentStack(newContent: string, hideText: string) {
+        const updateStatus = async () => {
+            try {
+                const response = await axios.put(`${BASE_URL}/api/v1/comments/status/${id}`, {
+                    headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
+                });
+                if (response.status === 200) {
+                    setStatus(status => status === "ACTIVE" ? "HIDDEN" : "ACTIVE");
+                }
+            } catch (error) {
+                console.error("Error updating status:", error);
+            }
+        };
 
         return (<Stack gap={3}>
             <Card p={"sm"} withBorder radius={20} maw={"800"}>
@@ -107,17 +123,7 @@ export const Comment = (props: CommentTagData) => {
                         {
                             ["STAFF", "ADMIN"].includes((localStorage.getItem("role") + "")) &&
                             <Anchor fz={"sm"} mx={"sm"}
-                                    onClick={() => {
-                                        const response = axios.put(`http://localhost:8080/api/v1/comments/status/${id}`,
-                                            {
-                                                headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
-                                            }
-                                        );
-                                        response.then(value => {
-                                            if (value.status == 200) setStatus(status => (status == "ACTIVE") ? "HIDDEN" : "ACTIVE");
-                                            console.log(value.data.message);
-                                        })
-                                    }}
+                                    onClick={updateStatus}
                             >{hideText}</Anchor>
                         }
                     </>}
@@ -128,7 +134,7 @@ export const Comment = (props: CommentTagData) => {
     const deleteComment = async (id: number) => {
         try {
             const response = await axios.delete(
-                "http://localhost:8080/api/v1/comments/" + id,
+                `${BASE_URL}/api/v1/comments/` + id,
                 {
                     headers: {
                         "Authorization": "Bearer " + localStorage.getItem("token")
@@ -191,7 +197,7 @@ export const Comment = (props: CommentTagData) => {
                     <CardSection inheritPadding py="xs" pt={0}>
                         <form onSubmit={form.onSubmit((values) => {
                             axios.put(
-                                `http://localhost:8080/api/v1/comments/update/${id}`,
+                                `${BASE_URL}/api/v1/comments/update/${id}`,
                                 values,
                                 {
                                     headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
@@ -203,8 +209,7 @@ export const Comment = (props: CommentTagData) => {
                                         console.log("Updated, form value: " + values.content + ", new content: " + content);
                                         form.setFieldValue("content", values.content);
                                         form.setInitialValues({"content": values.content});
-                                        setContentStack(defaultContentStack(values.content));
-                                        props.content = values.content;
+                                        setContentStack(defaultContentStack(values.content, status));
                                         props.updateFunction(id, values.content);
                                     }
                                 })
@@ -222,7 +227,7 @@ export const Comment = (props: CommentTagData) => {
                             ></Textarea>
                             <Group justify={"flex-end"}>
                                 <Button size={"xs"} mb={"xs"} color={"gray"}
-                                        onClick={() => setContentStack(defaultContentStack(content))}>Cancel</Button>
+                                        onClick={() => setContentStack(defaultContentStack(content, status))}>Cancel</Button>
                                 <Button ms={"md"} size={"xs"} mb={"xs"} type={"submit"}>Save</Button>
                             </Group>
                         </form>
@@ -274,7 +279,7 @@ export const Comment = (props: CommentTagData) => {
                             console.log(values);
                             try {
                                 const response: AxiosResponse<{ message: string, id: number }> = await axios.post(
-                                    `http://localhost:8080/api/v1/comments/upload/comment-${id}`,
+                                    `${BASE_URL}/api/v1/comments/upload/comment-${id}`,
                                     values,
                                     {
                                         headers: {

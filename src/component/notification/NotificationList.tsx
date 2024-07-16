@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
-import { Tabs, rem } from "@mantine/core";
+import {useState, useEffect} from "react";
+import {toast} from "react-toastify";
+import {Tabs} from "@mantine/core";
 
 import {
 	ScrollArea,
@@ -17,9 +17,11 @@ import {
 	Menu,
 	ActionIcon,
 } from "@mantine/core";
-import { useNavigate } from "react-router-dom";
-import { Center, Pagination } from "@mantine/core";
-import { IconDots, IconTrash, IconNote } from "@tabler/icons-react";
+import {useNavigate} from "react-router-dom";
+import {Center, Pagination} from "@mantine/core";
+import {IconDots, IconTrash, IconNote} from "@tabler/icons-react";
+import {BASE_URL} from "../../common/constant.tsx";
+
 interface Notification {
 	id: string;
 	time: string;

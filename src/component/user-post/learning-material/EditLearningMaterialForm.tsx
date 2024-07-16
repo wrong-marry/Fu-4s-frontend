@@ -15,6 +15,7 @@ import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import {BASE_URL} from "../../../common/constant.tsx";
 
 interface Subject {
     code: string;
@@ -48,11 +49,11 @@ export function EditLearningMaterialForm() {
     const [error, setError] = useState<string>("");
     const [errorAll, setErrorAll] = useState<string>("");
 
-    useEffect(() =>{
+    useEffect(() => {
         const fetchSubject = async () => {
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/subject/getAll`
+                    `${BASE_URL}/api/v1/subject/getAll`
                 );
                 const data = await response.json();
                 setSubjectList(data);
@@ -64,7 +65,7 @@ export function EditLearningMaterialForm() {
         const fetchMaterial = async () => {
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/v1/learningMaterial/getById?id=${id}`
+                    `${BASE_URL}/api/v1/learningMaterial/getById?id=${id}`
                 );
                 const data = await response.json();
                 setMaterial(data);
@@ -82,14 +83,14 @@ export function EditLearningMaterialForm() {
 
     var toolbarOptions = [
         ['bold', 'italic', 'underline', 'strike'],
-        [{ 'header': 1 }, { 'header': 2 }],
-        [{ 'align': [] }],
-        [{ 'color': [] }],
+        [{'header': 1}, {'header': 2}],
+        [{'align': []}],
+        [{'color': []}],
         ['blockquote', 'code-block'],
-        [{ 'direction': 'rtl' }],
-        [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-        [{ 'indent': '-1'}, { 'indent': '+1' }],
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+        [{'direction': 'rtl'}],
+        [{'script': 'sub'}, {'script': 'super'}],      // superscript/subscript
+        [{'indent': '-1'}, {'indent': '+1'}],
+        [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}],
         ['clean'],
     ];
     const module = {
@@ -139,7 +140,7 @@ export function EditLearningMaterialForm() {
     }
 
     const handleDownloadOldFile = async (filename: string) => {
-        const response = await fetch(`http://localhost:8080/api/v1/learningMaterial/getFile?id=${id}&filename=${filename}`);
+        const response = await fetch(`${BASE_URL}/api/v1/learningMaterial/getFile?id=${id}&filename=${filename}`);
         const file = await response.blob();
 
         const url = window.URL.createObjectURL(
@@ -162,25 +163,24 @@ export function EditLearningMaterialForm() {
     const handleSetFiles = (fs: File[]) => {
         var check: boolean = false;
         fs.forEach(f => {
-            if(f.size > maxSize)
-            {
+            if (f.size > maxSize) {
                 setError("Files must be smaller than 2GB!");
                 check = true;
             }
         });
 
-        if(check) {
+        if (check) {
             setFiles(null);
             return;
         }
 
         setError("");
-        if(fs.length != 0) setFiles(fs);
+        if (fs.length != 0) setFiles(fs);
         else setFiles(null);
     }
 
     const handleRemove = () => {
-        fetch(`http://localhost:8080/api/v1/learningMaterial/remove?id=${id}&username=${localStorage.getItem('username')}`, {
+        fetch(`${BASE_URL}/api/v1/learningMaterial/remove?id=${id}&username=${localStorage.getItem('username')}`, {
             method: "DELETE"
         }).then(() => {
             navigate(`/user/post/learning-material`);
@@ -195,27 +195,31 @@ export function EditLearningMaterialForm() {
         )
     );
 
-    if(material == null) return;
+    if (material == null) return;
 
     let listData;
-    if(files != null) listData = files.length == 0 ? <ListItem><i>no files yet</i></ListItem> : files.map((file, index) => {
-                                        return <ListItem key={index} mb="xs">
-                                            <Text onClick={() => handleDownloadNewFile(file)} td="underline" color="blue" type="button" component="button">{file.name}</Text>
-                                        </ListItem>
+    if (files != null) listData = files.length == 0 ?
+        <ListItem><i>no files yet</i></ListItem> : files.map((file, index) => {
+            return <ListItem key={index} mb="xs">
+                <Text onClick={() => handleDownloadNewFile(file)} td="underline" color="blue" type="button"
+                      component="button">{file.name}</Text>
+            </ListItem>
 
-    })
-    else listData = material.filenames.length == 0 ? <ListItem><i>no files yet</i></ListItem> : material.filenames.map((file, index) => {
-        return <ListItem key={index} mb="xs">
-            <Text onClick={() => handleDownloadOldFile(file)} td="underline" color="blue" type="button" component="button">{file}</Text>
-        </ListItem>
+        })
+    else listData = material.filenames.length == 0 ?
+        <ListItem><i>no files yet</i></ListItem> : material.filenames.map((file, index) => {
+            return <ListItem key={index} mb="xs">
+                <Text onClick={() => handleDownloadOldFile(file)} td="underline" color="blue" type="button"
+                      component="button">{file}</Text>
+            </ListItem>
 
-    })
+        })
     return <>
         <Modal opened={removePopup} onClose={() => setRemovePopup(false)} title="Are you sure">
             <Text size="md">
                 Are you sure you want to remove this question? The action cannot be undone
             </Text>
-            <Grid >
+            <Grid>
                 <Grid.Col span={3} offset={5}>
                     <Center>
                         <Button variant="default" onClick={() => setRemovePopup(false)} mt="sm">
@@ -238,7 +242,7 @@ export function EditLearningMaterialForm() {
             <Text size="md">
                 Are you sure you want to edit this question? The action cannot be undone
             </Text>
-            <Grid >
+            <Grid>
                 <Grid.Col span={3} offset={5}>
                     <Center>
                         <Button variant="default" onClick={() => setEditPopup(false)} mt="sm">
@@ -301,7 +305,8 @@ export function EditLearningMaterialForm() {
                     <p className="m_fe47ce59 mantine-InputWrapper-description mantine-TextInput-description"
                        id="mantine-sjauq2siu-description">Your material content</p>
                     <Space h="xs"/>
-                    <ReactQuill defaultValue={content} modules={module} theme="snow" onChange={setContent} value={content} style={{height: "60vh"}}/>
+                    <ReactQuill defaultValue={content} modules={module} theme="snow" onChange={setContent}
+                                value={content} style={{height: "60vh"}}/>
 
                     <Space h="lg"/>
                     <Space h="md"/>
@@ -349,7 +354,8 @@ export function EditLearningMaterialForm() {
                     <Grid>
                         <Grid.Col span={2} offset={6}>
                             <Center>
-                                <Button variant="outline" color="black" onClick={() => navigate("/user/post/learning-material")} ml="lg">
+                                <Button variant="outline" color="black"
+                                        onClick={() => navigate("/user/post/learning-material")} ml="lg">
                                     Back
                                 </Button>
                             </Center>

@@ -6,30 +6,193 @@ import {
 	IconCoin,
 	IconArrowUpRight,
 	IconArrowDownRight,
+	Icon24Hours,
 } from "@tabler/icons-react";
 import classes from "./StatsGrid.module.css";
+import { useEffect, useState } from "react";
 
-const icons = {
-	user: IconUserPlus,
-	discount: IconDiscount2,
-	receipt: IconReceipt2,
-	coin: IconCoin,
-};
 
-const data = [
-	{ title: "Revenue", icon: "receipt", value: "13,456", diff: 34 },
-	{ title: "Profit", icon: "coin", value: "4,145", diff: -13 },
-	{ title: "Coupons usage", icon: "discount", value: "745", diff: 18 },
-	{ title: "New customers", icon: "user", value: "188", diff: -30 },
-	{ title: "New customers", icon: "user", value: "188", diff: -30 },
-	{ title: "New customers", icon: "user", value: "188", diff: -30 },
-	{ title: "New customers", icon: "user", value: "188", diff: -30 },
-	{ title: "New customers", icon: "user", value: "188", diff: -30 },
-] as const;
+const dataTemplate = [
+	{ title: "Web users", icon: IconUserPlus, value: 0, diff: 0 },
+	{ title: "Number of posts", icon: Icon24Hours, value: 0, diff: 0 },
+	{ title: "Learning materials", icon: IconCoin, value: 0, diff: 0 },
+	{ title: "Mock tests", icon: IconUserPlus, value: 0, diff: 0 },
+	{
+		title: "Total test participation",
+		icon: IconReceipt2,
+		value: 0,
+		diff: 0,
+	},
+	{ title: "Level of interaction", icon: IconDiscount2, value: 0, diff: 0 },
+];
 
 export function StatsGrid() {
-	const stats = data.map((stat) => {
-		const Icon = icons[stat.icon];
+	const [data1, setData1] = useState(dataTemplate);
+    const pageSize = 3;
+
+	useEffect(() => {
+		const fetchNumOfUser = async () => {
+			const token = localStorage.getItem("token");
+			try {
+				const response = await fetch(
+					`http://localhost:8080/api/v1/admin/getNumUser`,
+					{
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+					}
+				);
+                const responsePercent = await fetch(
+					`http://localhost:8080/api/v1/admin/compareNumberAccounts`,
+					{
+					headers: {
+					Authorization: `Bearer ${token}`,
+							},
+					}
+								);
+                const responseNumberPost = await fetch(
+	                `http://localhost:8080/api/v1/post/getAllPost?pageSize=${pageSize}`,
+	                {
+		            headers: {
+			        Authorization: `Bearer ${token}`,
+		                    },
+	                }
+                                    );
+                const responsePercentPost = await fetch(
+									`http://localhost:8080/api/v1/staff/compareNumberPosts`,
+									{
+										headers: {
+											Authorization: `Bearer ${token}`,
+										},
+									}
+								);
+                 const responseNumberTests = await fetch(
+										`http://localhost:8080/api/v1/search?pageSize=${pageSize}`,
+										{
+											headers: {
+												Authorization: `Bearer ${token}`,
+											},
+										}
+									);
+                const responseNumberNewTests = await fetch(
+									`http://localhost:8080/api/v1/staff/numberTestsNew`,
+									{
+										headers: {
+											Authorization: `Bearer ${token}`,
+										},
+									}
+								);
+                const responseNumberNewMaterials = await fetch(
+									`http://localhost:8080/api/v1/staff/numberMaterialsNew`,
+									{
+										headers: {
+											Authorization: `Bearer ${token}`,
+										},
+									}
+								);
+                const responseNumberComments = await fetch(
+									`http://localhost:8080/api/v1/admin/getNumComments`,
+									{
+										headers: {
+											Authorization: `Bearer ${token}`,
+										},
+									}
+								);
+                 const responseNumberTestResults = await fetch(
+										`http://localhost:8080/api/v1/admin/getNumTestResults`,
+										{
+											headers: {
+												Authorization: `Bearer ${token}`,
+											},
+										}
+									);
+                 const responsePercentComment = await fetch(
+										`http://localhost:8080/api/v1/admin/percentCommentsNew`,
+										{
+											headers: {
+												Authorization: `Bearer ${token}`,
+											},
+										}
+									);
+                 const responsePercentTestResult = await fetch(
+										`http://localhost:8080/api/v1/admin/percentTestResultsNew`,
+										{
+											headers: {
+												Authorization: `Bearer ${token}`,
+											},
+										}
+									);
+
+				const userData = await response.json();
+                const percent = await responsePercent.json();
+                const percentPost = await responsePercentPost.json();
+                const percentComment = await responsePercentComment.json();
+                const percentTestResult = await responsePercentTestResult.json();
+                const numberPost = await responseNumberPost.json();
+                const numberTests = await responseNumberTests.json();
+                const newTests = await responseNumberNewTests.json();
+                const newMaterials = await responseNumberNewMaterials.json();
+                const numberComments = await responseNumberComments.json();
+                const numberTestResults = await responseNumberTestResults.json();
+				setData1((prevData) => {
+					return prevData.map((stat) => {
+						if (stat.title === "Web users") {
+							return { ...stat, value: userData, diff: percent };
+						}
+                        if (stat.title === "Number of posts") {
+							return { ...stat, value: numberPost.total, diff: percentPost };
+						}
+                         if (stat.title === "Learning materials") {
+														return {
+															...stat,
+															value: numberTests.data.totalMaterial,
+															diff: parseFloat(
+																(
+																	(newMaterials * (1 / 100)) /
+																	numberTests.data.totalMaterial
+																).toFixed(3)
+															),
+														};
+													}
+                    if (stat.title === "Mock tests") {
+											return {
+												...stat,
+												value: numberTests.data.totalTest,
+												diff: parseFloat(
+													(
+														(newTests * (1 / 100)) /
+														numberTests.data.totalTest
+													).toFixed(3)
+												),
+											};
+										}
+                    if (stat.title === "Total test participation") {
+											return {
+												...stat,
+												value: numberTestResults,
+												diff: percentTestResult,
+											};
+										}
+                     if (stat.title === "Level of interaction") {
+												return {
+													...stat,
+													value: numberComments,
+													diff: percentComment,
+												};
+											}
+
+						return stat;
+					});
+				});
+			} catch (error) {
+				console.error("Error fetching number of users:", error);
+			}
+		};
+		fetchNumOfUser();
+	}, []);
+
+	const stats = data1.map((stat) => {
+		const Icon = stat.icon;
 		const DiffIcon = stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight;
 
 		return (
@@ -60,9 +223,10 @@ export function StatsGrid() {
 			</Paper>
 		);
 	});
+
 	return (
 		<div className={classes.root}>
-			<SimpleGrid cols={{ base: 1, xs: 2, md: 4 }}>{stats}</SimpleGrid>
+			<SimpleGrid cols={{ base: 1, xs: 2, md: 3 }}>{stats}</SimpleGrid>
 		</div>
 	);
 }

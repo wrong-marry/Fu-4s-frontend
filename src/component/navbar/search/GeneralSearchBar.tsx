@@ -14,6 +14,7 @@ import React, {useState} from "react";
 import {Link, useSearchParams} from "react-router-dom";
 import {ActionIcon, rem} from '@mantine/core';
 import {IconArrowRight} from '@tabler/icons-react';
+import {BASE_URL} from "../../../common/constant.tsx";
 
 interface MaterialResponseData {
     id: number;
@@ -45,7 +46,10 @@ interface Form {
 export const SEARCH_LOAD_SIZE = 4;
 const fetchSearchResultData = async (keywords: string) => {
     try {
-        const res = await axios.get(`http://localhost:8080/api/v1/search?keyword=${keywords}&pageSize=` + SEARCH_LOAD_SIZE);
+        let api = `${BASE_URL}/api/v1/search?keyword=${keywords}`;
+        if (["STAFF", "ADMIN"].includes(localStorage.getItem("role") ?? "")) api += `&isStaff=true`;
+        api += `&pageSize=${SEARCH_LOAD_SIZE}`;
+        const res = await axios.get(api);
         return res.data;
     } catch (error) {
         console.error(error)
