@@ -183,28 +183,12 @@ const PostPage1: React.FC<ComponentProps> = ({ flag, setFlag }) => {
 									<Text size="l" fw={800} m="20">
 										<span className="text-orange-500">Need censored :</span>
 									</Text>
-									<span>{post.title}</span>
+									
 								</div>
 							</Title>
 						</CardSection>
 						<Divider size="xs" />
-						<Group justify="space-between">
-							<Text fw={700} size="lg">
-								<span className="text-gray-500 text-xs">Uploaded by :</span>{" "}
-								{post.username}
-							</Text>
-							<Text c="dimmed" p={"md"}>
-								<span className="text-gray-500 text-xs">Time :</span>
-								{format(new Date(post.postTime), "dd/MM/yyyy HH:mm")}
-							</Text>
-						</Group>
-						<Group justify="space-between">
-							{post.test ? (
-								<Badge color="indigo">Mock Test</Badge>
-							) : (
-								<Badge color="pink">Learning material</Badge>
-							)}
-						</Group>
+					
 						<CardSection>
 							<Box w={830}>
 								{!post?.test && <LearningMaterialDetail id={post?.id} />}
