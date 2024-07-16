@@ -37,7 +37,7 @@ const PostsOfSubject: React.FC<PostsOfAuthor> = ({ thisSubject }) => {
 	useEffect(() => {
 		axios
 			.get(
-				`${BASE_URL}/api/v1/post/getPostBySubjectCode?subjectCode=${thisSubject}`
+				`${BASE_URL}/api/v1/getPostBySubjectCode/?subjectCode=${thisSubject}`
 			)
 			.then((res) => {
 				const sortedList = res.data
@@ -48,7 +48,7 @@ const PostsOfSubject: React.FC<PostsOfAuthor> = ({ thisSubject }) => {
 							) => {
 								const timeA = new Date(a.date).getTime();
 								const timeB = new Date(b.date).getTime();
-								return timeB - timeA; // Sort in descending order for most completed views first
+								return timeB - timeA;
 							}
 					  )
 					: [];
@@ -56,14 +56,13 @@ const PostsOfSubject: React.FC<PostsOfAuthor> = ({ thisSubject }) => {
 			})
 			.catch((error) => {
 				console.error("Error fetching data:", error);
-				// Handle error gracefully, e.g., display an error message to the user
 			});
 	}, [thisSubject]);
 
 	function fetchMore(offset: number) {
 		axios
 			.get(
-				`${BASE_URL}/api/v1/post/getPostBySubjectCode?subjectCode=${thisSubject}&offset=${offset}`
+				`${BASE_URL}/api/v1/getPostBySubjectCode/?subjectCode=${thisSubject}&offset=${offset}`
 			)
 			.then((res) => {
 				const sortedList = res.data
@@ -82,7 +81,6 @@ const PostsOfSubject: React.FC<PostsOfAuthor> = ({ thisSubject }) => {
 			})
 			.catch((error) => {
 				console.error("Error fetching data:", error);
-				// Handle error gracefully, e.g., display an error message to the user
 			});
 	}
 
