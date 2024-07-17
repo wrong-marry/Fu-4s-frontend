@@ -35,15 +35,20 @@ const PostsOfSubject: React.FC<PostsOfAuthor> = ({ thisSubject }) => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await axios.get(
+				const res = await axios.get(
 					`${BASE_URL}/api/v1/post/subject/${thisSubject}`
 				);
-				const sortedList = response.data
-					? response.data.sort((a, b) => {
-							const timeA = new Date(a.date).getTime();
-							const timeB = new Date(b.date).getTime();
-							return timeB - timeA;
-					  })
+				const sortedList = res.data
+					? res.data.sort(
+							(
+								a: { date: string | number | Date },
+								b: { date: string | number | Date }
+							) => {
+								const timeA = new Date(a.date).getTime();
+								const timeB = new Date(b.date).getTime();
+								return timeB - timeA; // Sort in descending order for most completed views first
+							}
+					  )
 					: [];
 				setPost(sortedList);
 			} catch (error) {

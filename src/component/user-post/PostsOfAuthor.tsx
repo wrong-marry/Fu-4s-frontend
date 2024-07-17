@@ -52,7 +52,6 @@ const PostsOfAuthor: React.FC<PostsOfAuthor> = ({ authorname }) => {
 			})
 			.catch((error) => {
 				console.error("Error fetching data:", error);
-				// Handle error gracefully, e.g., display an error message to the user
 			});
 	}, [authorname]);
 
@@ -70,7 +69,7 @@ const PostsOfAuthor: React.FC<PostsOfAuthor> = ({ authorname }) => {
 							) => {
 								const timeA = new Date(a.date).getTime();
 								const timeB = new Date(b.date).getTime();
-								return timeB - timeA; // Sort in descending order for most completed views first
+								return timeB - timeA;
 							}
 					  )
 					: [];
@@ -78,7 +77,6 @@ const PostsOfAuthor: React.FC<PostsOfAuthor> = ({ authorname }) => {
 			})
 			.catch((error) => {
 				console.error("Error fetching data:", error);
-				// Handle error gracefully, e.g., display an error message to the user
 			});
 	}
 
