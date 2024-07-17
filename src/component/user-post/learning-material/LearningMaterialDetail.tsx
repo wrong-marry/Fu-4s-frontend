@@ -18,6 +18,7 @@ import {
 	List,
 	ListItem,
 	Button,
+	TypographyStylesProvider,
 } from "@mantine/core";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -35,6 +36,8 @@ import {
 } from "yet-another-react-lightbox/plugins";
 import "yet-another-react-lightbox/plugins/captions.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
+import { BASE_URL } from "../../../common/constant";
+import { fetchUserByUsername } from "../../../util/UserFetchUtil";
 
 interface Post {
 	id: number;
@@ -54,27 +57,45 @@ interface ImageItem {
 	description: string | null;
 }
 
-const LearningMaterialDetail: React.FC = () => {
-	const { id } = useParams<{ id: string }>();
+interface LearningMaterialDetailProps {
+	id?: number; // Thêm prop id tùy chọn
+}
+
+const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({
+	id,
+}) => {
+	const { id: paramId } = useParams<{ id: string }>();
+	const effectiveId = id || paramId;
 
 	const [post, setPost] = useState<Post | null>(null);
 	const [fileUrls, setFileUrls] = useState<{ [key: string]: string }>({});
 	const [index, setIndex] = useState<number>(-1);
-
+	const [name, setName] = useState<string>("");
 	useEffect(() => {
-		const fetchPost = async () => {
+		const fetchData = async () => {
 			try {
 				const response: AxiosResponse<Post> = await axios.get(
-					`${BASE_URL}/api/v1/learningMaterial/getById?id=${id}`
+					`${BASE_URL}/api/v1/learningMaterial/getById?id=${effectiveId}`
 				);
 				setPost(response.data);
+
+				if (response.data.username) {
+					const userResponse = await fetchUserByUsername(
+						response.data.username
+					);
+					setName(
+						userResponse.data.firstName + " " + userResponse.data.lastName
+					);
+				} else {
+					throw new Error("Username is missing in the post");
+				}
 			} catch (error) {
-				console.error("Error fetching post:", error);
+				console.error("Error fetching data:", error);
 			}
 		};
 
-		fetchPost();
-	}, [id]);
+		fetchData();
+	}, [effectiveId]);
 
 	useEffect(() => {
 		const fetchFileLinks = async () => {
@@ -82,7 +103,7 @@ const LearningMaterialDetail: React.FC = () => {
 				const urls: { [key: string]: string } = {};
 				for (const file of post.filenames) {
 					const response = await fetch(
-						`${BASE_URL}/api/v1/learningMaterial/getFile?id=${id}&filename=${file}`
+						`${BASE_URL}/api/v1/learningMaterial/getFile?id=${effectiveId}&filename=${file}`
 					);
 					const blob = await response.blob();
 					const url = window.URL.createObjectURL(blob);
@@ -93,7 +114,7 @@ const LearningMaterialDetail: React.FC = () => {
 		};
 
 		fetchFileLinks();
-	}, [post, id]);
+	}, [post, effectiveId]);
 
 	if (!post) {
 		return <div>Loading...</div>;
@@ -143,7 +164,7 @@ const LearningMaterialDetail: React.FC = () => {
 
 	const fetchFileLink = async (filename: string): Promise<string> => {
 		const response = await fetch(
-			`${BASE_URL}/api/v1/learningMaterial/getFile?id=${id}&filename=${filename}`
+			`${BASE_URL}/api/v1/learningMaterial/getFile?id=${effectiveId}&filename=${filename}`
 		);
 		const file = await response.blob();
 
@@ -193,7 +214,7 @@ const LearningMaterialDetail: React.FC = () => {
 				<Divider size="xs" />
 				<Group justify="space-between">
 					<Text fw={700} size="lg">
-						{post.username}
+						{name}
 					</Text>
 					<Text c="dimmed" p={"md"}>
 						{format(new Date(post.postTime), "dd/MM/yyyy HH:mm")}
@@ -201,9 +222,9 @@ const LearningMaterialDetail: React.FC = () => {
 				</Group>
 
 				<CardSection>
-					<Text fw={400} size="lg" p={"lg"} m="20">
+					<TypographyStylesProvider fw={400} fs="lg" p={"lg"} m="20">
 						<ReactQuill value={post.content} readOnly={true} theme="bubble" />
-					</Text>
+					</TypographyStylesProvider>
 					{post.filenames.length > 0 && (
 						<>
 							<Divider my="sm" variant="dotted" />
@@ -264,7 +285,6 @@ const LearningMaterialDetail: React.FC = () => {
 				</CardSection>
 				<Divider my="sm" variant="dotted" />
 				<Badge color="pink">Learning material</Badge>
-				<Text mt="xs" c="dimmed" size="sm"></Text>
 			</Card>
 		</Center>
 	);

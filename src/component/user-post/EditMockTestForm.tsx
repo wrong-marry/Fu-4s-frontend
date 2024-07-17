@@ -17,6 +17,7 @@ import * as XLSX from "xlsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { i } from "vite/dist/node/types.d-FdqQ54oU";
 import { useDisclosure } from "@mantine/hooks";
+import {BASE_URL} from "../../common/constant.tsx";
 
 interface MockTest {
 	id: string;

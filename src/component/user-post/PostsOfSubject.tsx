@@ -8,10 +8,10 @@ import {
 	Avatar,
 	ActionIcon,
 	Flex,
+	Anchor,
 } from "@mantine/core";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { IconDots } from "@tabler/icons-react";
 import { BASE_URL } from "../../common/constant";
 
@@ -26,17 +26,18 @@ export interface Post {
 }
 
 interface PostsOfAuthor {
-	authorname: string;
+	thisSubject: string;
 }
 
-const PostsOfAuthor: React.FC<PostsOfAuthor> = ({ authorname }) => {
-	const [authorPost, setAuthorPost] = useState<Post[]>([]);
-	const navigate = useNavigate();
+const PostsOfSubject: React.FC<PostsOfAuthor> = ({ thisSubject }) => {
+	const [post, setPost] = useState<Post[]>([]);
 
 	useEffect(() => {
-		axios
-			.get(`${BASE_URL}/api/v1/post/getPostByUserName?username=${authorname}`)
-			.then((res) => {
+		const fetchData = async () => {
+			try {
+				const res = await axios.get(
+					`${BASE_URL}/api/v1/post/subject/${thisSubject}`
+				);
 				const sortedList = res.data
 					? res.data.sort(
 							(
@@ -49,19 +50,18 @@ const PostsOfAuthor: React.FC<PostsOfAuthor> = ({ authorname }) => {
 							}
 					  )
 					: [];
-				setAuthorPost(sortedList);
-			})
-			.catch((error) => {
+				setPost(sortedList);
+			} catch (error) {
 				console.error("Error fetching data:", error);
-				// Handle error gracefully, e.g., display an error message to the user
-			});
-	}, [authorname]);
+			}
+		};
+
+		fetchData();
+	}, [thisSubject]);
 
 	function fetchMore(offset: number) {
 		axios
-			.get(
-				`${BASE_URL}/api/v1/post/getPostByUserName?username=${authorname}&offset=${offset}`
-			)
+			.get(`${BASE_URL}/api/v1/post/subject/${thisSubject}&offset=${offset}`)
 			.then((res) => {
 				const sortedList = res.data
 					? res.data.sort(
@@ -75,17 +75,16 @@ const PostsOfAuthor: React.FC<PostsOfAuthor> = ({ authorname }) => {
 							}
 					  )
 					: [];
-				setAuthorPost((list) => list.concat(sortedList));
+				setPost((list) => list.concat(sortedList));
 			})
 			.catch((error) => {
 				console.error("Error fetching data:", error);
-				// Handle error gracefully, e.g., display an error message to the user
 			});
 	}
 
 	return (
 		<>
-			{authorPost.length === 0 ? null : (
+			{post.length === 0 ? null : (
 				<>
 					<Carousel
 						slideSize={"25%"}
@@ -96,7 +95,7 @@ const PostsOfAuthor: React.FC<PostsOfAuthor> = ({ authorname }) => {
 						controlSize={30}
 						dragFree
 					>
-						{authorPost.map((test, index) => (
+						{post.map((test, index) => (
 							<Carousel.Slide key={index}>
 								<Card
 									miw={"300px"}
@@ -108,64 +107,61 @@ const PostsOfAuthor: React.FC<PostsOfAuthor> = ({ authorname }) => {
 									component="a"
 									className="h-full"
 								>
-									<Stack
-										onClick={() => {
-											navigate(`/post/${test.id}`);
-										}}
-										className="cursor-pointer justify-between h-full"
-									>
-										<Stack gap={2}>
-											<Text fw={360} truncate="end">
-												{test.title}
-											</Text>
-											<Text fw={200} fz={12}>
-												{test.postTime.toString().substring(0, 10)}
-											</Text>
-											{test.test ? (
-												<Badge color="indigo">Mock Test</Badge>
-											) : (
-												<Badge color="pink">Learning Material</Badge>
-											)}
-										</Stack>
-										<Group
-											align="stretch"
-											gap="sm"
-											style={{ marginBottom: "10px" }}
-										>
-											<Avatar
-												variant="filled"
-												radius="xl"
-												size="sm"
-												style={{
-													height: "110%",
-													borderRadius: "50%",
-													objectFit: "cover",
-													width: "10%",
-												}}
-											/>
-											<Text size="sm">{test.username}</Text>
+									<Anchor href={`/post/${test.id}`}>
+										<Stack>
 											<Stack gap={2}>
-												<Badge
-													color="blue"
-													style={{
-														display: "inline-block",
-														padding: "1px 8px",
-														borderRadius: "999px",
-														fontSize: "12px",
-														fontWeight: "500",
-														textTransform: "uppercase",
-														width: "100%",
-													}}
-												>
-													{test.subjectCode}
-												</Badge>
+												<Text fw={360} truncate="end">
+													{test.title}
+												</Text>
+												<Text fw={200} fz={12}>
+													{test.postTime.toString().substring(0, 10)}
+												</Text>
+												{test.test ? (
+													<Badge color="indigo">Mock Test</Badge>
+												) : (
+													<Badge color="pink">Learning Material</Badge>
+												)}
 											</Stack>
-										</Group>
-									</Stack>
+											<Group
+												align="stretch"
+												gap="sm"
+												style={{ marginBottom: "10px" }}
+											>
+												<Avatar
+													variant="filled"
+													radius="xl"
+													size="sm"
+													style={{
+														height: "110%",
+														borderRadius: "50%",
+														objectFit: "cover",
+														width: "10%",
+													}}
+												/>
+												<Text size="sm">{test.username}</Text>
+												<Stack gap={2}>
+													<Badge
+														color="blue"
+														style={{
+															display: "inline-block",
+															padding: "1px 8px",
+															borderRadius: "999px",
+															fontSize: "12px",
+															fontWeight: "500",
+															textTransform: "uppercase",
+															width: "100%",
+														}}
+													>
+														{test.subjectCode}
+													</Badge>
+												</Stack>
+											</Group>
+										</Stack>
+									</Anchor>
 								</Card>
 							</Carousel.Slide>
 						))}
-						{authorPost.length > 0 && (
+						{post.length > 0 && (
 							<Carousel.Slide>
 								<Flex p={"lg"} className="h-full" align={"center"}>
 									<ActionIcon
@@ -173,7 +169,7 @@ const PostsOfAuthor: React.FC<PostsOfAuthor> = ({ authorname }) => {
 										aria-label="Dots"
 										radius={"xl"}
 										size={"xl"}
-										onClick={() => fetchMore(authorPost.length)}
+										onClick={() => fetchMore(post.length)}
 									>
 										<IconDots stroke={1.5} />
 									</ActionIcon>
@@ -187,4 +183,4 @@ const PostsOfAuthor: React.FC<PostsOfAuthor> = ({ authorname }) => {
 	);
 };
 
-export default PostsOfAuthor;
+export default PostsOfSubject;
