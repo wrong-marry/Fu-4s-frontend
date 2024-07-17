@@ -4,21 +4,21 @@ import { IconFile } from "@tabler/icons-react";
 import JSZip from "jszip";
 
 import {
-  Image,
-  Text,
-  Group,
-  Badge,
-  Box,
-  Card,
-  CardSection,
-  Divider,
-  Center,
-  Container,
-  Title,
-  List,
-  ListItem,
-  Button,
-  TypographyStylesProvider,
+	Image,
+	Text,
+	Group,
+	Badge,
+	Box,
+	Card,
+	CardSection,
+	Divider,
+	Center,
+	Container,
+	Title,
+	List,
+	ListItem,
+	Button,
+	TypographyStylesProvider,
 } from "@mantine/core";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -37,6 +37,7 @@ import {
 import "yet-another-react-lightbox/plugins/captions.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import { BASE_URL } from "../../../common/constant";
+import { fetchUserByUsername } from "../../../util/UserFetchUtil";
 
 interface Post {
 	id: number;
@@ -64,25 +65,36 @@ const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({
 	id,
 }) => {
 	const { id: paramId } = useParams<{ id: string }>();
-	const effectiveId = id || paramId; // Sử dụng id từ props nếu có, nếu không thì lấy từ useParams
+	const effectiveId = id || paramId;
 
 	const [post, setPost] = useState<Post | null>(null);
 	const [fileUrls, setFileUrls] = useState<{ [key: string]: string }>({});
 	const [index, setIndex] = useState<number>(-1);
-
+	const [name, setName] = useState<string>("");
 	useEffect(() => {
-		const fetchPost = async () => {
+		const fetchData = async () => {
 			try {
 				const response: AxiosResponse<Post> = await axios.get(
 					`${BASE_URL}/api/v1/learningMaterial/getById?id=${effectiveId}`
 				);
 				setPost(response.data);
+
+				if (response.data.username) {
+					const userResponse = await fetchUserByUsername(
+						response.data.username
+					);
+					setName(
+						userResponse.data.firstName + " " + userResponse.data.lastName
+					);
+				} else {
+					throw new Error("Username is missing in the post");
+				}
 			} catch (error) {
-				console.error("Error fetching post:", error);
+				console.error("Error fetching data:", error);
 			}
 		};
 
-		fetchPost();
+		fetchData();
 	}, [effectiveId]);
 
 	useEffect(() => {
@@ -202,7 +214,7 @@ const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({
 				<Divider size="xs" />
 				<Group justify="space-between">
 					<Text fw={700} size="lg">
-						{post.username}
+						{name}
 					</Text>
 					<Text c="dimmed" p={"md"}>
 						{format(new Date(post.postTime), "dd/MM/yyyy HH:mm")}
@@ -273,7 +285,6 @@ const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({
 				</CardSection>
 				<Divider my="sm" variant="dotted" />
 				<Badge color="pink">Learning material</Badge>
-				<Text mt="xs" c="dimmed" size="sm"></Text>
 			</Card>
 		</Center>
 	);

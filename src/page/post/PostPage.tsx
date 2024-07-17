@@ -22,9 +22,10 @@ import { useForm } from "@mantine/form";
 import LearningMaterialDetail from "../../component/user-post/learning-material/LearningMaterialDetail";
 import { useDisclosure } from "@mantine/hooks";
 import { BASE_URL } from "../../common/constant.tsx";
-import PostsOfAuthor from "./PostsOfAuthor.tsx";
-import PostsOfSubject from "./PostsOfSubject.tsx";
 import { Subject } from "../list/PostListBySubject.tsx";
+import { fetchAuthorUsername } from "../../util/loader/PostUtils.tsx";
+import PostsOfAuthor from "../../component/user-post/PostsOfAuthor.tsx";
+import PostsOfSubject from "../../component/user-post/PostsOfSubject.tsx";
 
 export interface Post {
 	id: number;
@@ -35,7 +36,6 @@ export interface Post {
 	subjectCode: string;
 	test: boolean;
 }
-
 
 export interface CommentData {
 	id: number;
@@ -79,19 +79,12 @@ const PostPage: React.FC = () => {
 		setPost(response);
 	};
 
-	const fetchAuthorname = async () => {
-		const response: string = (
-			await axios.get(`${BASE_URL}/api/v1/post/getUsernameById?id=${id}`)
-		).data;
-		setAuthorname(response);
-	};
-
-	const fetchSubject = async (subjectCode: string) => {
-		const response: Subject = (
-			await axios.get(`${BASE_URL}/api/v1/subject/${subjectCode}`)
-		).data;
-		setSubject(response);
-	};
+	// const fetchAuthorname = async () => {
+	// 	const response: string = (
+	// 		await axios.get(`${BASE_URL}/api/v1/post/getUsernameById?id=${id}`)
+	// 	).data;
+	// 	setAuthorname(response);
+	// };
 
 	const fetchComments = async () => {
 		try {
@@ -136,16 +129,30 @@ const PostPage: React.FC = () => {
 	};
 
 	useEffect(() => {
-		fetchPost()
-			.then(() => {
+		const fetchData = async () => {
+			try {
+				await fetchPost();
+
 				if (post?.subjectCode) {
-					fetchSubject(post.subjectCode);
+					await fetchSubject(post.subjectCode);
 				}
-			})
-			.catch(console.error);
-		fetchAuthorname();
-		fetchComments().catch();
+
+				const authorname = await fetchAuthorUsername(post?.id + "");
+				setAuthorname(authorname);
+
+				await fetchComments();
+			} catch (error) {}
+		};
+
+		fetchData();
 	}, [id, post?.subjectCode]);
+
+	const fetchSubject = async (subjectCode: string) => {
+		const response: Subject = (
+			await axios.get(`${BASE_URL}/api/v1/subject/${subjectCode}`)
+		).data;
+		setSubject(response);
+	};
 
 	function updateCommentWithId(id: number, content: string) {
 		setComments(
@@ -185,14 +192,24 @@ const PostPage: React.FC = () => {
 						{post?.subjectCode ?? ""}
 					</Anchor>
 				</Center>
-				{!post?.test && <LearningMaterialDetail />}
+				{!post?.test && <LearningMaterialDetail {...post} />}
 				{post?.test && <MockTestDetailPage {...post} />}
-				<Space h={"xl"} />
-				<Title order={2}>Posts of {post?.username}</Title>
-				<PostsOfAuthor authorname={authorname ?? ""} />
-				<Space h={"xl"} />
-				<Title order={2}>Posts in {post?.subjectCode}</Title>
-				<PostsOfSubject thisSubject={post?.subjectCode ?? ""} />
+
+				{post?.username && (
+					<>
+						<Space h={"xl"} />
+						<Title order={2}>Posts of {post?.username}</Title>
+						<PostsOfAuthor authorname={authorname ?? ""} />
+					</>
+				)}
+				{post?.subjectCode && (
+					<>
+						<Space h={"xl"} />
+						<Title order={2}>Posts in {post?.subjectCode}</Title>
+						<PostsOfSubject thisSubject={post.subjectCode} />
+					</>
+				)}
+
 				<Space h={"xl"} />
 				<Title order={2}>Comment section</Title>
 				{comments == null || comments?.length == 0 ? (
@@ -214,7 +231,6 @@ const PostPage: React.FC = () => {
 						updateFunction={updateCommentWithId}
 					/>
 				))}
-				{/*Check if there is more comment to fetch*/}
 				{!(
 					(comments?.length ?? 0) % 10 ||
 					(comments?.length ?? 0) == 0 ||

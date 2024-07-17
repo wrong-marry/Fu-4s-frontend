@@ -12,7 +12,6 @@ import {
 } from "@mantine/core";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { IconDots } from "@tabler/icons-react";
 import { BASE_URL } from "../../common/constant";
 
@@ -32,29 +31,27 @@ interface PostsOfAuthor {
 
 const PostsOfSubject: React.FC<PostsOfAuthor> = ({ thisSubject }) => {
 	const [post, setPost] = useState<Post[]>([]);
-	const navigate = useNavigate();
 
 	useEffect(() => {
-		axios
-			.get(`${BASE_URL}/api/v1/post/subject/${thisSubject}`)
-			.then((res) => {
-				const sortedList = res.data
-					? res.data.sort(
-							(
-								a: { date: string | number | Date },
-								b: { date: string | number | Date }
-							) => {
-								const timeA = new Date(a.date).getTime();
-								const timeB = new Date(b.date).getTime();
-								return timeB - timeA;
-							}
-					  )
+		const fetchData = async () => {
+			try {
+				const response = await axios.get(
+					`${BASE_URL}/api/v1/post/subject/${thisSubject}`
+				);
+				const sortedList = response.data
+					? response.data.sort((a, b) => {
+							const timeA = new Date(a.date).getTime();
+							const timeB = new Date(b.date).getTime();
+							return timeB - timeA;
+					  })
 					: [];
 				setPost(sortedList);
-			})
-			.catch((error) => {
+			} catch (error) {
 				console.error("Error fetching data:", error);
-			});
+			}
+		};
+
+		fetchData();
 	}, [thisSubject]);
 
 	function fetchMore(offset: number) {
