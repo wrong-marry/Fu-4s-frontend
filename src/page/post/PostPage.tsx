@@ -10,9 +10,9 @@ import {
     Anchor,
     Modal,
     Group,
-    Center,
+    Center, rem, Select, Flex,
 } from "@mantine/core";
-import {IconChevronsRight} from "@tabler/icons-react";
+import {IconAdjustmentsAlt, IconChevronsRight} from "@tabler/icons-react";
 
 import {Comment} from "../../component/comment/CommentTag";
 import {useParams} from "react-router-dom";
@@ -69,6 +69,7 @@ const PostPage: React.FC = () => {
     const [authorname, setAuthorname] = useState<string | null>(null);
     const [subject, setSubject] = useState<Subject | null>(null);
 
+    const [sorted, setSorted] = useState(false);
     const isStaff = ["STAFF", "ADMIN"].includes(
         localStorage.getItem("role") + ""
     );
@@ -86,11 +87,11 @@ const PostPage: React.FC = () => {
     // 	setAuthorname(response);
     // };
 
-    const fetchComments = async () => {
+    const fetchComments = async (sorted: boolean) => {
         try {
             const response: AxiosResponse<CommentData[]> = await axios.get(
                 `${BASE_URL}/api/v1/comments/post/${id}` +
-                (isStaff ? "?isStaff=true" : ""),
+                (isStaff ? "?isStaff=true&" : "?") + (sorted ? "sorted" : ""),
                 {
                     headers: {
                         // Check login
@@ -101,8 +102,6 @@ const PostPage: React.FC = () => {
                     },
                 }
             );
-            console.log(`${BASE_URL}/api/v1/comments/post/${id}` +
-                (isStaff ? "?isStaff=true" : ""));
             setComments(response.data);
         } catch (error) {
             console.error("Error fetching comment:", error);
@@ -134,7 +133,7 @@ const PostPage: React.FC = () => {
         const fetchData = async () => {
             try {
                 await fetchPost();
-                await fetchComments();
+                await fetchComments(sorted);
 
                 if (post?.subjectCode) {
                     await fetchSubject(post.subjectCode);
@@ -149,7 +148,7 @@ const PostPage: React.FC = () => {
         };
 
         fetchData();
-    }, [id, post?.subjectCode]);
+    }, [id, post?.subjectCode, sorted]);
 
     const fetchSubject = async (subjectCode: string) => {
         const response: Subject = (
@@ -215,7 +214,22 @@ const PostPage: React.FC = () => {
                 )}
 
                 <Space h={"xl"}/>
-                <Title order={2}>Comment section</Title>
+                <Flex justify={"space-between"}>
+                    <Title order={2}>Comment section</Title>
+                    <Select
+                        onChange={(value) => setSorted(value == "sorted")}
+                        leftSection={<IconAdjustmentsAlt style={{width: rem(18), height: rem(18)}} stroke={1.5}/>}
+                        placeholder="Order"
+                        data={[
+                            {
+                                group: 'Sort by',
+                                items: [
+                                    {label: 'Oldest first', value: 'default'},
+                                    {label: 'Newest first', value: 'sorted'}
+                                ]
+                            }
+                        ]}
+                    /></Flex>
                 {comments == null || comments?.length == 0 ? (
                     <Text>No comments</Text>
                 ) : (
