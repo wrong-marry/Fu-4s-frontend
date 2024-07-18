@@ -183,7 +183,7 @@ function NotificationList() {
 		setTimeout(async () => {
 			if (shouldDelete) {
 				try {
-					const response = await fetch(
+					await fetch(
 						`${BASE_URL}/api/v1/notification/${id}`,
 						{
 							method: "DELETE",

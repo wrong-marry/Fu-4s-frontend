@@ -47,7 +47,7 @@ function TableUser({ flag2, setFlag2 }: TableUserProps) {
 	const [numPage, setNumPage] = useState(1);
 	const [search, setSearch] = useState("");
 	const [allUserList, setAllUserList] = useState<User[]>([]);
-	const [users, SetUsers] = useState<User[]>([]);
+	const [, SetUsers] = useState<User[]>([]);
 	const [allUsers, SetallUsers] = useState<User[]>([]);
 
 	const [loading, setLoading] = useState<boolean>(true);

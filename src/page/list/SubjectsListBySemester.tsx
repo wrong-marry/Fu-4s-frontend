@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { TextInput, Table, Card } from "@mantine/core";
 import {
-	IconDots,
 	IconSortAscending,
 	IconSortDescending,
 } from "@tabler/icons-react";
@@ -93,20 +92,20 @@ function SubjectsList() {
 		return <div>Error: {error}</div>;
 	}
 
-	const handleInputChange = (
-		event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-	) => {
-		const { name, value } = event.target;
-		const currentSubject = subjects.find((subject) => subject.code === name);
-		if (currentSubject) {
-			setSubjects((prevSubjects) => {
-				const updatedSubjects = prevSubjects.map((subject) =>
-					subject.code === name ? { ...subject, [name]: value } : subject
-				);
-				return updatedSubjects;
-			});
-		}
-	};
+	// const handleInputChange = (
+	// 	event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+	// ) => {
+	// 	const { name, value } = event.target;
+	// 	const currentSubject = subjects.find((subject) => subject.code === name);
+	// 	if (currentSubject) {
+	// 		setSubjects((prevSubjects) => {
+	// 			const updatedSubjects = prevSubjects.map((subject) =>
+	// 				subject.code === name ? { ...subject, [name]: value } : subject
+	// 			);
+	// 			return updatedSubjects;
+	// 		});
+	// 	}
+	// };
 
 	const handleSortClick = (field: string) => {
 		setSortBy(field);

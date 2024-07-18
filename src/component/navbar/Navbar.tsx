@@ -19,7 +19,6 @@ import {
 	IconUserCircle,
 	IconPremiumRights,
 	IconLogout,
-	IconDeviceLaptop,
 	IconMenu2,
 } from "@tabler/icons-react";
 
@@ -29,7 +28,7 @@ import {
 	UserCredentials,
 	UserCredentialsContext,
 } from "../../store/user-credentials-context";
-import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { useMediaQuery } from "@mantine/hooks";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
 
 import { Logout } from "../../util/loader/Auth.tsx";
@@ -107,169 +106,6 @@ const userBtn = (data: LoaderData, handleLogout: () => void) => {
 	) as React.ReactElement;
 };
 
-const adminBtn = (data: LoaderData, handleLogout: () => void) => {
-	return (
-		<>
-			<Menu shadow="md" width={200}>
-				<Menu.Target>
-					<Group className="cursor-pointer border-none">
-						<Avatar
-							variant="filled"
-							radius="xl"
-							color="grape"
-							className="cursor-pointer"
-							// src={data?.avatar}
-						/>
-						<Text className="text-sm font-semibold">
-							{data ? data.firstName + " " + data.lastName : "Guest"}
-						</Text>
-					</Group>
-				</Menu.Target>
-				<Menu.Dropdown>
-					<Menu.Label>Menu</Menu.Label>
-					<NavLink to={"/user"}>
-						<Menu.Item
-							leftSection={
-								<IconUserCircle style={{ width: rem(14), height: rem(14) }} />
-							}
-						>
-							Profile
-						</Menu.Item>
-					</NavLink>
-
-					<NavLink to={"/user/post"}>
-						<Menu.Item
-							leftSection={
-								<IconSettings style={{ width: rem(14), height: rem(14) }} />
-							}
-						>
-							Manage Posts
-						</Menu.Item>
-					</NavLink>
-					<NavLink to={"/test-result"}>
-						<Menu.Item
-							leftSection={
-								<IconPremiumRights
-									style={{ width: rem(14), height: rem(14) }}
-								/>
-							}
-						>
-							Test History
-						</Menu.Item>
-					</NavLink>
-					<Menu.Divider />
-					<Menu.Item
-						color="red"
-						leftSection={
-							<IconLogout style={{ width: rem(14), height: rem(14) }} />
-						}
-						onClick={handleLogout}
-					>
-						Logout
-					</Menu.Item>
-				</Menu.Dropdown>
-			</Menu>
-			<Menu shadow="md" width={200}>
-				<Menu.Target>
-					<IconDeviceLaptop className="cursor-pointer w-5 h-5" />
-				</Menu.Target>
-				<Menu.Dropdown>
-					<Menu.Label>Admin Menu</Menu.Label>
-					<NavLink to={"/admin/manage-user"}>
-						<Menu.Item
-							leftSection={
-								<IconDeviceLaptop style={{ width: rem(14), height: rem(14) }} />
-							}
-						>
-							Join your workspace
-						</Menu.Item>
-					</NavLink>
-				</Menu.Dropdown>
-			</Menu>
-		</>
-	) as React.ReactElement;
-};
-const staffBtn = (data: LoaderData, handleLogout: () => void) => {
-	return (
-		<>
-			<Menu shadow="md" width={200}>
-				<Menu.Target>
-					<Group className="cursor-pointer border-none">
-						<Avatar
-							variant="filled"
-							radius="xl"
-							color="grape"
-							className="cursor-pointer"
-							// src={data?.avatar}
-						/>
-						<Text className="text-sm font-semibold">
-							{data ? data.firstName + " " + data.lastName : "Guest"}
-						</Text>
-					</Group>
-				</Menu.Target>
-				<Menu.Dropdown>
-					<Menu.Label>Menu</Menu.Label>
-					<NavLink to={"/user"}>
-						<Menu.Item
-							leftSection={
-								<IconUserCircle style={{ width: rem(14), height: rem(14) }} />
-							}
-						>
-							Profile
-						</Menu.Item>
-					</NavLink>
-
-					<NavLink to={"/user/post"}>
-						<Menu.Item
-							leftSection={
-								<IconSettings style={{ width: rem(14), height: rem(14) }} />
-							}
-						>
-							Manage Posts
-						</Menu.Item>
-					</NavLink>
-
-					<Menu.Item
-						leftSection={
-							<IconPremiumRights style={{ width: rem(14), height: rem(14) }} />
-						}
-					>
-						Upgrade to Premium
-					</Menu.Item>
-
-					<Menu.Divider />
-					<Menu.Item
-						color="red"
-						leftSection={
-							<IconLogout style={{ width: rem(14), height: rem(14) }} />
-						}
-						onClick={handleLogout}
-					>
-						Logout
-					</Menu.Item>
-				</Menu.Dropdown>
-			</Menu>
-			<Menu shadow="md" width={200}>
-				<Menu.Target>
-					<IconDeviceLaptop className="cursor-pointer w-5 h-5" />
-				</Menu.Target>
-				<Menu.Dropdown>
-					<Menu.Label>Staff Menu</Menu.Label>
-					<NavLink to={"/staff/manage-post"}>
-						<Menu.Item
-							leftSection={
-								<IconDeviceLaptop style={{ width: rem(14), height: rem(14) }} />
-							}
-						>
-							Join your workspace
-						</Menu.Item>
-					</NavLink>
-				</Menu.Dropdown>
-			</Menu>
-		</>
-	) as React.ReactElement;
-};
-
 const guestBtn = () => {
 	const navigate = useNavigate();
 	return (
@@ -308,7 +144,6 @@ export interface LoaderData {
 }
 
 function Navbar(props: any) {
-	const [, { open }] = useDisclosure(false);
 
 	const { assignUserCredentials } = useContext(UserCredentialsContext);
 	const data: LoaderData = useLoaderData() as LoaderData;

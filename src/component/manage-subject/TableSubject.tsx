@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import {
   ActionIcon,
   TextInput,
@@ -358,7 +358,7 @@ function TableSubject() {
   };
 
   const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    event: { target: { name: string, value: string } }
   ) => {
     const { name, value } = event.target;
     if (currentSubject) {
@@ -416,7 +416,7 @@ function TableSubject() {
     <Card shadow="lg" withBorder radius="md">
       <div className="container px-4 mx-auto ">
         <div>
-          <h3 className="text-xl font-bold w-full w-auto p-5">
+          <h3 className="text-xl font-bold w-auto p-5">
             SUBJECT STATISTICS
           </h3>
         </div>

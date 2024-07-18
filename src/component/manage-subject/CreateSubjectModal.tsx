@@ -14,7 +14,7 @@ interface CreateModalProps {
 	};
 	onInputChange: (
 		event:
-			| React.ChangeEvent<HTMLInputElement>
+			| React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
 			| { target: { name: string; value: string } }
 	) => void;
 }

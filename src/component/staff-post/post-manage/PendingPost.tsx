@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Text, Container, Title, Button, Center, Card, CardSection, Divider, Group, Box, Badge } from "@mantine/core";
-import { format } from "date-fns";
+import { Text, Container, Title, Button, Center, Card, CardSection, Divider, Group, Box } from "@mantine/core";
 import LearningMaterialDetail from "../../user-post/learning-material/LearningMaterialDetail";
 import MockTestDetailPage from "../../../page/mock-test-detail-page/MockTestDetailPage";
 import { useDisclosure } from "@mantine/hooks";
@@ -25,7 +24,7 @@ interface ComponentProps {
 
 const PostPage1: React.FC<ComponentProps> = ({ flag, setFlag }) => {
 	const [post, setPost] = useState<Post | null>(null);
-	const [posts, setPosts] = useState<Post[] | null>(null);
+	const [, setPosts] = useState<Post[] | null>(null);
 	const [postToApproved, setpostToApproved] = useState<Post | null>(null);
 	const [postToDenied, setpostToDenied] = useState<Post | null>(null);
 
@@ -181,7 +180,7 @@ const PostPage1: React.FC<ComponentProps> = ({ flag, setFlag }) => {
 							<Title order={2} ta={"center"} component="div" mb={2} p={"md"}>
 								<div className="flex items-center justify-center space-x-2">
 									<Text size="l" fw={800} m="20">
-										<span className="text-orange-500">Need censored :</span>
+										<span className="text-orange-500">Pending posts :</span>
 									</Text>
 									
 								</div>
@@ -206,7 +205,7 @@ const PostPage1: React.FC<ComponentProps> = ({ flag, setFlag }) => {
 										className="bg-green-500 text-white hover:bg-green-700"
 										size="xs"
 									>
-										APPROVED
+										APPROVE
 									</Button>
 									<Button
 										onClick={() => handleDeniedPost(post)}
@@ -214,7 +213,7 @@ const PostPage1: React.FC<ComponentProps> = ({ flag, setFlag }) => {
 										className="bg-red-500 text-white hover:bg-red-700"
 										size="xs"
 									>
-										DENIED
+										DENY
 									</Button>
 								</Group>
 							</Box>

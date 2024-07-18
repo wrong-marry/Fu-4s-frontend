@@ -1,6 +1,5 @@
 import {Card} from "@mantine/core";
 import {useEffect, useState} from "react";
-import {BASE_URL} from "../../../common/constant.tsx";
 
 
 interface ComponentProps {
@@ -104,7 +103,7 @@ const DashboardSectionStaff: React.FC<ComponentProps> = ({ flag, setFlag }) => {
 				<div className="flex flex-wrap -m-3">
 					<div className="container px-4 mx-auto">
 						<div className="bg-coolGray-50 py-4">
-							<h3 className="text-xl font-bold w-full w-auto p-5">
+							<h3 className="text-xl font-bold w-auto p-5">
 								QUANTITY STATISTICS
 							</h3>
 						</div>

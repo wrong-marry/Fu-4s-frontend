@@ -4,7 +4,6 @@ import { IconFile } from "@tabler/icons-react";
 import JSZip from "jszip";
 
 import {
-	Image,
 	Text,
 	Group,
 	Badge,
@@ -13,7 +12,6 @@ import {
 	CardSection,
 	Divider,
 	Center,
-	Container,
 	Title,
 	List,
 	ListItem,
@@ -177,7 +175,7 @@ const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({
 	const fileList: string[] = [];
 
 	// Iterate over filenames and categorize them
-	post.filenames.forEach((file, index) => {
+	post.filenames.forEach((file) => {
 		const url = fileUrls[file];
 		const isImage =
 			url &&

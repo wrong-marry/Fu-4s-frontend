@@ -42,7 +42,7 @@ export default function MockTestDetailPage(post: any) {
     return (
         <>
             <Grid display={Flex} justify="center">
-                <Grid.Col span={{base: 12, md: 8}}>
+                <Grid.Col span={{base: 12}}>
                     <Group justify="center">
                         <Badge mt={15} variant="filled" size="lg">
                             Mock Test

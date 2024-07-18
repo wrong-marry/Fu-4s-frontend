@@ -1,4 +1,3 @@
-import React, { ChangeEvent } from "react";
 import { Modal, TextInput, Button, Select } from "@mantine/core";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -10,10 +9,10 @@ interface EditModalProps {
   subject: {
     code: string;
     name: string;
-    semester: string;
+    semester: number;
   };
   onInputChange: (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    event: { target: { name: string; value: string; }; }
   ) => void;
 }
 
