@@ -4,6 +4,7 @@ import RecentPost from "../../component/home/RecentPost.tsx";
 import CompletedTest from "../../component/home/CompletedTest.tsx";
 import UploadedPost from "../../component/home/UploadedPost.tsx";
 import React from "react";
+import StudyPage from "../study/StudyPage.tsx";
 
 
 export default function HomePage() {
@@ -14,6 +15,9 @@ export default function HomePage() {
             <Container className="container">
                 <Card>
                     <Stack gap="md">
+                        <Card withBorder mb="xl" mx="xl" shadow="sm" radius="lg">
+                        <StudyPage/>
+                        </Card>
                         <Title order={2}>Recent Posts</Title>
                         <RecentPost/>
                         <Title order={2}>Completed Tests</Title>

@@ -2,7 +2,6 @@ import {
   Title,
   Button,
   Text,
-  Overlay,
   AspectRatio,
   useComputedColorScheme,
   TypographyStylesProvider
@@ -21,11 +20,7 @@ export function HeroContent() {
           className="w-full h-screen bg-cover "
           style={{backgroundImage: `url(${homepageCover})`}}
     >
-        {color == "dark" && <Overlay
-            gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
-            opacity={0.3}
-            zIndex={0}
-        />}
+        {color == "dark"}
 
       <div className="h-full flex justify-start items-center w-[80%] mx-auto">
         <div className="basis-1/2">
@@ -52,26 +47,22 @@ export function HeroContent2() {
   const navigate = useNavigate();
   const color = useComputedColorScheme();
   return (
-      <AspectRatio
+    <AspectRatio
           className="w-full h-screen bg-cover "
           style={{backgroundImage: `url(${landingCover})`}}
           pos="relative"
       >
-        {color == "dark" && <Overlay
-            gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
-            opacity={0.6}
-            zIndex={0}
-        />}
+        {color == "dark"}
 
         <div className="h-full flex justify-center items-center w-[80%] mx-auto">
           <div className="basis-1/2 ms-2 me-10 mt-20">
             <TypographyStylesProvider>
-              <Title>Guaranteed high quality!</Title>
-              <Text className="text-start" size="xl" mt="xl">
+              <Title className="text-black">Guaranteed high quality!</Title>
+              <Text className="text-start text-black" size="xl" mt="xl">
                 A dedicated platform for FPT University students majoring in
                 Software Engineering.
               </Text>
-              <Text className="text-start" size="xl">
+              <Text className="text-start text-black" size="xl">
                 Join the community to get your educational journey enhanced with
                 valuable resources and interactive discussions!
               </Text>
