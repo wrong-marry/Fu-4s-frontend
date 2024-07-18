@@ -15,14 +15,7 @@ export default function ManageSubjectPage() {
     return (
         <>
             <Grid>
-                <Grid.Col span={isSmallScreen ? 12 : isMediumScreen ? 3 : 2.6}>
-                    {isSmallScreen ? (
-                        <Burger opened={drawerOpened} onClick={handleBurgerClick}/>
-                    ) : (
-                        <></>
-                    )}
-                </Grid.Col>
-                <Grid.Col span={isSmallScreen ? 12 : isMediumScreen ? 9 : 9}>
+                <Grid.Col span={10} offset={1}>
                     <TableSubject/>
                 </Grid.Col>
             </Grid>

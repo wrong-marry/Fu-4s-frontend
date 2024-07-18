@@ -7,7 +7,6 @@ import {
 import {Area} from "../../component/manageUser/chart/Area.tsx";
 import {Bar} from "../../component/manageUser/chart/Bar.tsx";
 import "@mantine/charts/styles.css";
-import DashboardSection from "../../component/manageUser/manage-user/show-customer.tsx";
 import DashboardSectionStaff from "../../component/staff-post/post-manage/DashboardSectionStaff.tsx";
 import {Pie} from "../../component/manageUser/chart/Pie.tsx";
 import {StatsGrid} from "../../component/manageUser/chart/Statistics.tsx";
@@ -24,7 +23,6 @@ export default function ManageUserPage() {
     color: "rgb(34, 139, 230)", // Set the color of the icons to light blue
   };
   const [flag, setFlag] = useState(false);
-  const [flag2, setFlag2] = useState(false);
 
   return (
 		<div>
@@ -94,10 +92,6 @@ export default function ManageUserPage() {
 							</Grid>
 						</Tabs.Panel>
 
-						<Tabs.Panel value="Manage Users">
-							<DashboardSection flag2={flag2} setFlag2={setFlag2} />
-							<TableUser flag2={flag2} setFlag2={setFlag2} />
-						</Tabs.Panel>
 
 						<Tabs.Panel value="Manage Subjects">
 							<TableSubject />

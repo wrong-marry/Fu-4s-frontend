@@ -27,28 +27,7 @@ export default function ManagePostForStaff() {
 					defaultValue="Posts Manage"
 					w={"100%"}
 				>
-					<Grid.Col span={2.6}>
-						<Tabs.List style={{ marginTop: "30px" }}>
-							<h1
-								style={{
-									textAlign: "center",
-									color: "rgba(2, 104, 207, 1)",
-									fontFamily: "Courier New, monospace",
-									fontWeight: "bold",
-								}}
-							>
-								WELCOME STAFF WORKSPACE!
-							</h1>
-							<Tabs.Tab
-								value="Posts Manage"
-								leftSection={<IconNotes style={iconStyle} />}
-								style={{ color: "rgb(34, 139, 230)" }}
-							>
-								Posts Manage
-							</Tabs.Tab>
-						</Tabs.List>
-					</Grid.Col>
-					<Grid.Col span={9}>
+					<Grid.Col span={10} offset={1}>
 						<Tabs.Panel value="Posts Manage">
 							<DashboardSectionStaff flag={flag} setFlag={setFlag} />
 							<br />

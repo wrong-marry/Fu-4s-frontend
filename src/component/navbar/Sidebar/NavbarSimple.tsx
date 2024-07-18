@@ -76,7 +76,10 @@ export function NavbarSimple() {
         >
           <Menu.Target>
             <a
-            onClick={()=>{navigate("/notifications");setActive("notifications");}}
+              onClick={() => {
+                navigate("/notifications");
+                setActive("notifications");
+              }}
               className={classes.link}
               data-active={"notifications" === active || undefined}
             >
@@ -148,28 +151,38 @@ export function NavbarSimple() {
             </NavLink>
           </Menu.Dropdown>
         </Menu>
-        
       </div>
       <div className={classes.footer}>
-        <Text ml='sm'>Admin workspace</Text>
+        <Text ml="sm">Admin workspace</Text>
         <a className={classes.link} onClick={() => navigate("/admin/overview")}>
           <IconChartBar className={classes.linkIcon} stroke={1.5} />
-          <span>Overview Charts</span>
+            <span>Overview Charts</span>
         </a>
-        <a className={classes.link} onClick={() => navigate("/admin/manage-users")}>
+        <a
+          className={classes.link}
+          onClick={() => navigate("/admin/manage-user")}
+        >
           <IconUsers className={classes.linkIcon} stroke={1.5} />
           <span>Manage users</span>
         </a>
-        <a className={classes.link} onClick={() => navigate("/admin/manage-subjects")}>
+        <a
+          className={classes.link}
+          onClick={() => navigate("/admin/manage-subject")}
+        >
           <IconBook className={classes.linkIcon} stroke={1.5} />
           <span>Manage subjects</span>
         </a>
-        <a className={classes.link} onClick={() => navigate("/admin/staff-monitoring")}>
+        <a
+          className={classes.link}
+          onClick={() => navigate("/admin/staff-monitoring")}
+        >
           <IconEyeCheck className={classes.linkIcon} stroke={1.5} />
           <span>Staff monitoring</span>
-          
         </a>
-        <a className={classes.link} onClick={() => navigate("/admin/pending-posts")}>
+        <a
+          className={classes.link}
+          onClick={() => navigate("/staff/manage-post")}
+        >
           <IconFileText className={classes.linkIcon} stroke={1.5} />
           <span>Pending posts</span>
         </a>

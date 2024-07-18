@@ -139,18 +139,6 @@ const router = createBrowserRouter([
 				element: <StudyPage />,
 			},
 			{
-				path: "manage-user",
-				element: <ManageUser />,
-			},
-			{
-				path: "staff-manage-post",
-				element: <ManagePostForStaff />,
-			},
-			{
-				path: "manage-subject",
-				element: <ManageSubjectPage />,
-			},
-			{
 				path: "change-password",
 				element: <ChangePassWordForm />,
 			},
@@ -286,6 +274,14 @@ const router = createBrowserRouter([
 								<ManageUser />
 							</Suspense>
 						),
+					},
+					{
+						path: "manage-user",
+						element: <ManageUser />,
+					},
+					{
+						path: "manage-subject",
+						element: <ManageSubjectPage />,
 					},
 				],
 			},
