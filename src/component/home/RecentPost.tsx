@@ -147,7 +147,7 @@ function RecentPost() {
                             </Card>
                         </Carousel.Slide>
                     ))}
-                    {recentPost.length && <Carousel.Slide> <Flex
+                    {recentPost.length % 8 == 0 && <Carousel.Slide> <Flex
                         p={"lg"}
                         className="h-full"
                         align={"center"}
