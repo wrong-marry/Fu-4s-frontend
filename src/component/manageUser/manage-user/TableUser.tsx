@@ -25,6 +25,7 @@ import * as XLSX from "xlsx";
 import { FaFileExcel } from "react-icons/fa";
 import { format } from "date-fns";
 import PromoteAccountModal from "./PromoteAccountModal";
+import SendNotiModal from "./SendNotiModal";
 
 interface User {
   username: string;
@@ -63,6 +64,7 @@ function TableUser({ flag2, setFlag2 }: TableUserProps) {
 	const [currentTab, setCurrentTab] = useState("ALL");
 
 	const [userToBan, setuserToBan] = useState<User | null>(null);
+    const [userToSendNoti, setuserToSendNoti] = useState<User | null>(null);
     const [userToPromote, setuserToPromote] = useState<User | null>(null);
 
 	const [
@@ -71,9 +73,54 @@ function TableUser({ flag2, setFlag2 }: TableUserProps) {
 	] = useDisclosure(false);
 
     const [
+			sendNotiOpened,
+			{ open: openSendNotiModal, close: closeSendNotiModal },
+		] = useDisclosure(false);
+
+    const [
 			promoteAccountOpened,
 			{ open: openPromoteAccountModal, close: closePromoteAccountModal },
 		] = useDisclosure(false);
+
+        const confirmSendNoti = async (message:string) => {
+					if (userToSendNoti) {
+						try {
+                            const notificationData = {
+															message: message, // Replace with an actual notification message
+															username: userToSendNoti.username, // Replace with an actual username
+														};
+							const token = localStorage.getItem("token");
+							const url = `http://localhost:8080/api/v1/admin/createDirectNoti`;
+							const response = await fetch(url, {
+								method: "POST",
+								headers: {
+									Authorization: `Bearer ${token}`,
+									"Content-Type": "application/json",
+								},
+								body: JSON.stringify(notificationData),
+							});
+
+							if (response.ok) {
+						
+								closeSendNotiModal();
+								notifications.show({
+									title: `Notification sent`,
+									message: `You just sent a notification to ` + userToSendNoti.username,
+									color:
+										userToSendNoti.status === "ACTIVE" ? "yellow" : "green",
+								});
+							}
+						} catch (error) {
+							console.error("Error changing user status:", error);
+							notifications.show({
+								title: "Error changing user status",
+								message: `An unknown error occurred while changing status for "${userToSendNoti.username}"`,
+								color: "red",
+							});
+						}
+					}
+				};
+
 
 	const confirmBanAccount = async () => {
 		if (userToBan) {
@@ -317,6 +364,12 @@ function TableUser({ flag2, setFlag2 }: TableUserProps) {
 		setuserToBan(user);
 		openBanAccountModal();
 	};
+
+    const handleSendNoti = (user: User) => {
+			setuserToSendNoti(user);
+			openSendNotiModal();
+		};
+
     const handlePromoteUser = (user: User) => {
 				setuserToPromote(user);
 				openPromoteAccountModal();
@@ -377,6 +430,7 @@ function TableUser({ flag2, setFlag2 }: TableUserProps) {
 										stroke={1.5}
 									/>
 								}
+								onClick={() => handleSendNoti(user)}
 							>
 								Send direct Notification
 							</Menu.Item>
@@ -531,6 +585,12 @@ function TableUser({ flag2, setFlag2 }: TableUserProps) {
 					onClose={closeBanAccountModal}
 					onConfirm={confirmBanAccount}
 					userToBan={userToBan}
+				/>
+				<SendNotiModal
+					opened={sendNotiOpened}
+					onClose={closeSendNotiModal}
+					onConfirm={confirmSendNoti}
+					userToSendNoti={userToSendNoti}
 				/>
 				<PromoteAccountModal
 					opened={promoteAccountOpened}
