@@ -7,6 +7,6 @@ export async function fetchAuthorUsername(id: string): Promise<string> {
 			method: "GET",
 		}
 	);
-	const data = await response.json();
-	return data;
+	const responseBody = await response.text();
+	return responseBody;
 }

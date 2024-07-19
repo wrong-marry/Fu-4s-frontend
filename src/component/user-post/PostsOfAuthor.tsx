@@ -15,14 +15,14 @@ import React, { useEffect, useState } from "react";
 import { IconDots } from "@tabler/icons-react";
 import { BASE_URL } from "../../common/constant";
 
-export interface Post {
-	id: number;
+interface Post {
+	id: string;
+	postTime: string;
 	title: string;
-	result: number;
-	postTime: Date;
+	status: string;
 	username: string;
-	test: boolean;
 	subjectCode: string;
+	test: boolean;
 }
 
 interface PostsOfAuthor {
@@ -34,7 +34,9 @@ const PostsOfAuthor: React.FC<PostsOfAuthor> = ({ authorname }) => {
 
 	useEffect(() => {
 		axios
-			.get(`${BASE_URL}/api/v1/post/getPostByUserName?username=${authorname}`)
+			.get(
+				`${BASE_URL}/api/v1/post/getAllByUsername?username=${authorname}&pageNum=1&pageSize=6`
+			)
 			.then((res) => {
 				const sortedList = res.data
 					? res.data.sort(
@@ -55,10 +57,10 @@ const PostsOfAuthor: React.FC<PostsOfAuthor> = ({ authorname }) => {
 			});
 	}, [authorname]);
 
-	function fetchMore(offset: number) {
+	function fetchMore(pageNum: number) {
 		axios
 			.get(
-				`${BASE_URL}/api/v1/post/getPostByUserName?username=${authorname}&offset=${offset}`
+				`${BASE_URL}/api/v1/post/getAllByUsername?username=${authorname}&pageSize=6&pageNum=${pageNum}`
 			)
 			.then((res) => {
 				const sortedList = res.data
@@ -167,7 +169,7 @@ const PostsOfAuthor: React.FC<PostsOfAuthor> = ({ authorname }) => {
 										aria-label="Dots"
 										radius={"xl"}
 										size={"xl"}
-										onClick={() => fetchMore(authorPost.length)}
+										onClick={() => fetchMore((authorPost.length + 1) / 6)}
 									>
 										<IconDots stroke={1.5} />
 									</ActionIcon>

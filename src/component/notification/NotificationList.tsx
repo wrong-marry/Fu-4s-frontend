@@ -27,7 +27,7 @@ interface Notification {
 	time: string;
 	message: string;
 	seen: boolean;
-	link: string;
+	postId: string;
 }
 
 function NotificationList() {
@@ -218,10 +218,6 @@ function NotificationList() {
 		}
 	};
 
-	const handleNotificationClick = (link: string) => {
-		navigate(link);
-	};
-
 	if (loading) {
 		return <LoadingOverlay visible />;
 	}
@@ -249,89 +245,80 @@ function NotificationList() {
 					<Box>
 						<Paper withBorder>
 							<ScrollArea>
-								{notifications
-									.filter((notification) =>
-										[
-											"APPROVED_POST",
-											"DISAPPROVED_POST",
-											"HIDE_COMMENT",
-										].includes(notification.message)
-									)
-									.map((notification, index) => (
+								{notifications.map((notification, index) => (
+									<Box
+										key={index}
+										style={{
+											display: "flex",
+											justifyContent: "space-between",
+											alignItems: "center",
+											cursor: "pointer",
+											padding: "10px",
+											marginBottom: "10px",
+											borderRadius: "4px",
+											transition: "background-color 0.3s ease",
+										}}
+										onMouseEnter={(e) =>
+											(e.currentTarget.style.backgroundColor = "#f0f0f0")
+										}
+										onMouseLeave={(e) =>
+											(e.currentTarget.style.backgroundColor = "transparent")
+										}
+									>
 										<Box
-											key={index}
-											style={{
-												display: "flex",
-												justifyContent: "space-between",
-												alignItems: "center",
-												cursor: "pointer",
-												padding: "10px",
-												marginBottom: "10px",
-												borderRadius: "4px",
-												transition: "background-color 0.3s ease",
+											onClick={() => {
+												navigate(`/post/${notification.postId}`);
+												markAsRead(notification.id);
 											}}
-											onMouseEnter={(e) =>
-												(e.currentTarget.style.backgroundColor = "#f0f0f0")
-											}
-											onMouseLeave={(e) =>
-												(e.currentTarget.style.backgroundColor = "transparent")
-											}
 										>
-											<Box
-												onClick={() => handleNotificationClick(notification.id)}
+											<Text
+												fw={notification.seen ? "" : "700"}
+												onMouseEnter={(e) =>
+													(e.currentTarget.style.textDecoration = "underline")
+												}
+												onMouseLeave={(e) =>
+													(e.currentTarget.style.textDecoration = "none")
+												}
 											>
-												<Text
-													fw={notification.seen ? "" : "700"}
-													onMouseEnter={(e) =>
-														(e.currentTarget.style.textDecoration = "underline")
-													}
-													onMouseLeave={(e) =>
-														(e.currentTarget.style.textDecoration = "none")
-													}
-												>
-													{notification.message === "APPROVED_POST"
-														? "Bài viết của bạn đã được duyệt"
-														: notification.message === "DISAPPROVED_POST"
-														? "Bài viết của bạn không được duyệt"
-														: "Comment của bạn đã bị ẩn"}
-												</Text>
-												<Text size="xs" c="dimmed">
-													{new Date(notification.time).toLocaleString()}
-												</Text>
-											</Box>
-											<Menu withArrow position="bottom-end" withinPortal>
-												<Menu.Target>
-													<ActionIcon color="gray" variant="light">
-														<IconDots size={16} />
-													</ActionIcon>
-												</Menu.Target>
-												<Menu.Dropdown>
-													{notification.seen ? (
-														<Menu.Item
-															onClick={() => markAsUnread(notification.id)}
-															leftSection={<IconNote />}
-														>
-															Mark as unread
-														</Menu.Item>
-													) : (
-														<Menu.Item
-															onClick={() => markAsRead(notification.id)}
-															leftSection={<IconNote />}
-														>
-															Mark as read
-														</Menu.Item>
-													)}
-													<Menu.Item
-														onClick={() => deleteNoti(notification.id)}
-														leftSection={<IconTrash />}
-														color="red"
-													>
-														Delete notification
-													</Menu.Item>
-												</Menu.Dropdown>
-											</Menu>
+												{notification.message}
+											</Text>
+											<Text size="xs" c="dimmed">
+												{new Date(notification.time).toLocaleString()}
+											</Text>
 										</Box>
-									))}
+										<Menu withArrow position="bottom-end" withinPortal>
+											<Menu.Target>
+												<ActionIcon color="gray" variant="light">
+													<IconDots size={16} />
+												</ActionIcon>
+											</Menu.Target>
+											<Menu.Dropdown>
+												{notification.seen ? (
+													<Menu.Item
+														onClick={() => markAsUnread(notification.id)}
+														leftSection={<IconNote />}
+													>
+														Mark as unread
+													</Menu.Item>
+												) : (
+													<Menu.Item
+														onClick={() => markAsRead(notification.id)}
+														leftSection={<IconNote />}
+													>
+														Mark as read
+													</Menu.Item>
+												)}
+												<Menu.Item
+													onClick={() => deleteNoti(notification.id)}
+													leftSection={<IconTrash />}
+													color="red"
+												>
+													Delete notification
+												</Menu.Item>
+											</Menu.Dropdown>
+										</Menu>
+									</Box>
+								))}
 							</ScrollArea>
 						</Paper>
 						<Center mt={"lg"}>
@@ -348,89 +335,80 @@ function NotificationList() {
 					<Box>
 						<Paper withBorder>
 							<ScrollArea>
-								{unSeenNotifications
-									.filter((notification) =>
-										[
-											"APPROVED_POST",
-											"DISAPPROVED_POST",
-											"HIDE_COMMENT",
-										].includes(notification.message)
-									)
-									.map((notification, index) => (
+								{unSeenNotifications.map((notification, index) => (
+									<Box
+										key={index}
+										style={{
+											display: "flex",
+											justifyContent: "space-between",
+											alignItems: "center",
+											cursor: "pointer",
+											padding: "10px",
+											marginBottom: "10px",
+											borderRadius: "4px",
+											transition: "background-color 0.3s ease",
+										}}
+										onMouseEnter={(e) =>
+											(e.currentTarget.style.backgroundColor = "#f0f0f0")
+										}
+										onMouseLeave={(e) =>
+											(e.currentTarget.style.backgroundColor = "transparent")
+										}
+									>
 										<Box
-											key={index}
-											style={{
-												display: "flex",
-												justifyContent: "space-between",
-												alignItems: "center",
-												cursor: "pointer",
-												padding: "10px",
-												marginBottom: "10px",
-												borderRadius: "4px",
-												transition: "background-color 0.3s ease",
+											onClick={() => {
+												navigate(`/post/${notification.postId}`);
+												markAsRead(notification.id);
 											}}
-											onMouseEnter={(e) =>
-												(e.currentTarget.style.backgroundColor = "#f0f0f0")
-											}
-											onMouseLeave={(e) =>
-												(e.currentTarget.style.backgroundColor = "transparent")
-											}
 										>
-											<Box
-												onClick={() => handleNotificationClick(notification.id)}
+											<Text
+												fw={notification.seen ? "" : "700"}
+												onMouseEnter={(e) =>
+													(e.currentTarget.style.textDecoration = "underline")
+												}
+												onMouseLeave={(e) =>
+													(e.currentTarget.style.textDecoration = "none")
+												}
 											>
-												<Text
-													fw={notification.seen ? "" : "700"}
-													onMouseEnter={(e) =>
-														(e.currentTarget.style.textDecoration = "underline")
-													}
-													onMouseLeave={(e) =>
-														(e.currentTarget.style.textDecoration = "none")
-													}
-												>
-													{notification.message === "APPROVED_POST"
-														? "Bài viết của bạn đã được duyệt"
-														: notification.message === "DISAPPROVED_POST"
-														? "Bài viết của bạn không được duyệt"
-														: "Comment của bạn đã bị ẩn"}
-												</Text>
-												<Text size="xs" c="dimmed">
-													{new Date(notification.time).toLocaleString()}
-												</Text>
-											</Box>
-											<Menu withArrow position="bottom-end" withinPortal>
-												<Menu.Target>
-													<ActionIcon color="gray" variant="light">
-														<IconDots size={16} />
-													</ActionIcon>
-												</Menu.Target>
-												<Menu.Dropdown>
-													{notification.seen ? (
-														<Menu.Item
-															onClick={() => markAsUnread(notification.id)}
-															leftSection={<IconNote />}
-														>
-															Mark as unread
-														</Menu.Item>
-													) : (
-														<Menu.Item
-															onClick={() => markAsRead(notification.id)}
-															leftSection={<IconNote />}
-														>
-															Mark as read
-														</Menu.Item>
-													)}
-													<Menu.Item
-														onClick={() => deleteNoti(notification.id)}
-														leftSection={<IconTrash />}
-														color="red"
-													>
-														Delete notification
-													</Menu.Item>
-												</Menu.Dropdown>
-											</Menu>
+												{notification.message}
+											</Text>
+											<Text size="xs" c="dimmed">
+												{new Date(notification.time).toLocaleString()}
+											</Text>
 										</Box>
-									))}
+										<Menu withArrow position="bottom-end" withinPortal>
+											<Menu.Target>
+												<ActionIcon color="gray" variant="light">
+													<IconDots size={16} />
+												</ActionIcon>
+											</Menu.Target>
+											<Menu.Dropdown>
+												{notification.seen ? (
+													<Menu.Item
+														onClick={() => markAsUnread(notification.id)}
+														leftSection={<IconNote />}
+													>
+														Mark as unread
+													</Menu.Item>
+												) : (
+													<Menu.Item
+														onClick={() => markAsRead(notification.id)}
+														leftSection={<IconNote />}
+													>
+														Mark as read
+													</Menu.Item>
+												)}
+												<Menu.Item
+													onClick={() => deleteNoti(notification.id)}
+													leftSection={<IconTrash />}
+													color="red"
+												>
+													Delete notification
+												</Menu.Item>
+											</Menu.Dropdown>
+										</Menu>
+									</Box>
+								))}
 							</ScrollArea>
 						</Paper>
 						<Center mt={"lg"}>
