@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Badge, Button, Card, Center, Grid, Pagination, Paper, Table } from "@mantine/core";
+import { Badge, Button, Card, Center, Grid, Pagination, Table } from "@mantine/core";
 import { BASE_URL } from "../../../common/constant.tsx";
 
 interface Post {

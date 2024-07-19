@@ -9,7 +9,6 @@ import {
 	Paper,
 	Space,
 	TextInput,
-	ThemeIcon,
 	Title,
 	Text,
 	Select,

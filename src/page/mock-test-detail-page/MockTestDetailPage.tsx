@@ -59,13 +59,14 @@ export default function MockTestDetailPage(post: any) {
                                 title={
                                     isLoggedIn()
                                         ? "Customize your test"
-                                        : "BRUH NOT LOGGED IN BRUHH!"
+                                        : "YOU ARE NOT LOGGED IN"
                                 }
                             >
                                 {isLoggedIn() ? (
                                     <CustomizeTestModal numberOfQuestion={questions.length} id={post.id}/>
                                 ) : (
-                                    <Text>BRUH NOT LOGGED IN BRUHH!</Text>
+                                    <Text>PLEASE LOGIN TO TAKE THIS TEST!</Text>
+                                    
                                 )}
                             </Modal>
                             <Button

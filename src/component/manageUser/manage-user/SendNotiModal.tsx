@@ -1,6 +1,6 @@
 // DisableModal.tsx
 import React, { useState } from "react";
-import { Modal, Button, Text, Center, TextInput, Box, JsonInput } from "@mantine/core";
+import { Modal, Button, Center, Box, JsonInput } from "@mantine/core";
 
 interface User {
 	username: string;

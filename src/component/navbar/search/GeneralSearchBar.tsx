@@ -49,7 +49,9 @@ const fetchSearchResultData = async (keywords: string) => {
         let api = `${BASE_URL}/api/v1/search?keyword=${keywords}`;
         if (["STAFF", "ADMIN"].includes(localStorage.getItem("role") ?? "")) api += `&isStaff=true`;
         api += `&pageSize=${SEARCH_LOAD_SIZE}`;
-        const res = await axios.get(api);
+        const res = await axios.get(api, {headers: localStorage.getItem("token")?{
+            "Authorization": "Bearer " + localStorage.getItem("token"),
+        }:{}});
         return res.data;
     } catch (error) {
         console.error(error)
