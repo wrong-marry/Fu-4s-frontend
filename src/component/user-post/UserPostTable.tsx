@@ -27,6 +27,7 @@ export function UserPostTable() {
   const [numPage, setNumPage] = useState(1);
   const [posts, setPost] = useState<Post[]>([]);
 
+  if(activePage < 1) setPage(1);
   useEffect(() => {
     const fetchPost = async () => {
       // ${localStorage.getItem('username')}
