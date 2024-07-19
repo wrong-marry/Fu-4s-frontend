@@ -139,7 +139,7 @@ function UploadedPost() {
                             </Card>
                         </Carousel.Slide>
                     ))}
-                    {uploadedPost.length && <Carousel.Slide> <Flex
+                    {uploadedPost.length % 6 == 0 && <Carousel.Slide> <Flex
                         p={"lg"}
                         className="h-full"
                         align={"center"}

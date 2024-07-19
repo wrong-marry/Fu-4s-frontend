@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import { useNavigate } from "react-router-dom";
 import { useDisclosure } from "@mantine/hooks";
+import { BASE_URL } from "../../common/constant";
 
 interface Subject {
 	code: string;

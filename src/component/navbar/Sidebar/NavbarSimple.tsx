@@ -1,26 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-  Group,
-  Code,
-  useComputedColorScheme,
   Menu,
-  Popover,
   rem,
-  Grid,
   em,
-  useMantineColorScheme,
-  Center,
   Text,
+  Container,
 } from "@mantine/core";
 import {
   IconBellRinging,
-  IconFingerprint,
-  IconKey,
-  IconSettings,
-  Icon2fa,
-  IconDatabaseImport,
-  IconReceipt2,
-  IconSwitchHorizontal,
+
   IconLogout,
   IconHome,
   IconLibraryPlus,
@@ -29,7 +17,6 @@ import {
   IconChartBar,
   IconUsers,
   IconBook,
-  IconEyeCheck,
   IconFileText,
 } from "@tabler/icons-react";
 
@@ -38,20 +25,12 @@ import { NavLink, useNavigate } from "react-router-dom";
 import NotificationList from "../../notification/NotificationList";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { Logout } from "../../../util/loader/Auth";
-import { DarkModeSwitch } from "react-toggle-dark-mode";
 
 export function NavbarSimple() {
   const [, { open }] = useDisclosure(false);
   const [active, setActive] = useState("home");
-  const computedColorScheme = useComputedColorScheme("light");
   const navigate = useNavigate();
   const isMobile = useMediaQuery(`(max-width: ${em(769)})`);
-  const { colorScheme, setColorScheme } = useMantineColorScheme({
-    keepTransitions: true,
-  });
-  const toggleColorScheme = () => {
-    setColorScheme(computedColorScheme === "dark" ? "light" : "dark");
-  };
   return (
     <nav className={classes.navbar}>
       <div className={classes.navbarMain}>
@@ -76,7 +55,10 @@ export function NavbarSimple() {
         >
           <Menu.Target>
             <a
-            onClick={()=>{navigate("/notifications");setActive("notifications");}}
+              onClick={() => {
+                navigate("/notifications");
+                setActive("notifications");
+              }}
               className={classes.link}
               data-active={"notifications" === active || undefined}
             >
@@ -148,32 +130,69 @@ export function NavbarSimple() {
             </NavLink>
           </Menu.Dropdown>
         </Menu>
-        
       </div>
-      <div className={classes.footer}>
-        <Text ml='sm'>Admin workspace</Text>
-        <a className={classes.link} onClick={() => navigate("/admin/overview")}>
-          <IconChartBar className={classes.linkIcon} stroke={1.5} />
-          <span>Overview Charts</span>
-        </a>
-        <a className={classes.link} onClick={() => navigate("/admin/manage-users")}>
-          <IconUsers className={classes.linkIcon} stroke={1.5} />
-          <span>Manage users</span>
-        </a>
-        <a className={classes.link} onClick={() => navigate("/admin/manage-subjects")}>
-          <IconBook className={classes.linkIcon} stroke={1.5} />
-          <span>Manage subjects</span>
-        </a>
-        <a className={classes.link} onClick={() => navigate("/admin/staff-monitoring")}>
-          <IconEyeCheck className={classes.linkIcon} stroke={1.5} />
-          <span>Staff monitoring</span>
-          
-        </a>
-        <a className={classes.link} onClick={() => navigate("/admin/pending-posts")}>
-          <IconFileText className={classes.linkIcon} stroke={1.5} />
-          <span>Pending posts</span>
-        </a>
-      </div>
+      <Container
+        m={0}
+        p={0}
+        display={localStorage.getItem("role") === "ADMIN" ? "block" : "none"}
+      >
+        <div className={classes.footer}>
+          <Text ml="sm">Admin workspace</Text>
+
+          <a
+            className={classes.link}
+            data-active={"overview" === active || undefined}
+            onClick={(event) => {
+              event.preventDefault();
+              setActive("overview");
+              navigate("admin/overview");
+            }}
+          >
+            <IconChartBar className={classes.linkIcon} stroke={1.5} />
+            <span>Overview Charts</span>
+          </a>
+          <a
+          data-active={"manage-users" === active || undefined}
+            className={classes.link}
+            onClick={() => {navigate("/admin/manage-user");setActive("manage-users");}}
+          >
+            <IconUsers className={classes.linkIcon} stroke={1.5} />
+            <span>Manage users</span>
+          </a>
+          <a
+          data-active={"manage-subject" === active || undefined}
+            className={classes.link}
+            onClick={() => {navigate("/admin/manage-subject");setActive("manage-subject");}}
+          >
+            <IconBook className={classes.linkIcon} stroke={1.5} />
+            <span>Manage subjects</span>
+          </a>
+        </div>
+      </Container>
+      <Container
+        m={0}
+        p={0}
+        display={
+          localStorage.getItem("role") === "STAFF" ||
+          localStorage.getItem("role") === "ADMIN"
+            ? "block"
+            : "none"
+        }
+      >
+        <div className={classes.footer}>
+          <Text ml="sm">Staff workspace</Text>
+
+          <a
+            className={classes.link}
+            
+          data-active={"pending-posts" === active || undefined}
+          onClick={() => {navigate("/staff/manage-post");setActive("pending-posts");}}
+          >
+            <IconFileText className={classes.linkIcon} stroke={1.5} />
+            <span>Pending posts</span>
+          </a>
+        </div>
+      </Container>
       <div className={classes.footer}>
         <a className={classes.link} onClick={() => Logout()}>
           <IconLogout className={classes.linkIcon} stroke={1.5} />

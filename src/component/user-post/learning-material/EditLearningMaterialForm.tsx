@@ -418,12 +418,12 @@ export function EditLearningMaterialForm() {
 						<Space h="xs" />
 
 						<List
-							icon={<ThemeIcon color="black" size={7} radius="xl"></ThemeIcon>}
-							withPadding
-							size="sm"
-						>
-							{listData}
-						</List>
+                        icon="•"
+                        withPadding
+                        size="sm"
+                    >
+                        {listData}
+                    </List>
 
 						<Space h="lg" />
 
@@ -432,7 +432,7 @@ export function EditLearningMaterialForm() {
 								<Center>
 									<Button
 										variant="outline"
-										color="black"
+										color="blue"
 										onClick={() => navigate("/user/post/learning-material")}
 										ml="lg"
 									>

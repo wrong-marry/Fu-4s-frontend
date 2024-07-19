@@ -1,6 +1,6 @@
 import React from "react";
-import { Modal, TextInput, Button, Select } from "@mantine/core";
-import { Formik, Field, ErrorMessage } from "formik";
+import {Modal, TextInput, Button, Select} from "@mantine/core";
+import {Formik, Field, ErrorMessage} from "formik";
 import * as Yup from "yup";
 
 interface CreateModalProps {
@@ -14,7 +14,7 @@ interface CreateModalProps {
 	};
 	onInputChange: (
 		event:
-			| React.ChangeEvent<HTMLInputElement>
+			| React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
 			| { target: { name: string; value: string } }
 	) => void;
 }

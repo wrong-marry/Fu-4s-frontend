@@ -85,13 +85,14 @@ function RecentPost() {
                     controlsOffset="xs"
                     controlSize={30}
                     dragFree
+                    
                 >
                     {recentPost?.map((test, index) => (
                         <Carousel.Slide key={index}>
                             <Card
                                 miw={"300px"}
                                 maw={"300px"}
-                                shadow="sm"
+                                shadow="lg"
                                 radius="md"
                                 padding={"lg"}
                                 withBorder
@@ -147,7 +148,7 @@ function RecentPost() {
                             </Card>
                         </Carousel.Slide>
                     ))}
-                    {recentPost.length && <Carousel.Slide> <Flex
+                    {recentPost.length % 8 == 0 && <Carousel.Slide> <Flex
                         p={"lg"}
                         className="h-full"
                         align={"center"}

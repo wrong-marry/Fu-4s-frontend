@@ -64,7 +64,7 @@ export default function TestScore(prop: any) {
                         c={score - lastScore > 0 ? "teal" : "red"}
                         fw={700}
                     >
-                        {score - lastScore} points
+                        {(score - lastScore).toFixed(1)} points
                     </Text>{" "}
                     {score - lastScore > 0 ? "increase" : "decrease"} compared to last
                     attempt

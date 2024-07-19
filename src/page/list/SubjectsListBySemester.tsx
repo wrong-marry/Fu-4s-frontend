@@ -1,21 +1,24 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { TextInput, Table, Card } from "@mantine/core";
 import {
-	IconDots,
 	IconSortAscending,
 	IconSortDescending,
+	IconArrowsSort,
 } from "@tabler/icons-react";
 import { loadingIndicator } from "../../App.tsx";
 import { BASE_URL } from "../../common/constant.tsx";
+
 export interface Subject {
 	code: string;
 	name: string;
 	semester: number;
 	active: boolean;
+	postCount?: number;
 }
+
 import { useParams, useNavigate } from "react-router-dom";
 
-function SubjectsList() {
+function SubjectsListBySemester() {
 	const { semester } = useParams<{ semester: string }>();
 	const navigate = useNavigate();
 	const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -24,7 +27,7 @@ function SubjectsList() {
 	const [error, setError] = useState<string | null>(null);
 	const [search, setSearch] = useState("");
 	const [sortBy, setSortBy] = useState<string | null>(null);
-	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+	const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
 
 	useEffect(() => {
 		async function fetchData() {
@@ -44,8 +47,27 @@ function SubjectsList() {
 				}
 
 				const data: Subject[] = await response.json();
-				setSubjects(data);
-				setFilteredSubjects(data);
+
+				// Fetch post count for each subject
+				const subjectsWithPostCount = await Promise.all(
+					data.map(async (subject) => {
+						const postCountResponse = await fetch(
+							`${BASE_URL}/api/v1/post/subject/count-${subject.code}`,
+							{
+								headers: {
+									Authorization: `Bearer ${token}`,
+								},
+							}
+						);
+
+						const postCount = await postCountResponse.json();
+
+						return { ...subject, postCount };
+					})
+				);
+
+				setSubjects(subjectsWithPostCount);
+				setFilteredSubjects(subjectsWithPostCount);
 				setLoading(false);
 			} catch (error: any) {
 				setError(error.message);
@@ -54,7 +76,7 @@ function SubjectsList() {
 		}
 
 		fetchData();
-	}, []);
+	}, [semester, navigate]);
 
 	useEffect(() => {
 		let filtered = subjects;
@@ -75,8 +97,12 @@ function SubjectsList() {
 				if (typeof aField === "string") aField = aField.toLowerCase();
 				if (typeof bField === "string") bField = bField.toLowerCase();
 
-				if (aField < bField) return sortOrder === "asc" ? -1 : 1;
-				if (aField > bField) return sortOrder === "asc" ? 1 : -1;
+				if (typeof aField === "string" && typeof bField === "string") {
+					if (aField < bField) return sortOrder === "asc" ? -1 : 1;
+				} else {
+					return 0;
+				}
+				if (aField! > bField!) return sortOrder === "asc" ? 1 : -1;
 
 				return 0;
 			});
@@ -93,24 +119,20 @@ function SubjectsList() {
 		return <div>Error: {error}</div>;
 	}
 
-	const handleInputChange = (
-		event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-	) => {
-		const { name, value } = event.target;
-		const currentSubject = subjects.find((subject) => subject.code === name);
-		if (currentSubject) {
-			setSubjects((prevSubjects) => {
-				const updatedSubjects = prevSubjects.map((subject) =>
-					subject.code === name ? { ...subject, [name]: value } : subject
-				);
-				return updatedSubjects;
-			});
-		}
-	};
-
 	const handleSortClick = (field: string) => {
-		setSortBy(field);
-		setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+		if (sortBy === field) {
+			if (sortOrder === "asc") {
+				setSortOrder("desc");
+			} else if (sortOrder === "desc") {
+				setSortOrder(null);
+				setSortBy(null);
+			} else {
+				setSortOrder("asc");
+			}
+		} else {
+			setSortBy(field);
+			setSortOrder("asc");
+		}
 	};
 
 	const subjectsList = filteredSubjects.map((subject) => (
@@ -141,8 +163,20 @@ function SubjectsList() {
 					{subject.active ? "Active" : "Disabled"}
 				</span>
 			</Table.Td>
+			<Table.Td className="font-medium">{subject.postCount}</Table.Td>
 		</Table.Tr>
 	));
+
+	const getSortIcon = (field: string) => {
+		if (sortBy === field) {
+			if (sortOrder === "asc") {
+				return <IconSortAscending />;
+			} else if (sortOrder === "desc") {
+				return <IconSortDescending />;
+			}
+		}
+		return <IconArrowsSort />;
+	};
 
 	return (
 		<section className="shadow pb-4">
@@ -173,15 +207,7 @@ function SubjectsList() {
 									>
 										<div style={{ display: "flex", alignItems: "center" }}>
 											<span>Code</span>
-											{sortBy === "code" && (
-												<span className="ml-2">
-													{sortOrder === "asc" ? (
-														<IconSortAscending />
-													) : (
-														<IconSortDescending />
-													)}
-												</span>
-											)}
+											<span className="ml-2">{getSortIcon("code")}</span>
 										</div>
 									</Table.Th>
 
@@ -192,34 +218,29 @@ function SubjectsList() {
 									>
 										<div style={{ display: "flex", alignItems: "center" }}>
 											<span>Name</span>
-											{sortBy === "name" && (
-												<span className="ml-2">
-													{sortOrder === "asc" ? (
-														<IconSortAscending />
-													) : (
-														<IconSortDescending />
-													)}
-												</span>
-											)}
+											<span className="ml-2">{getSortIcon("name")}</span>
 										</div>
 									</Table.Th>
 
 									<Table.Th
 										className="py-4 font-medium"
-										onClick={() => handleSortClick("status")}
+										onClick={() => handleSortClick("active")}
 										style={{ cursor: "pointer" }}
 									>
 										<div style={{ display: "flex", alignItems: "center" }}>
 											<span>Status</span>
-											{sortBy === "status" && (
-												<span className="ml-2">
-													{sortOrder === "asc" ? (
-														<IconSortAscending />
-													) : (
-														<IconSortDescending />
-													)}
-												</span>
-											)}
+											<span className="ml-2">{getSortIcon("active")}</span>
+										</div>
+									</Table.Th>
+
+									<Table.Th
+										className="py-4 font-medium"
+										onClick={() => handleSortClick("postCount")}
+										style={{ cursor: "pointer" }}
+									>
+										<div style={{ display: "flex", alignItems: "center" }}>
+											<span>Post Count</span>
+											<span className="ml-2">{getSortIcon("postCount")}</span>
 										</div>
 									</Table.Th>
 								</Table.Tr>
@@ -233,4 +254,4 @@ function SubjectsList() {
 	);
 }
 
-export default SubjectsList;
+export default SubjectsListBySemester;

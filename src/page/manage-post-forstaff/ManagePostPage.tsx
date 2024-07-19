@@ -1,20 +1,12 @@
-import {Grid, Tabs, rem} from "@mantine/core";
-import {IconMessageCircle, IconNotes, IconSettings} from "@tabler/icons-react";
+import {Grid, Tabs} from "@mantine/core";
 import "@mantine/charts/styles.css";
-// import TablePostStaff from "../../component/staff-post/post-manage/TablePostStaff.tsx";
 import DashboardSectionStaff from "../../component/staff-post/post-manage/DashboardSectionStaff.tsx";
 import PostPage1 from "../../component/staff-post/post-manage/PendingPost.tsx";
 import { useState } from "react";
 import TablePostStaff from "../../component/staff-post/post-manage/TablePostStaff.tsx";
 
 export default function ManagePostForStaff() {
-    // Sử dụng useMediaQuery để xác định kích thước màn hình
-
-	const iconStyle = {
-		width: rem(30),
-		height: rem(30),
-		color: "rgb(34, 139, 230)", // Set the color of the icons to light blue
-	};
+  
 	 const [flag, setFlag] = useState(false);
 
 	return (
@@ -27,28 +19,7 @@ export default function ManagePostForStaff() {
 					defaultValue="Posts Manage"
 					w={"100%"}
 				>
-					<Grid.Col span={2.6}>
-						<Tabs.List style={{ marginTop: "30px" }}>
-							<h1
-								style={{
-									textAlign: "center",
-									color: "rgba(2, 104, 207, 1)",
-									fontFamily: "Courier New, monospace",
-									fontWeight: "bold",
-								}}
-							>
-								WELCOME STAFF WORKSPACE!
-							</h1>
-							<Tabs.Tab
-								value="Posts Manage"
-								leftSection={<IconNotes style={iconStyle} />}
-								style={{ color: "rgb(34, 139, 230)" }}
-							>
-								Posts Manage
-							</Tabs.Tab>
-						</Tabs.List>
-					</Grid.Col>
-					<Grid.Col span={9}>
+					<Grid.Col span={10} offset={1}>
 						<Tabs.Panel value="Posts Manage">
 							<DashboardSectionStaff flag={flag} setFlag={setFlag} />
 							<br />

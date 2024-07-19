@@ -556,9 +556,9 @@ function TablePostStaff({ flag, setFlag }: TablePostStaffProps) {
 			<Table.Td className="font-medium">
 				{format(new Date(post.postTime), "dd/MM/yyyy HH:mm")}
 			</Table.Td>
-			<Table.Td className="font-medium">
+			<Table.Td c="dark" className="font-medium">
 				<span
-					className={`inline-block py-1 px-2 text-blue rounded ${
+					className={`inline-block font-semibold py-1 px-2 rounded ${
 						post.test === true
 							? "bg-blue-200" // Lighter pastel green
 							: post.test === false
@@ -684,7 +684,7 @@ function TablePostStaff({ flag, setFlag }: TablePostStaffProps) {
 							<h3 className="text-xl font-bold">POST MANAGEMENT</h3>
 							<div className="ml-auto flex items-center">
 								<span>
-									<h3>Subject : </h3>
+									<h3 className="mr-1">Subject : </h3>
 								</span>
 								<Select
 									placeholder="Filter by subject"

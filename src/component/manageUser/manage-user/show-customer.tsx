@@ -91,10 +91,10 @@ const DashboardSection: React.FC<ComponentProps> = ({ flag2, setFlag2 }) => {
 
 	return (
 		<>
-			<section className="bg-coolGray-50 py-4">
+			<section className="bg-coolGray-50">
 				<div className="container px-4 mx-auto">
-					<div className="bg-coolGray-50 py-4">
-						<h3 className="text-xl font-bold w-full w-auto p-5">
+					<div className="bg-coolGray-50">
+						<h3 className="text-xl font-bold w-auto p-5">
 							QUANTITY STATISTICS
 						</h3>
 					</div>
