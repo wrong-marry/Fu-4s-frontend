@@ -111,6 +111,14 @@ const router = createBrowserRouter([
 					</Suspense>
 				),
 			},
+			// {
+			// 	path: "user/:username",
+			// 	element: (
+			// 		<Suspense fallback={loadingIndicator}>
+			// 			<PostsListByUser />
+			// 		</Suspense>
+			// 	),
+			// },
 			{
 				path: "subject/:code",
 				element: (
@@ -279,10 +287,11 @@ const router = createBrowserRouter([
 					{
 						path: "manage-subject",
 						element: <TableSubject />,
-					},{
+					},
+					{
 						path: "overview",
 						element: <OverviewCharts />,
-					}
+					},
 				],
 			},
 			{

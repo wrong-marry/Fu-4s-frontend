@@ -68,18 +68,20 @@ export function ProfileCard({user}: ProfileCardProps) {
                 }
 
                 fetch(`${BASE_URL}/api/v1/user/avatar`, {
-                    method: "POST",
-                    body: formData,
-                })
-                    .then((response) => response.json())
-                    .then(() => {
-                        if (username) {
-                            const url = `${BASE_URL}/api/v1/user/getAvatar?username=${username}`;
-                            setAvatarUrl(url);
-                            setSrc(url);
-                        }
-                    })
-                    .catch((error) => console.error("Error uploading image:", error));
+									method: "POST",
+									body: formData,
+								})
+									.then((response) => response.json())
+									.then(() => {
+										if (username) {
+											const url = `${BASE_URL}/api/v1/user/getAvatar?username=${username}`;
+											setAvatarUrl(url);
+											setSrc(url);
+										}
+									})
+									.catch((error) =>
+										console.error("Error uploading image:", error)
+									);
             });
         setModalOpen(false);
     };
