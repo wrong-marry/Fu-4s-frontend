@@ -67,7 +67,7 @@ export function ProfileCard({user}: ProfileCardProps) {
                     formData.append("username", username);
                 }
 
-                fetch("${BASE_URL}/api/v1/user/avatar", {
+                fetch(`${BASE_URL}/api/v1/user/avatar`, {
                     method: "POST",
                     body: formData,
                 })

@@ -16,7 +16,7 @@ export function ChangePassWordForm() {
     const navigate = useNavigate();
     const username = localStorage.getItem("username");
     const compareAPI =
-        "${BASE_URL}/api/v1/user/compare-password?username=" +
+        `${BASE_URL}/api/v1/user/compare-password?username=` +
         username +
         "&confirmPassword=";
     const changePassAPI = `${BASE_URL}/api/v1/user/change-password?username=` + username + "&newPassword=";
