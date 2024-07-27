@@ -9,13 +9,10 @@ import {
 	LoadingOverlay,
 	Container,
 	Box,
-	Title,
-	Group,
 	Menu,
 	ActionIcon,
 } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import { NavLink } from "@mantine/core";
 import { IconDots, IconTrash, IconNote } from "@tabler/icons-react";
 import { BASE_URL } from "../../common/constant.tsx";
 
@@ -34,8 +31,7 @@ function NotificationListSmall() {
 	const username = localStorage.getItem("username");
 	const pageSize = 6;
 
-	const [activePage, setPage] = useState(1);
-	const [numPage, setNumPage] = useState(1);
+	const activePage = 1;
 	const [notifications, setNotifications] = useState<Notification[]>([]);
 	const [unSeenNotifications, setUnSeenNotifications] = useState<
 		Notification[]
@@ -71,21 +67,6 @@ function NotificationListSmall() {
 				setLoading(false);
 			}
 		};
-
-		const fetchNum = async () => {
-			try {
-				const response = await fetch(
-					`${BASE_URL}/api/v1/notification/getNum?username=${username}`
-				);
-				const data = await response.json();
-				setNumPage(Math.ceil(data / pageSize));
-			} catch (error) {
-				console.error("Error fetching notification count:", error);
-				setError("Error fetching notification count");
-			}
-		};
-
-		fetchNum();
 		fetchNoti();
 		fetchUnSeenNoti();
 	}, [activePage, activeTab]);

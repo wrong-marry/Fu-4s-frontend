@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-	Badge,
-	Button,
 	Card,
 	Center,
 	Grid,
@@ -12,7 +10,6 @@ import {
 	Select,
 	TextInput,
 	Avatar as MantineAvatar,
-	Group,
 	Stack,
 } from "@mantine/core";
 import { useParams, useNavigate } from "react-router-dom";
@@ -180,6 +177,14 @@ export function PostsListByUser() {
 
 	if (!user) {
 		return <Text>Loading...</Text>;
+	}
+
+	if (loading) {
+		return <Text>Loading...</Text>;
+	}
+
+	if (error) {
+		return <div>Error: {error}</div>;
 	}
 
 	return (

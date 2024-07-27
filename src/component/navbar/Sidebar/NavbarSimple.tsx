@@ -40,93 +40,94 @@ export function NavbarSimple() {
 					<span>Home</span>
 				</a>
 				{localStorage.getItem("role") ? (
-					<Menu
-						trigger="hover"
-						position={!isMobile ? "right-start" : "bottom-end"}
-						withArrow
-						shadow="md"
-					>
-						<Menu.Target>
-							<a
-								onClick={() => {
-									navigate("/notifications");
-									setActive("notifications");
-								}}
-								className={classes.link}
-								data-active={"notifications" === active || undefined}
-							>
-								<IconBellRinging className={classes.linkIcon} stroke={1.5} />
-								<span>Notifications</span>
-							</a>
-						</Menu.Target>
-
-						<Menu.Dropdown style={{ height: "400" }}>
-							<Group justify="space-between" m="10">
-								<Title order={4}>Notifications</Title>
-								<NavLink
-									onClick={() => setActive("notifications")}
-									to="/notifications"
-									style={{ textDecoration: "none", color: "#007bff" }}
+					<>
+						<Menu
+							trigger="hover"
+							position={!isMobile ? "right-start" : "bottom-end"}
+							withArrow
+							shadow="md"
+						>
+							<Menu.Target>
+								<a
+									onClick={() => {
+										navigate("/notifications");
+										setActive("notifications");
+									}}
+									className={classes.link}
+									data-active={"notifications" === active || undefined}
 								>
-									See all
+									<IconBellRinging className={classes.linkIcon} stroke={1.5} />
+									<span>Notifications</span>
+								</a>
+							</Menu.Target>
+
+							<Menu.Dropdown style={{ height: "400" }}>
+								<Group justify="space-between" m="10">
+									<Title order={4}>Notifications</Title>
+									<NavLink
+										onClick={() => setActive("notifications")}
+										to="/notifications"
+										style={{ textDecoration: "none", color: "#007bff" }}
+									>
+										See all
+									</NavLink>
+								</Group>
+
+								<NotificationListSmall />
+							</Menu.Dropdown>
+						</Menu>
+
+						<Menu
+							trigger="hover"
+							shadow="md"
+							position={!isMobile ? "right-start" : "bottom-end"}
+							withArrow
+							width={200}
+						>
+							<Menu.Target>
+								<a
+									className={classes.link}
+									data-active={"create" === active || undefined}
+								>
+									<IconSquarePlus className={classes.linkIcon} stroke={1.5} />
+									<span>Generate</span>
+								</a>
+							</Menu.Target>
+
+							<Menu.Dropdown>
+								<Menu.Label>Create</Menu.Label>
+								<NavLink
+									to={"/create-mock-test"}
+									onClick={() => setActive("create")}
+								>
+									<Menu.Item
+										leftSection={
+											<IconLibraryPlus
+												style={{ width: rem(14), height: rem(14) }}
+											/>
+										}
+									>
+										Mock Test
+									</Menu.Item>
 								</NavLink>
-							</Group>
 
-							<NotificationListSmall />
-						</Menu.Dropdown>
-					</Menu>
-				) : (
-					""
-				)}
-				<Menu
-					trigger="hover"
-					shadow="md"
-					position={!isMobile ? "right-start" : "bottom-end"}
-					withArrow
-					width={200}
-				>
-					<Menu.Target>
-						<a
-							className={classes.link}
-							data-active={"create" === active || undefined}
-						>
-							<IconSquarePlus className={classes.linkIcon} stroke={1.5} />
-							<span>Generate</span>
-						</a>
-					</Menu.Target>
-
-					<Menu.Dropdown>
-						<Menu.Label>Create</Menu.Label>
-						<NavLink
-							to={"/create-mock-test"}
-							onClick={() => setActive("create")}
-						>
-							<Menu.Item
-								leftSection={
-									<IconLibraryPlus
-										style={{ width: rem(14), height: rem(14) }}
-									/>
-								}
-							>
-								Mock Test
-							</Menu.Item>
-						</NavLink>
-
-						<NavLink
-							to={"/create-learning-material"}
-							onClick={() => setActive("create")}
-						>
-							<Menu.Item
-								onClick={open}
-								leftSection={
-									<IconPhoto style={{ width: rem(14), height: rem(14) }} />
-								}
-							>
-								Learning material
-							</Menu.Item>
-						</NavLink>
-					</Menu.Dropdown>
-				</Menu>
+								<NavLink
+									to={"/create-learning-material"}
+									onClick={() => setActive("create")}
+								>
+									<Menu.Item
+										onClick={open}
+										leftSection={
+											<IconPhoto style={{ width: rem(14), height: rem(14) }} />
+										}
+									>
+										Learning material
+									</Menu.Item>
+								</NavLink>
+							</Menu.Dropdown>
+						</Menu>
+					</>
+				) : null}
 			</div>
 			<Container
 				m={0}
@@ -198,12 +199,21 @@ export function NavbarSimple() {
 					</a>
 				</div>
 			</Container>
-			<div className={classes.footer}>
-				<a className={classes.link} onClick={() => Logout()}>
-					<IconLogout className={classes.linkIcon} stroke={1.5} />
-					<span>Logout</span>
-				</a>
-			</div>
+			{localStorage.getItem("role") ? (
+				<div className={classes.footer}>
+					<a className={classes.link} onClick={() => Logout()}>
+						<IconLogout className={classes.linkIcon} stroke={1.5} />
+						<span> Logout</span>
+					</a>
+				</div>
+			) : (
+				<div className={classes.footer}>
+					<a className={classes.link} onClick={() => navigate("/auth")}>
+						<IconLogout className={classes.linkIcon} stroke={1.5} />
+						<span> Login</span>
+					</a>
+				</div>
+			)}
 		</nav>
 	);
 }
