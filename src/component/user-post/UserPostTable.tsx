@@ -86,7 +86,7 @@ export function UserPostTable() {
 
       <Table.Td>
         <Button radius="xl" className="text-white" bg="gray">
-          <a href={(post.test ? "/edit-mock-test" : "/edit-learning-material/") + post.id}>Edit</a>
+          <a href={(post.test ? "/edit-mock-test/" : "/edit-learning-material/") + post.id}>Edit</a>
         </Button>
       </Table.Td>
     </Table.Tr>
