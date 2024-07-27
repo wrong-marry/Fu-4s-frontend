@@ -10,7 +10,6 @@ import {
 	Anchor,
 } from "@mantine/core";
 import EditIcon from "@mui/icons-material/Edit";
-import { ActionToggle } from "../color-scheme/ActionToggle";
 import { useNavigate } from "react-router-dom";
 import Avatar from "react-avatar-edit";
 import { BASE_URL } from "../../common/constant.tsx";
@@ -82,6 +81,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
 					.catch((error) => console.error("Error uploading image:", error));
 			});
 		setModalOpen(false);
+		window.location.reload();
 	};
 
 	return (
