@@ -26,7 +26,7 @@ function UploadedPost() {
                             ) => {
                                 const timeA = new Date(a.date).getTime();
                                 const timeB = new Date(b.date).getTime();
-                                return timeB - timeA; // Sort in descending order for most completed views first
+                                return timeB - timeA;
                             }
                         )
                         : [];
@@ -66,7 +66,7 @@ function UploadedPost() {
     return (
         <>
             {uploadedPost.length === 0 ? (
-                <Text c={"dimmed"}>No completed tests available :(</Text>
+                <Text c={"dimmed"}>You haven't uploaded any posts :(</Text>
             ) : (
                 <Carousel
                     slideSize={"25%"}
@@ -90,6 +90,11 @@ function UploadedPost() {
                                 component="a"
                                 className="h-full"
                             >
+                                {test.status != "ACTIVE" ?
+                                    <Badge ms={170} color={test.status == "PENDING_APPROVE" ? "Orange" : "Red"}
+                                           style={{position: 'absolute'}}>{test.status == "PENDING_APPROVE" ? "Pending" : "Hidden"}
+                                    </Badge> : <></>
+                                }
                                 <Stack
                                     onClick={() => {
                                         navigate(`/post/${test.id}`);
