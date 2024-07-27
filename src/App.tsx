@@ -138,6 +138,10 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "notifications",
+				loader: () => {
+					if (!isLoggedIn()) return redirect("/forbidden");
+					return null;
+				},
 				element: (
 					<Suspense fallback={loadingIndicator}>
 						<NotificationList />
@@ -287,6 +291,10 @@ const router = createBrowserRouter([
 					},
 					{
 						path: "manage-subject",
+						loader: async () => {
+							if (!isLoggedIn()) return redirect("/forbidden");
+							else return "";
+						},
 						element: <TableSubject />,
 					},
 					{
