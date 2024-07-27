@@ -15,7 +15,7 @@ import {
 import {IconAdjustmentsAlt, IconChevronsRight} from "@tabler/icons-react";
 
 import {Comment} from "../../component/comment/CommentTag";
-import {redirect, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import MockTestDetailPage from "../mock-test-detail-page/MockTestDetailPage";
 import {forEach} from "lodash";
 import {useForm} from "@mantine/form";
@@ -63,6 +63,7 @@ const PostPage = () => {
         },
     });
 
+    const navigate = useNavigate();
     const [outOfComment, setOutOfComment] = useState<boolean>(false);
     const [post, setPost] = useState<Post | null>(null);
     const [comments, setComments] = useState<CommentData[] | null>([]);
@@ -143,14 +144,17 @@ const PostPage = () => {
                 setAuthorname(authorname);
 
             } catch (error) {
-                console.log("Error fetching data:", error)
+                navigate("/404");
+                return;
             }
         };
 
-        fetchData();
+        fetchData().catch(() => {
+            navigate("/404");
+            return;
+        });
     }, [id, post?.subjectCode, sorted]);
 
-    // if (post == null) return redirect("/404");
     const fetchSubject = async (subjectCode: string) => {
         const response: Subject = (
             await axios.get(`${BASE_URL}/api/v1/subject/${subjectCode}`)
@@ -204,8 +208,8 @@ const PostPage = () => {
                         <Space h={"xl"}/>
                         <Title order={3}>
                             Posts of{" "}
-                            <Anchor fw={700} size="xl">
-                                <a href={`/user/${authorname}`}>{post?.username}</a>
+                            <Anchor fw={700} size="xl" href={`/user/${authorname}`}>
+                                {post?.username}
                             </Anchor>
                         </Title>
                         <PostsOfAuthor authorname={authorname ?? ""}/>
@@ -216,10 +220,8 @@ const PostPage = () => {
                         <Space h={"xl"}/>
                         <Title order={3}>
                             Posts in{" "}
-                            <Anchor fw={700} size="xl">
-                                <a href={`/subject/${post.subjectCode}`}>
-                                    {post.subjectCode}
-                                </a>
+                            <Anchor fw={700} size="xl" href={`/subject/${post.subjectCode}`}>
+                                {post.subjectCode}
                             </Anchor>
                         </Title>
                         <PostsOfSubject thisSubject={post.subjectCode}/>
