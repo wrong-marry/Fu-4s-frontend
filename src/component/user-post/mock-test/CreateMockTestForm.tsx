@@ -83,8 +83,8 @@ export function CreateMockTestForm() {
         const fetchSubject = async () => {
             try {
                 const response = await fetch(
-                    `${BASE_URL}/api/v1/subject/getAll`
-                );
+									`${BASE_URL}/api/v1/subject/getAllActive`
+								);
                 const data = await response.json();
                 //console.log(data);
                 setList(data);

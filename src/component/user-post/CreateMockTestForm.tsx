@@ -82,7 +82,7 @@ export function CreateMockTestForm() {
 	useEffect(() => {
 		const fetchSubject = async () => {
 			try {
-				const response = await fetch(`${BASE_URL}/api/v1/subject/getAll`);
+				const response = await fetch(`${BASE_URL}/api/v1/subject/getAllActive`);
 				const data = await response.json();
 				//console.log(data);
 				setList(data);
