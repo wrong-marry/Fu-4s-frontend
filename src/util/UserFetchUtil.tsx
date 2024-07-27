@@ -8,6 +8,7 @@ export const emptyUser = {
 	email: "",
 	role: "",
 	status: "",
+	enrolledDate: "",
 };
 
 export const fetchUser = async () => {

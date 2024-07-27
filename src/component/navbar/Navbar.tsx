@@ -32,9 +32,20 @@ import { useMediaQuery } from "@mantine/hooks";
 import GeneralSearchBar from "./search/GeneralSearchBar.tsx";
 
 import { Logout } from "../../util/loader/Auth.tsx";
+import { BASE_URL } from "../../common/constant.tsx";
 
 const userBtn = (data: LoaderData, handleLogout: () => void) => {
+	const [avatarUrl, setAvatarUrl] = React.useState<string | null>(
+		"https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-11.png"
+	);
 	const isMobile = useMediaQuery(`(max-width: ${em(500)})`);
+	useEffect(() => {
+		if (data?.username) {
+			const url = `${BASE_URL}/api/v1/user/getAvatar?username=${data.username}`;
+			setAvatarUrl(url);
+		}
+	}, [data?.username]);
+
 	return (
 		<>
 			<Menu shadow="md" width={200}>
@@ -45,7 +56,7 @@ const userBtn = (data: LoaderData, handleLogout: () => void) => {
 							radius="xl"
 							color="grape"
 							className="cursor-pointer"
-							// src={data?.avatar}
+							src={avatarUrl}
 						/>
 						<Text
 							display={isMobile ? "none" : "block"}

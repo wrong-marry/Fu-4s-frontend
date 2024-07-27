@@ -50,6 +50,7 @@ import SubjectsListBySemester from "./page/list/SubjectsListBySemester.tsx";
 import ManageUsers from "./page/admin/ManageUsers.tsx";
 import OverviewCharts from "./page/admin/OverviewCharts.tsx";
 import TableSubject from "./component/manage-subject/TableSubject.tsx";
+import { PostsListByUser } from "./page/list/PostsListByUser.tsx";
 
 export const loadingIndicator = (
 	<Box pos={"relative"} h={"100vh"} w={"100vw"}>
@@ -108,6 +109,14 @@ const router = createBrowserRouter([
 				element: (
 					<Suspense fallback={loadingIndicator}>
 						<SubjectsListBySemester />
+					</Suspense>
+				),
+			},
+			{
+				path: "user/:username",
+				element: (
+					<Suspense fallback={loadingIndicator}>
+						<PostsListByUser />
 					</Suspense>
 				),
 			},
@@ -279,10 +288,11 @@ const router = createBrowserRouter([
 					{
 						path: "manage-subject",
 						element: <TableSubject />,
-					},{
+					},
+					{
 						path: "overview",
 						element: <OverviewCharts />,
-					}
+					},
 				],
 			},
 			{

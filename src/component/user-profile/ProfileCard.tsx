@@ -7,9 +7,9 @@ import {
     Group,
     Modal,
     Avatar as MantineAvatar,
+    Anchor,
 } from "@mantine/core";
 import EditIcon from "@mui/icons-material/Edit";
-import {ActionToggle} from "../color-scheme/ActionToggle";
 import {useNavigate} from "react-router-dom";
 import Avatar from "react-avatar-edit";
 import {BASE_URL} from "../../common/constant.tsx";
@@ -67,7 +67,7 @@ export function ProfileCard({user}: ProfileCardProps) {
                     formData.append("username", username);
                 }
 
-                fetch("${BASE_URL}/api/v1/user/avatar", {
+                fetch(`${BASE_URL}/api/v1/user/avatar`, {
                     method: "POST",
                     body: formData,
                 })
@@ -82,6 +82,7 @@ export function ProfileCard({user}: ProfileCardProps) {
                     .catch((error) => console.error("Error uploading image:", error));
             });
         setModalOpen(false);
+        // window.location.reload();
     };
 
     return (
@@ -233,9 +234,12 @@ export function ProfileCard({user}: ProfileCardProps) {
                     gradient={{from: "green", to: "indigo", deg: 90}}
                 >
                     Click me to change your password
-                </Button>
+                </Button>{" "}
             </div>
-            <ActionToggle/>
+            <div className="flex justify-center my-5">
+                <Anchor fw={700} size="lg" href={`/user/${user.username}`}>Preview Profile
+                </Anchor>{" "}
+            </div>
         </Paper>
     );
 }

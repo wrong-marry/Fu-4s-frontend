@@ -17,6 +17,8 @@ import {
 	ListItem,
 	Button,
 	TypographyStylesProvider,
+	Avatar,
+	Anchor,
 } from "@mantine/core";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -69,6 +71,10 @@ const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({
 	const [fileUrls, setFileUrls] = useState<{ [key: string]: string }>({});
 	const [index, setIndex] = useState<number>(-1);
 	const [name, setName] = useState<string>("");
+	const [avatarUrl, setAvatarUrl] = useState(
+		"https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-11.png"
+	);
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -83,6 +89,9 @@ const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({
 					);
 					setName(
 						userResponse.data.firstName + " " + userResponse.data.lastName
+					);
+					setAvatarUrl(
+						`${BASE_URL}/api/v1/user/getAvatar?username=${response.data.username}`
 					);
 				} else {
 					throw new Error("Username is missing in the post");
@@ -211,9 +220,12 @@ const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({
 				</CardSection>
 				<Divider size="xs" />
 				<Group justify="space-between">
-					<Text fw={700} size="lg">
-						{name}
-					</Text>
+					<Group>
+						<Avatar src={avatarUrl} alt={`${name}'s avatar`} size="lg" />
+						<Anchor fw={700} size="lg">
+							<a href={`/user/${post.username}`}>{name}</a>
+						</Anchor>
+					</Group>
 					<Text c="dimmed" p={"md"}>
 						{format(new Date(post.postTime), "dd/MM/yyyy HH:mm")}
 					</Text>
