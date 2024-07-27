@@ -1,41 +1,137 @@
+import React, { useEffect, useState } from "react";
 import { BarChart } from "@mantine/charts";
-import { Box } from "@mantine/core";
+import { Box, Checkbox, Group, Text } from "@mantine/core";
 import "@mantine/charts/styles.css";
+import { BASE_URL } from "../../../common/constant.tsx";
 
- const data = [
-	{ month: "January", Smartphones: 1200, Laptops: 900, Tablets: 200 },
-	{ month: "February", Smartphones: 1900, Laptops: 1200, Tablets: 400 },
-	{ month: "March", Smartphones: 400, Laptops: 1000, Tablets: 200 },
-	{ month: "April", Smartphones: 1000, Laptops: 200, Tablets: 800 },
-	{ month: "May", Smartphones: 800, Laptops: 1400, Tablets: 1200 },
-	{ month: "June", Smartphones: 750, Laptops: 600, Tablets: 1000 },
-];
+// Giả sử URL API
+const API_URL = "/api/v1/post/subject/count-";
+
+interface ChartData {
+	subject: string;
+	value: number;
+}
+
+const fetchData = async (subject: string): Promise<number> => {
+	const response = await fetch(`${BASE_URL}${API_URL}${subject}`);
+	if (!response.ok) {
+		throw new Error("Failed to fetch data");
+	}
+	const data = await response.json();
+	return data.count; // Điều chỉnh theo cấu trúc dữ liệu API trả về
+};
 
 export function Bar() {
+	const [data, setData] = useState<ChartData[]>([]);
+	const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const [subjectCodes, setSubjectCodes] = useState<string[]>([]);
+
+	useEffect(() => {
+		const fetchSubjectCodes = async () => {
+			try {
+				const token = localStorage.getItem("token");
+				const response = await fetch(
+					`${BASE_URL}/api/v1/subject/getAllSubjectCodes`,
+					{
+						method: "GET",
+						headers: {
+							Authorization: `Bearer ${token}`,
+							"Content-Type": "application/json",
+						},
+					}
+				);
+				if (response.ok) {
+					const data = await response.json();
+					setSubjectCodes(data); //  API trả về mảng các subject codes
+				} else {
+					console.error("Failed to fetch subject codes");
+				}
+			} catch (error) {
+				console.error("Error fetching subject codes:", error);
+			}
+		};
+
+		fetchSubjectCodes();
+	}, []);
+
+	useEffect(() => {
+		if (selectedSubjects.length > 0) {
+			const fetchAllData = async () => {
+				setLoading(true);
+				setError(null);
+				try {
+					const results = await Promise.all(
+						selectedSubjects.map(async (subject) => ({
+							subject,
+							value: await fetchData(subject),
+						}))
+					);
+					setData(results);
+				} catch (err) {
+					setError("Error fetching data");
+				} finally {
+					setLoading(false);
+				}
+			};
+			fetchAllData();
+		} else {
+			setData([]); // Xóa dữ liệu khi không có môn học nào được chọn
+		}
+	}, [selectedSubjects]);
+
+	const handleSubjectChange = (subject: string) => {
+		setSelectedSubjects((prev) => {
+			if (prev.includes(subject)) {
+				return prev.filter((s) => s !== subject);
+			} else if (prev.length < 10) {
+				return [...prev, subject];
+			} else {
+				return prev;
+			}
+		});
+	};
+
 	return (
 		<Box>
-			<h1
-				style={{
-					textAlign: "center",
-					color: "rgba(2, 104, 207, 1)",
-					fontFamily: "Courier New, monospace",
-					fontWeight: "bold",
-					padding: "20px",
-				}}
-			>
-				Stacked area chart
-			</h1>
-		<BarChart
-			h={300}
-			data={data}
-			dataKey="month"
-			series={[
-				{ name: "Smartphones", color: "violet.6" },
-				{ name: "Laptops", color: "blue.6" },
-				{ name: "Tablets", color: "teal.6" },
-			]}
-			tickLine="y"
-		/>
+			<Text fz="lg" mb="md" ta="center" fw="bold">
+                BAR CHART ABOUT THE NUMBER OF POSTS BY SUBJECT
+                </Text>
+
+			<Group style={{ padding: "34px" }}>
+				{subjectCodes.map((subject) => (
+					<Checkbox
+						key={subject}
+						label={subject}
+						checked={selectedSubjects.includes(subject)}
+						onChange={() => handleSubjectChange(subject)}
+						disabled={
+							selectedSubjects.length >= 10 &&
+							!selectedSubjects.includes(subject)
+						}
+					/>
+				))}
+			</Group>
+
+			{loading && <Text style={{ textAlign: "center" }}>Loading...</Text>}
+			{error && (
+				<Text style={{ textAlign: "center", color: "red" }}>{error}</Text>
+			)}
+
+			{data.length > 0 && !loading && !error && (
+				<BarChart
+					h={300}
+					data={data}
+					dataKey="subject"
+					series={data.map((item) => ({
+						name: item.subject,
+						data: [{ x: item.subject, y: item.value }],
+						color: "violet.6", // You can customize colors if needed
+					}))}
+					tickLine="y"
+				/>
+			)}
 		</Box>
 	);
 }

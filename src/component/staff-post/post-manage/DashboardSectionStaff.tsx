@@ -20,13 +20,13 @@ const DashboardSectionStaff: React.FC<ComponentProps> = ({flag, setFlag}) => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `${BASE_URL}/api/v1/post/getAllPost?pageSize=${pageSize}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
+									`${BASE_URL}/api/v1/post/getAllPost?pageSize=${pageSize}&page=1`,
+									{
+										headers: {
+											Authorization: `Bearer ${token}`,
+										},
+									}
+								);
                 setFlag(!flag);
                 const data = await response.json();
                 setNumOfPost(data.total);

@@ -50,22 +50,22 @@ export default function OverviewCharts(){
 									and new Learning Materials Uploaded in this month
 								</h3>
 								<br />
-								<p
+								<div
 									style={{
 										fontSize: "0.9rem",
 									}}
 								>
 									{" "}
-									Mock Tests :{" "}
+									Mock Tests  : {"   "}
 									<Badge
 										color="rgba(157, 245, 226, 1)" // Màu sắc của vòng tròn
 										size="xl" // Kích thước vòng tròn
 										radius="50%" // Đảm bảo vòng tròn
 										variant="filled" // Hoặc "outline" nếu muốn đường viền
 									></Badge>
-								</p>
+								</div>
 								<br />
-								<p
+								<div
 									style={{
 										fontSize: "0.9rem",
 									}}
@@ -78,7 +78,7 @@ export default function OverviewCharts(){
 										radius="50%" // Đảm bảo vòng tròn
 										variant="filled" // Hoặc "outline" nếu muốn đường viền
 									></Badge>
-								</p>
+								</div>
 							</ScrollArea>
 						</Grid.Col>
 					</Grid>
