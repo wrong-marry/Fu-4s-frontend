@@ -12,6 +12,7 @@ import {Pie} from "../../component/manageUser/chart/Pie.tsx";
 import {StatsGrid} from "../../component/manageUser/chart/Statistics.tsx";
 import TableSubject from "../../component/manage-subject/TableSubject.tsx";
 import { useState } from "react";
+import { ScrollArea } from "@mantine/core";
 
 export default function ManageUserPage() {
   // Sử dụng useMediaQuery để xác định kích thước màn hình
@@ -74,11 +75,13 @@ export default function ManageUserPage() {
 								<Grid.Col span={12}>
 									<DashboardSectionStaff flag={flag} setFlag={setFlag} />
 								</Grid.Col>
+                                
 								<Grid.Col span={12}>
 									<StatsGrid />
 								</Grid.Col>
 								<Grid.Col span={12}>
 									<Area />
+									
 									<br />
 									<StatsGrid />
 									<br />
@@ -90,7 +93,6 @@ export default function ManageUserPage() {
 								</Grid.Col>
 							</Grid>
 						</Tabs.Panel>
-
 
 						<Tabs.Panel value="Manage Subjects">
 							<TableSubject />
