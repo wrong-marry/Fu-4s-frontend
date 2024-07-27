@@ -30,7 +30,7 @@ interface CommentTagData extends CommentData {
 
 export const Comment = (props: CommentTagData) => {
     const [replyOpened, setReplyOpened] = useState(true);
-    const [childrenOpened, {open: openChildren, close: closeChildren}] = useDisclosure(false);
+    const [childrenOpened, setChildrenOpened] = useState(false);
     const [opened, {open, close}] = useDisclosure(false);
     const username = props.username;
     const [content, setContent] = useState(props.content);
@@ -62,7 +62,7 @@ export const Comment = (props: CommentTagData) => {
     function handleReplyClick() {
         if (!childrenOpened) {
             // getChildren();
-            openChildren();
+            setChildrenOpened(childrenOpened => !childrenOpened);
         } else {
             setReplyOpened(replyOpened => !replyOpened);
         }
@@ -110,7 +110,7 @@ export const Comment = (props: CommentTagData) => {
 
             <Group mt={0} mx={"md"} lh={"xs"}>
                 <Anchor fz={"sm"} mx={"sm"} mt={0} onClick={handleReplyClick}
-                >{childrenNumber ? "View replies..." : "Reply"}</Anchor>
+                >Reply</Anchor>
                 {isMine ?
                     <>
                         <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
@@ -152,7 +152,7 @@ export const Comment = (props: CommentTagData) => {
                     </Card>
                 );
                 console.log(response);
-                closeChildren();
+                setChildrenOpened(false);
             }
         } catch (e) {
             console.log(e)
@@ -230,7 +230,7 @@ export const Comment = (props: CommentTagData) => {
                 </Card>
                 <Group mt={0} mx={"md"} lh={"xs"}>
                     <Anchor fz={"sm"} mx={"sm"} mt={0}
-                            onClick={handleReplyClick}>{childrenNumber ? "View replies..." : "Reply"}</Anchor>
+                            onClick={handleReplyClick}>Reply</Anchor>
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={updateComment}>Update</Anchor>
                     <Anchor fz={"sm"} mt={0} mx={"sm"} onClick={open}>Delete</Anchor>
                 </Group>
@@ -274,8 +274,8 @@ export const Comment = (props: CommentTagData) => {
                         onChange={(checked) => {
                             if (checked) {
                                 getChildren();
-                                openChildren();
-                            } else closeChildren();
+                                setChildrenOpened(true);
+                            } else setChildrenOpened(false);
                         }}
                         size={20}/></ActionIcon> : <></>}
             </Group>
@@ -336,7 +336,8 @@ export const Comment = (props: CommentTagData) => {
                                  childrenNumber={item.childrenNumber} key={item.id}
                                  updateFunction={props.updateFunction}></Comment>
                     ))}
-                    {moreChildren && <Anchor onClick={getChildren} ms={"xl"}>Fetch more child comments...</Anchor>}
+                    {moreChildren && childrenNumber >= 10 &&
+                        <Anchor onClick={getChildren} ms={"xl"}>Fetch more child comments...</Anchor>}
                 </Collapse>
             </Container>
         </Container>)
