@@ -29,7 +29,7 @@ interface CommentTagData extends CommentData {
 }
 
 export const Comment = (props: CommentTagData) => {
-    const [replyOpened, {open: openReply, close: closeReply}] = useDisclosure(true);
+    const [replyOpened, setReplyOpened] = useState(true);
     const [childrenOpened, {open: openChildren, close: closeChildren}] = useDisclosure(false);
     const [opened, {open, close}] = useDisclosure(false);
     const username = props.username;
@@ -61,16 +61,10 @@ export const Comment = (props: CommentTagData) => {
 
     function handleReplyClick() {
         if (!childrenOpened) {
-            getChildren();
+            // getChildren();
             openChildren();
         } else {
-            if (replyOpened) {
-                closeReply();
-                console.log("closed");
-            } else {
-                openReply();
-                console.log("opened");
-            }
+            setReplyOpened(replyOpened => !replyOpened);
         }
     }
 
