@@ -1,58 +1,13 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Box } from "@mantine/core";
 import { AreaChart } from "@mantine/charts";
 
-// const dataTemplate = [
-// 	{
-// 		date: "2023-12",
-//         "DBI202": 0,
-//         "PRJ301": 0,
-//         "PRM392": 0,
-//         "ACC101": 0,
-//         "CEA201": 0,
-//         "NWC203c": 0,
-//         "ENW492c": 0,
-//         "PMG202c": 0,
-//         "SWP391": 0,
-//         "SWE201c": 0,
-//         "SSL101c": 0,
-//         "IOT102": 0,
-//         "WED201c": 0,
-//         "SWR302": 0,
-//         "SWT301": 0,
-//         "JPD113": 0,
-//         "MLN131": 0,
-//         "CSD201": 0,
-//         "MAD101": 0,
-//         "MLN111": 0,
-//         "SEP490": 0,
-//         "PRF192": 0,
-//         "LAB211": 0,
-//         "SWD392": 0,
-//         "SE-0002": 0,
-//         "ITE302c": 0,
-//         "SE-0003": 0,
-//         "VNR202": 0,
-//         "OSG202": 0,
-//         "HCM202": 0,
-//         "OJT202": 0,
-//         "CSI104": 0,
-//         "MAS291": 0,
-//         "SAP341": 0,
-//         "EXE101": 0,
-//         "PRO192": 0,
-//         "EXE201": 0,
-//         "MAE101": 0,
-//         "JPD123": 0,
-//         "MLN122": 0,
-//         "SSG104": 0,
-//         "WDU203c": 0,
-//     },   
-
-//     ];
-
 export const Area = () => {
-	const [data, setData] = useState([]);
+	const [data, setData] = useState<{ date: string; }[]>([]);
+    type DataEntry = {
+			date: string;
+			[subject: string]: number | string; // Adjusting for possible mixed types
+		};
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -66,11 +21,25 @@ export const Area = () => {
 				}
 			);
 			const jsonData = await response.json();
-			setData(jsonData); // Cập nhật state với dữ liệu nhận được
+
+			// Transform the JSON data into the required format
+			const transformedData = Object.entries(jsonData).map(
+				([date, subjects]) => {
+					if (typeof subjects === "object" && subjects !== null) {
+						return { date, ...subjects };
+					} else {
+						return { date };
+					}
+				}
+			);
+
+			setData(transformedData); // Update state with transformed data
 		};
 
 		fetchData();
 	}, []);
+
+    
 
 	return (
 		<Box>
@@ -85,18 +54,15 @@ export const Area = () => {
 			>
 				Posts per Course Over Time
 				<ul>
-					{Object.entries(data).map(
-						(
-							[subject, stats] // Sử dụng dữ liệu từ state
-						) => (
-							<li key={subject}>
-								{subject}:{" "}
-								{Object.entries(stats).map(
-									([month, count]) => `${month}: ${count}, `
-								)}
-							</li>
-						)
-					)}
+					{data.map((entry) => (
+						<li key={entry.date}>
+							{entry.date}:{" "}
+							{Object.entries(entry).map(
+								([subject, count]) =>
+									subject !== "date" && `${subject}: ${count}, `
+							)}
+						</li>
+					))}
 				</ul>
 			</h1>
 			<AreaChart
@@ -104,9 +70,27 @@ export const Area = () => {
 				data={data}
 				dataKey="date"
 				series={[
-					{ name: "Staffs", color: "indigo.6" },
-					{ name: "Admin", color: "blue.6" },
-					{ name: "Users", color: "teal.6" },
+					{ name: "DBI202", color: "indigo.6" },
+					{ name: "PRJ301", color: "blue.6" },
+					{ name: "PRM392", color: "teal.6" },
+					{ name: "ACC101", color: "green.6" },
+					{ name: "CEA201", color: "orange.6" },
+					{ name: "NWC203c", color: "cyan.6" },
+					{ name: "ENW492c", color: "dark.6" },
+					{ name: "PMG202c", color: "orange.6" },
+					{ name: "SWP391", color: "orange.6" },
+					{ name: "SWE201c", color: "orange.6" },
+					{ name: "SSL101c", color: "orange.6" },
+					{ name: "IOT102", color: "orange.6" },
+					{ name: "WED201c", color: "orange.6" },
+					{ name: "SWR302", color: "orange.6" },
+					{ name: "SWT301", color: "orange.6" },
+					{ name: "JPD113", color: "orange.6" },
+					{ name: "MLN131", color: "orange.6" },
+					{ name: "CSD201", color: "orange.6" },
+					{ name: "MAD101", color: "orange.6" },
+					{ name: "MLN111", color: "orange.6" },
+					{ name: "SEP490", color: "orange.6" },
 				]}
 				curveType="bump"
 			/>

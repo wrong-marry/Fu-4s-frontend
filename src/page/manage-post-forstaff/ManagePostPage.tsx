@@ -4,6 +4,8 @@ import DashboardSectionStaff from "../../component/staff-post/post-manage/Dashbo
 import PostPage1 from "../../component/staff-post/post-manage/PendingPost.tsx";
 import { useState } from "react";
 import TablePostStaff from "../../component/staff-post/post-manage/TablePostStaff.tsx";
+import { ScrollArea } from "@mantine/core";
+
 
 export default function ManagePostForStaff() {
   
@@ -24,7 +26,17 @@ export default function ManagePostForStaff() {
 							<DashboardSectionStaff flag={flag} setFlag={setFlag} />
 							<br />
 							<br />
-							<PostPage1 flag={flag} setFlag={setFlag} />
+							<ScrollArea
+								h={500}
+								style={{
+									border: "2px solid rgba(47, 119, 150, 0.7)",
+									borderRadius: "8px",
+									padding: "10px",
+								}}
+							>
+								{<PostPage1 flag={flag} setFlag={setFlag} />}
+							</ScrollArea>
+
 							<br />
 							<TablePostStaff flag={flag} setFlag={setFlag} />
 						</Tabs.Panel>

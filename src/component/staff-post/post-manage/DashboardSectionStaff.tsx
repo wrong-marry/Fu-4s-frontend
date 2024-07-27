@@ -19,7 +19,7 @@ const DashboardSectionStaff: React.FC<ComponentProps> = ({ flag, setFlag }) => {
 			const token = localStorage.getItem("token");
 			try {
 				const response = await fetch(
-					`http://localhost:8080/api/v1/post/getAllPost?pageSize=${pageSize}`,
+					`http://localhost:8080/api/v1/post/getAllPost?pageSize=${pageSize}&page=1`,
 					{
 						headers: {
 							Authorization: `Bearer ${token}`,

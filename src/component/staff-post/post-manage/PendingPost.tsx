@@ -67,7 +67,7 @@ const PostPage1: React.FC<ComponentProps> = ({ flag, setFlag }) => {
 									: post
 							) || []
 					);
-
+                    setFlag(!flag);
 					closeModalConfirm();
 					notifications.show({
 						title: `Change Post Status`,
@@ -117,7 +117,7 @@ const PostPage1: React.FC<ComponentProps> = ({ flag, setFlag }) => {
 									: post
 							) || []
 					);
-
+                    setFlag(!flag);
 					closeModalDenied();
 					notifications.show({
 						title: `Change Post Status`,

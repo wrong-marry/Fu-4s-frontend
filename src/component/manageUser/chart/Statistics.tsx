@@ -48,7 +48,7 @@ export function StatsGrid() {
 					}
 				);
 				const responseNumberPost = await fetch(
-					`${BASE_URL}/api/v1/post/getAllPost?pageSize=${pageSize}`,
+					`${BASE_URL}/api/v1/post/getAllPost?pageSize=${pageSize}&page=1`,
 					{
 						headers: {
 							Authorization: `Bearer ${token}`,
@@ -192,6 +192,7 @@ export function StatsGrid() {
 		const DiffIcon = stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight;
 
 		return (
+            
 			<Paper withBorder p="md" radius="md" key={stat.title}>
 				<Group justify="space-between">
 					<Text size="xs" c="dimmed" className={classes.title}>
