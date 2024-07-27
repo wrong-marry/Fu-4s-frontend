@@ -32,14 +32,8 @@ function SubjectsListBySemester() {
 	useEffect(() => {
 		async function fetchData() {
 			try {
-				const token = localStorage.getItem("token");
 				const response = await fetch(
-					`${BASE_URL}/api/v1/subject/semester/${semester}`,
-					{
-						headers: {
-							Authorization: `Bearer ${token}`,
-						},
-					}
+					`${BASE_URL}/api/v1/subject/semester/${semester}`
 				);
 
 				if (!response.ok) {
@@ -52,12 +46,7 @@ function SubjectsListBySemester() {
 				const subjectsWithPostCount = await Promise.all(
 					data.map(async (subject) => {
 						const postCountResponse = await fetch(
-							`${BASE_URL}/api/v1/post/subject/count-${subject.code}`,
-							{
-								headers: {
-									Authorization: `Bearer ${token}`,
-								},
-							}
+							`${BASE_URL}/api/v1/post/subject/count-${subject.code}`
 						);
 
 						const postCount = await postCountResponse.json();
