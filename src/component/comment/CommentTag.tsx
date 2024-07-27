@@ -40,7 +40,8 @@ export const Comment = (props: CommentTagData) => {
     const childrenNumber = props.childrenNumber;
     const [status, setStatus] = useState(props.status);
     const [hideText, setHideText] = useState(props.status == "ACTIVE" ? "Hide" : "Unhide");
-    const [children, setChildren] = useState<CommentData[]>();
+    const [children, setChildren] = useState<CommentData[]>([]);
+    const [moreChildren, setMoreChildren] = useState(true);
     useEffect(() => {
         setHideText(status == "ACTIVE" ? "Hide" : "Unhide");
     }, [status]);
@@ -74,9 +75,10 @@ export const Comment = (props: CommentTagData) => {
     }
 
     function getChildren() {
-        const response = axios.get(`${BASE_URL}/api/v1/comments/children/comment-${id}`);
+        const response = axios.get(`${BASE_URL}/api/v1/comments/children/comment-${id}?offset=` + children?.length);
         response.then(data => {
-            setChildren([...data.data] as CommentData[]);
+            setChildren((children) => children?.concat([...data.data]) as CommentData[]);
+            setMoreChildren(data.data.length == 10);
         }).catch(error => console.log(error))
     }
 
@@ -175,7 +177,7 @@ export const Comment = (props: CommentTagData) => {
         mode: 'uncontrolled',
         initialValues: {
             username: localStorage.getItem("username"),
-            'content': "@" + props.account + " ",
+            'content': "",
         },
         validate: {
             content: (value: string) => (/^\S/.test(value) ? null : 'Invalid content'),
@@ -206,7 +208,6 @@ export const Comment = (props: CommentTagData) => {
                                 .then((response: AxiosResponse<string>) => {
                                     if (response.status === 200) {
                                         setContent(values.content);
-                                        console.log("Updated, form value: " + values.content + ", new content: " + content);
                                         form.setFieldValue("content", values.content);
                                         form.setInitialValues({"content": values.content});
                                         setContentStack(defaultContentStack(values.content, status));
@@ -288,7 +289,6 @@ export const Comment = (props: CommentTagData) => {
                 <Collapse in={childrenOpened}>
                     <form
                         onSubmit={replyForm.onSubmit(async (values) => {
-                            console.log(values);
                             try {
                                 const response: AxiosResponse<{ message: string, id: number }> = await axios.post(
                                     `${BASE_URL}/api/v1/comments/upload/comment-${id}`,
@@ -342,6 +342,7 @@ export const Comment = (props: CommentTagData) => {
                                  childrenNumber={item.childrenNumber} key={item.id}
                                  updateFunction={props.updateFunction}></Comment>
                     ))}
+                    {moreChildren && <Anchor onClick={getChildren} ms={"xl"}>Fetch more child comments...</Anchor>}
                 </Collapse>
             </Container>
         </Container>)
