@@ -85,7 +85,7 @@ export function UserMockTestTable() {
 
       <Table.Td>
         <Button radius="xl" className="text-white" bg="gray">
-          <a href={"/edit-learning-material/" + post.id}>Edit</a>
+          <a href={"/edit-mock-test/" + post.id}>Edit</a>
         </Button>
       </Table.Td>
     </Table.Tr>

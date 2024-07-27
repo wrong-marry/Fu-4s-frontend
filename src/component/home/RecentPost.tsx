@@ -15,6 +15,7 @@ export interface Post {
     username: string;
     test: boolean;
     subjectCode: string;
+    status: string;
     // Add other properties as needed
 }
 
@@ -85,7 +86,6 @@ function RecentPost() {
                     controlsOffset="xs"
                     controlSize={30}
                     dragFree
-                    
                 >
                     {recentPost?.map((test, index) => (
                         <Carousel.Slide key={index}>

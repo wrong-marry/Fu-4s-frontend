@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import {useState, useEffect} from "react";
 import axios, {AxiosResponse} from "axios";
 import {
     Text,
@@ -15,7 +15,7 @@ import {
 import {IconAdjustmentsAlt, IconChevronsRight} from "@tabler/icons-react";
 
 import {Comment} from "../../component/comment/CommentTag";
-import {useParams} from "react-router-dom";
+import {redirect, useParams} from "react-router-dom";
 import MockTestDetailPage from "../mock-test-detail-page/MockTestDetailPage";
 import {forEach} from "lodash";
 import {useForm} from "@mantine/form";
@@ -48,7 +48,7 @@ export interface CommentData {
     childrenNumber: number;
 }
 
-const PostPage: React.FC = () => {
+const PostPage = () => {
     const {id} = useParams<{ id: string }>();
     const [opened, toggle] = useDisclosure(false);
     const form = useForm({
@@ -75,8 +75,8 @@ const PostPage: React.FC = () => {
     );
     const fetchPost = async () => {
         const response: Post = (
-            await axios.get(`${BASE_URL}/api/v1/post/get?id=${id}`)
-        ).data;
+            await axios.get(`${BASE_URL}/api/v1/post/get?id=${id}`))
+            .data;
         setPost(response);
     };
 
@@ -150,6 +150,7 @@ const PostPage: React.FC = () => {
         fetchData();
     }, [id, post?.subjectCode, sorted]);
 
+    if (post == null) return redirect("/404");
     const fetchSubject = async (subjectCode: string) => {
         const response: Subject = (
             await axios.get(`${BASE_URL}/api/v1/subject/${subjectCode}`)
@@ -168,171 +169,173 @@ const PostPage: React.FC = () => {
     }
 
     return (
-			<>
-				<Modal opened={opened} onClose={toggle.close} title={"Login required"}>
-					<Text ta={"center"}>You did not login!</Text>
-					<Group justify={"space-around"} mt={"md"}>
-						<Button
-							size={"sm"}
-							onClick={() => (window.location.href = "/auth/login")}
-						>
-							Login
-						</Button>
-						<Button color={"red"} size={"sm"} onClick={toggle.close}>
-							Close
-						</Button>
-					</Group>
-				</Modal>
+        <>
+            <Modal opened={opened} onClose={toggle.close} title={"Login required"}>
+                <Text ta={"center"}>You did not login!</Text>
+                <Group justify={"space-around"} mt={"md"}>
+                    <Button
+                        size={"sm"}
+                        onClick={() => (window.location.href = "/auth/login")}
+                    >
+                        Login
+                    </Button>
+                    <Button color={"red"} size={"sm"} onClick={toggle.close}>
+                        Close
+                    </Button>
+                </Group>
+            </Modal>
 
-				<Container>
-					<Center style={{ display: "flex", gap: "10px" }}>
-						<Anchor href="/">FU4S</Anchor> <IconChevronsRight size={20} />
-						<Anchor href={`/semester/${subject?.semester ?? ""}`}>
-							Semester {subject?.semester}
-						</Anchor>{" "}
-						<IconChevronsRight size={20} />
-						<Anchor href={`/subject/${post?.subjectCode ?? ""}`}>
-							{post?.subjectCode ?? ""}
-						</Anchor>
-					</Center>
-					{!post?.test && <LearningMaterialDetail {...post} />}
-					{post?.test && <MockTestDetailPage {...post} />}
+            <Container>
+                <Center style={{display: "flex", gap: "10px"}}>
+                    <Anchor href="/">FU4S</Anchor> <IconChevronsRight size={20}/>
+                    <Anchor href={`/semester/${subject?.semester ?? ""}`}>
+                        Semester {subject?.semester}
+                    </Anchor>{" "}
+                    <IconChevronsRight size={20}/>
+                    <Anchor href={`/subject/${post?.subjectCode ?? ""}`}>
+                        {post?.subjectCode ?? ""}
+                    </Anchor>
+                </Center>
+                {!post?.test && <LearningMaterialDetail {...post} />}
+                {post?.test && <MockTestDetailPage {...post} />}
 
-					{post?.username && (
-						<>
-							<Space h={"xl"} />
-							<Title order={3}>
-								Posts of{" "}
-								<Anchor fw={700} size="xl">
-									<a href={`/user/${authorname}`}>{post?.username}</a>
-								</Anchor>
-							</Title>
-							<PostsOfAuthor authorname={authorname ?? ""} />
-						</>
-					)}
-					{post?.subjectCode && (
-						<>
-							<Space h={"xl"} />
-							<Title order={3}>
-								Posts in{" "}
-								<Anchor fw={700} size="xl">
-									<a href={`/subject/${post.subjectCode}`}>
-										{post.subjectCode}
-									</a>
-								</Anchor>
-							</Title>
-							<PostsOfSubject thisSubject={post.subjectCode} />
-						</>
-					)}
+                {post?.username && (
+                    <>
+                        <Space h={"xl"}/>
+                        <Title order={3}>
+                            Posts of{" "}
+                            <Anchor fw={700} size="xl">
+                                <a href={`/user/${authorname}`}>{post?.username}</a>
+                            </Anchor>
+                        </Title>
+                        <PostsOfAuthor authorname={authorname ?? ""}/>
+                    </>
+                )}
+                {post?.subjectCode && (
+                    <>
+                        <Space h={"xl"}/>
+                        <Title order={3}>
+                            Posts in{" "}
+                            <Anchor fw={700} size="xl">
+                                <a href={`/subject/${post.subjectCode}`}>
+                                    {post.subjectCode}
+                                </a>
+                            </Anchor>
+                        </Title>
+                        <PostsOfSubject thisSubject={post.subjectCode}/>
+                    </>
+                )}
 
-					<Space h={"xl"} />
-					<Flex justify={"space-between"}>
-						<Title order={2}>Comment section</Title>
-						<Select
-							onChange={(value) => setSorted(value == "sorted")}
-							leftSection={
-								<IconAdjustmentsAlt
-									style={{ width: rem(18), height: rem(18) }}
-									stroke={1.5}
-								/>
-							}
-							placeholder="Order"
-							data={[
-								{
-									group: "Sort by",
-									items: [
-										{ label: "Oldest first", value: "default" },
-										{ label: "Newest first", value: "sorted" },
-									],
-								},
-							]}
-						/>
-					</Flex>
-					{comments == null || comments?.length == 0 ? (
-						<Text>No comments</Text>
-					) : (
-						<></>
-					)}
-					{forEach(comments)?.map((c) => (
-						<Comment
-							key={c.id}
-							id={c.id}
-							username={c.username}
-							content={c.content}
-							date={c.date}
-							isMine={c.account == localStorage.getItem("username")}
-							account={c.account}
-							status={c.status}
-							childrenNumber={c.childrenNumber}
-							updateFunction={updateCommentWithId}
-						/>
-					))}
-					{!(
-						(comments?.length ?? 0) % 10 ||
-						(comments?.length ?? 0) == 0 ||
-						outOfComment
-					) ? (
-						<Anchor onClick={fetchMore}>Load more comments</Anchor>
-					) : (
-						<></>
-					)}
-					<form
-						onSubmit={form.onSubmit(async (values) => {
-							try {
-								const response: AxiosResponse<{ message: string; id: number }> =
-									await axios.post(
-										`${BASE_URL}/api/v1/comments/upload/post-${id}`,
-										values,
-										{
-											headers: {
-												Authorization:
-													"Bearer " + localStorage.getItem("token"),
-											},
-										}
-									);
+                <Space h={"xl"}/>
+                <Flex justify={"space-between"}>
+                    <Title order={2}>Comment section</Title>
+                    <Select
+                        onChange={(value) => setSorted(value == "sorted")}
+                        leftSection={
+                            <IconAdjustmentsAlt
+                                style={{width: rem(18), height: rem(18)}}
+                                stroke={1.5}
+                            />
+                        }
+                        placeholder="Order"
+                        data={[
+                            {
+                                group: "Sort by",
+                                items: [
+                                    {label: "Oldest first", value: "default"},
+                                    {label: "Newest first", value: "sorted"},
+                                ],
+                            },
+                        ]}
+                    />
+                </Flex>
+                {comments == null || comments?.length == 0 ? (
+                    <Text>No comments</Text>
+                ) : (
+                    <></>
+                )}
+                {forEach(comments)?.map((c) => (
+                    <Comment
+                        key={c.id}
+                        id={c.id}
+                        username={c.username}
+                        content={c.content}
+                        date={c.date}
+                        isMine={c.account == localStorage.getItem("username")}
+                        account={c.account}
+                        status={c.status}
+                        childrenNumber={c.childrenNumber}
+                        updateFunction={updateCommentWithId}
+                    />
+                ))}
+                {!(
+                    (comments?.length ?? 0) % 10 ||
+                    (comments?.length ?? 0) == 0 ||
+                    outOfComment
+                ) ? (
+                    <Anchor onClick={fetchMore}>Load more comments</Anchor>
+                ) : (
+                    <></>
+                )}
+                {
+                    <form
+                        onSubmit={form.onSubmit(async (values) => {
+                            try {
+                                const response: AxiosResponse<{ message: string; id: number }> =
+                                    await axios.post(
+                                        `${BASE_URL}/api/v1/comments/upload/post-${id}`,
+                                        values,
+                                        {
+                                            headers: {
+                                                Authorization:
+                                                    "Bearer " + localStorage.getItem("token"),
+                                            },
+                                        }
+                                    );
 
-								if (response.status == 200) {
-									setComments(
-										(comments) =>
-											comments?.concat([
-												{
-													status: "ACTIVE",
-													content: values.content,
-													date: new Date(),
-													username: "Me",
-													account: localStorage.getItem("username") || "",
-													isMine: true,
-													id: response.data?.id ?? -1,
-													childrenNumber: 0,
-												},
-											]) || []
-									);
-									form.reset();
-								}
-							} catch (error: any) {
-								if (error.response?.status == 401) {
-									toggle.open();
-								} else {
-									console.error("Error posting comment:", error);
-								}
-							}
-						})}
-					>
-						<Textarea
-							size={"md"}
-							my={"md"}
-							placeholder={"Your comment"}
-							autosize
-							minRows={2}
-							maxRows={4}
-							key={form.key("content")}
-							{...form.getInputProps("content")}
-						></Textarea>
-						<Button type={"submit"}>Comment</Button>
-					</form>
-				</Container>
-			</>
-		);
+                                if (response.status == 200) {
+                                    setComments(
+                                        (comments) =>
+                                            comments?.concat([
+                                                {
+                                                    status: "ACTIVE",
+                                                    content: values.content,
+                                                    date: new Date(),
+                                                    username: "Me",
+                                                    account: localStorage.getItem("username") || "",
+                                                    isMine: true,
+                                                    id: response.data?.id ?? -1,
+                                                    childrenNumber: 0,
+                                                },
+                                            ]) || []
+                                    );
+                                    form.reset();
+                                }
+                            } catch (error: any) {
+                                if (error.response?.status == 401) {
+                                    toggle.open();
+                                } else {
+                                    console.error("Error posting comment:", error);
+                                }
+                            }
+                        })}
+                    >
+                        <Textarea
+                            size={"md"}
+                            my={"md"}
+                            placeholder={"Your comment"}
+                            autosize
+                            minRows={2}
+                            maxRows={4}
+                            key={form.key("content")}
+                            {...form.getInputProps("content")}
+                        ></Textarea>
+                        <Button type={"submit"}>Comment</Button>
+                    </form>
+                }
+            </Container>
+        </>
+    );
 };
 
 export default PostPage;
