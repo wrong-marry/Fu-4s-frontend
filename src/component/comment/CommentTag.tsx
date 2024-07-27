@@ -1,13 +1,13 @@
 import {
     ActionIcon,
     Anchor,
-    Avatar,
+    Avatar, Badge,
     Button,
     Card,
     CardSection, Collapse,
     Container,
     Flex,
-    Group, Modal, rem,
+    Group, HoverCard, Modal, rem,
     Space,
     Stack,
     Text,
@@ -260,6 +260,18 @@ export const Comment = (props: CommentTagData) => {
             </Modal>
             <Group m={"md"} align={"flex-start"}>
                 <Avatar variant="filled" radius="xl" size="md" mt={"sm"}/>
+                {status != "ACTIVE" ? <HoverCard width={200} shadow="md">
+                    <HoverCard.Target>
+                        <Badge size={"xs"} color={"red"} style={{position: "absolute"}} mt={60} ms={-6}>
+                            Hidden
+                        </Badge>
+                    </HoverCard.Target>
+                    <HoverCard.Dropdown>
+                        <Text size="sm">
+                            This comment is hidden by a Staff.
+                        </Text>
+                    </HoverCard.Dropdown>
+                </HoverCard> : <></>}
                 {contentStack}
                 {childrenNumber > 0 ?
                     <ActionIcon mt={"sm"} color={childrenOpened ? "red" : "teal"}><CommentButtonSwitch

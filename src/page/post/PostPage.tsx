@@ -150,7 +150,7 @@ const PostPage = () => {
         fetchData();
     }, [id, post?.subjectCode, sorted]);
 
-    if (post == null) return redirect("/404");
+    // if (post == null) return redirect("/404");
     const fetchSubject = async (subjectCode: string) => {
         const response: Subject = (
             await axios.get(`${BASE_URL}/api/v1/subject/${subjectCode}`)
