@@ -1,8 +1,22 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import { Tabs } from "@mantine/core";
 
-import { Paper, Text, LoadingOverlay, Container, Box } from "@mantine/core";
+import {
+	ScrollArea,
+	Paper,
+	Text,
+	LoadingOverlay,
+	Container,
+	Box,
+	Title,
+	Group,
+	Menu,
+	ActionIcon,
+} from "@mantine/core";
 import { useNavigate } from "react-router-dom";
+import { NavLink } from "@mantine/core";
+import { IconDots, IconTrash, IconNote } from "@tabler/icons-react";
 import { BASE_URL } from "../../common/constant.tsx";
 
 interface Notification {
@@ -12,7 +26,6 @@ interface Notification {
 	seen: boolean;
 	postId: string;
 }
-
 function NotificationListSmall() {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
@@ -20,6 +33,9 @@ function NotificationListSmall() {
 	const navigate = useNavigate();
 	const username = localStorage.getItem("username");
 	const pageSize = 6;
+
+	const [activePage, setPage] = useState(1);
+	const [numPage, setNumPage] = useState(1);
 	const [notifications, setNotifications] = useState<Notification[]>([]);
 	const [unSeenNotifications, setUnSeenNotifications] = useState<
 		Notification[]
@@ -29,7 +45,7 @@ function NotificationListSmall() {
 		const fetchNoti = async () => {
 			try {
 				const response = await fetch(
-					`${BASE_URL}/api/v1/notification/getAllByUsername?username=${username}&pageNum=1&pageSize=${pageSize}`
+					`${BASE_URL}/api/v1/notification/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}`
 				);
 				const data = await response.json();
 				setNotifications(data);
@@ -44,7 +60,7 @@ function NotificationListSmall() {
 		const fetchUnSeenNoti = async () => {
 			try {
 				const response = await fetch(
-					`${BASE_URL}/api/v1/notification/getAllByUsername?username=${username}&pageNum=1&pageSize=${pageSize}&seen=false`
+					`${BASE_URL}/api/v1/notification/getAllByUsername?username=${username}&pageNum=${activePage}&pageSize=${pageSize}&seen=false`
 				);
 				const data = await response.json();
 				setUnSeenNotifications(data);
@@ -56,9 +72,42 @@ function NotificationListSmall() {
 			}
 		};
 
+		const fetchNum = async () => {
+			try {
+				const response = await fetch(
+					`${BASE_URL}/api/v1/notification/getNum?username=${username}`
+				);
+				const data = await response.json();
+				setNumPage(Math.ceil(data / pageSize));
+			} catch (error) {
+				console.error("Error fetching notification count:", error);
+				setError("Error fetching notification count");
+			}
+		};
+
+		fetchNum();
 		fetchNoti();
 		fetchUnSeenNoti();
-	}, [activeTab]);
+	}, [activePage, activeTab]);
+
+	const markAsUnread = async (id: string) => {
+		try {
+			const response = await fetch(
+				`${BASE_URL}/api/v1/notification/${id}/unseen`,
+				{
+					method: "PUT",
+				}
+			);
+
+			if (response.ok) {
+				setNotifications((prev) =>
+					prev.map((noti) => (noti.id === id ? { ...noti, seen: false } : noti))
+				);
+			}
+		} catch (error) {
+			console.error("Error marking notification as unread:", error);
+		}
+	};
 
 	const markAsRead = async (id: string) => {
 		try {
@@ -83,6 +132,63 @@ function NotificationListSmall() {
 		}
 	};
 
+	const deleteNoti = (id: string) => {
+		const notificationToDelete = notifications.find((noti) => noti.id === id);
+		if (!notificationToDelete) return;
+		const originalIndex = notifications.findIndex((noti) => noti.id === id);
+		setNotifications((prevNotifications) =>
+			prevNotifications.filter((noti) => noti.id !== id)
+		);
+		setUnSeenNotifications((prevNotifications) =>
+			prevNotifications.filter((noti) => noti.id !== id)
+		);
+		let shouldDelete = true;
+		const toastId = toast(
+			<div>
+				<span>Notification removed.</span>
+				<button
+					style={{
+						marginLeft: "10px",
+						fontWeight: "bold",
+						textDecoration: "underline",
+						border: "none",
+						background: "none",
+						cursor: "pointer",
+						color: "#007bff",
+					}}
+					onClick={() => {
+						shouldDelete = false;
+						setNotifications((prev) => {
+							const newNotifications = [...prev];
+							newNotifications.splice(originalIndex, 0, notificationToDelete);
+							return newNotifications;
+						});
+						setUnSeenNotifications((prev) => {
+							const newNotifications = [...prev];
+							newNotifications.splice(originalIndex, 0, notificationToDelete);
+							return newNotifications;
+						});
+						toast.dismiss(toastId);
+					}}
+				>
+					Undo
+				</button>
+			</div>,
+			{ autoClose: 3000, pauseOnHover: false }
+		);
+		setTimeout(async () => {
+			if (shouldDelete) {
+				try {
+					await fetch(`${BASE_URL}/api/v1/notification/${id}`, {
+						method: "DELETE",
+					});
+				} catch (error) {
+					console.error("Error deleting notification:", error);
+				}
+			}
+		}, 3000);
+	};
+
 	if (loading) {
 		return <LoadingOverlay visible />;
 	}
@@ -102,43 +208,79 @@ function NotificationListSmall() {
 				<Tabs.Panel value="all">
 					<Box>
 						<Paper withBorder>
-							{notifications.map((notification, index) => (
-								<Box
-									key={index}
-									style={{
-										cursor: "pointer",
-										padding: "10px",
-										marginBottom: "10px",
-										borderRadius: "4px",
-										transition: "background-color 0.3s ease",
-									}}
-									onMouseEnter={(e) =>
-										(e.currentTarget.style.backgroundColor = "#f0f0f0")
-									}
-									onMouseLeave={(e) =>
-										(e.currentTarget.style.backgroundColor = "transparent")
-									}
-								>
+							<ScrollArea>
+								{notifications.map((notification, index) => (
 									<Box
-										onClick={() => {
-											navigate(`/post/${notification.postId}`);
-											markAsRead(notification.id);
+										key={index}
+										style={{
+											display: "flex",
+											justifyContent: "space-between",
+											alignItems: "center",
+											cursor: "pointer",
+											padding: "10px",
+											marginBottom: "10px",
+											borderRadius: "4px",
+											transition: "background-color 0.3s ease",
 										}}
+										onMouseEnter={(e) =>
+											(e.currentTarget.style.backgroundColor = "#f0f0f0")
+										}
+										onMouseLeave={(e) =>
+											(e.currentTarget.style.backgroundColor = "transparent")
+										}
 									>
-										<Text
-											fw={notification.seen ? "" : "700"}
-											onMouseEnter={(e) =>
-												(e.currentTarget.style.textDecoration = "underline")
-											}
-											onMouseLeave={(e) =>
-												(e.currentTarget.style.textDecoration = "none")
-											}
+										<Box
+											onClick={() => {
+												navigate(`/post/${notification.postId}`);
+												markAsRead(notification.id);
+											}}
 										>
-											{notification.message}
-										</Text>
+											<Text
+												fw={notification.seen ? "" : "700"}
+												onMouseEnter={(e) =>
+													(e.currentTarget.style.textDecoration = "underline")
+												}
+												onMouseLeave={(e) =>
+													(e.currentTarget.style.textDecoration = "none")
+												}
+											>
+												{notification.message}
+											</Text>
+										</Box>
+										<Menu withArrow position="bottom-end" withinPortal>
+											<Menu.Target>
+												<ActionIcon color="gray" variant="light">
+													<IconDots size={16} />
+												</ActionIcon>
+											</Menu.Target>
+											<Menu.Dropdown>
+												{notification.seen ? (
+													<Menu.Item
+														onClick={() => markAsUnread(notification.id)}
+														leftSection={<IconNote />}
+													>
+														Mark as unread
+													</Menu.Item>
+												) : (
+													<Menu.Item
+														onClick={() => markAsRead(notification.id)}
+														leftSection={<IconNote />}
+													>
+														Mark as read
+													</Menu.Item>
+												)}
+												<Menu.Item
+													onClick={() => deleteNoti(notification.id)}
+													leftSection={<IconTrash />}
+													color="red"
+												>
+													Delete notification
+												</Menu.Item>
+											</Menu.Dropdown>
+										</Menu>
 									</Box>
-								</Box>
-							))}
+								))}
+							</ScrollArea>
 						</Paper>
 					</Box>
 				</Tabs.Panel>
@@ -146,46 +288,82 @@ function NotificationListSmall() {
 				<Tabs.Panel value="unread">
 					<Box>
 						<Paper withBorder>
-							{unSeenNotifications.map((notification, index) => (
-								<Box
-									key={index}
-									style={{
-										display: "flex",
-										justifyContent: "space-between",
-										alignItems: "center",
-										cursor: "pointer",
-										padding: "10px",
-										marginBottom: "10px",
-										borderRadius: "4px",
-										transition: "background-color 0.3s ease",
-									}}
-									onMouseEnter={(e) =>
-										(e.currentTarget.style.backgroundColor = "#f0f0f0")
-									}
-									onMouseLeave={(e) =>
-										(e.currentTarget.style.backgroundColor = "transparent")
-									}
-								>
+							<ScrollArea>
+								{unSeenNotifications.map((notification, index) => (
 									<Box
-										onClick={() => {
-											navigate(`/post/${notification.postId}`);
-											markAsRead(notification.id);
+										key={index}
+										style={{
+											display: "flex",
+											justifyContent: "space-between",
+											alignItems: "center",
+											cursor: "pointer",
+											padding: "10px",
+											marginBottom: "10px",
+											borderRadius: "4px",
+											transition: "background-color 0.3s ease",
 										}}
+										onMouseEnter={(e) =>
+											(e.currentTarget.style.backgroundColor = "#f0f0f0")
+										}
+										onMouseLeave={(e) =>
+											(e.currentTarget.style.backgroundColor = "transparent")
+										}
 									>
-										<Text
-											fw={notification.seen ? "" : "700"}
-											onMouseEnter={(e) =>
-												(e.currentTarget.style.textDecoration = "underline")
-											}
-											onMouseLeave={(e) =>
-												(e.currentTarget.style.textDecoration = "none")
-											}
+										<Box
+											onClick={() => {
+												navigate(`/post/${notification.postId}`);
+												markAsRead(notification.id);
+											}}
 										>
-											{notification.message}
-										</Text>
+											<Text
+												fw={notification.seen ? "" : "700"}
+												onMouseEnter={(e) =>
+													(e.currentTarget.style.textDecoration = "underline")
+												}
+												onMouseLeave={(e) =>
+													(e.currentTarget.style.textDecoration = "none")
+												}
+											>
+												{notification.message}
+											</Text>
+											<Text size="xs" c="dimmed">
+												{new Date(notification.time).toLocaleString()}
+											</Text>
+										</Box>
+										<Menu withArrow position="bottom-end" withinPortal>
+											<Menu.Target>
+												<ActionIcon color="gray" variant="light">
+													<IconDots size={16} />
+												</ActionIcon>
+											</Menu.Target>
+											<Menu.Dropdown>
+												{notification.seen ? (
+													<Menu.Item
+														onClick={() => markAsUnread(notification.id)}
+														leftSection={<IconNote />}
+													>
+														Mark as unread
+													</Menu.Item>
+												) : (
+													<Menu.Item
+														onClick={() => markAsRead(notification.id)}
+														leftSection={<IconNote />}
+													>
+														Mark as read
+													</Menu.Item>
+												)}
+												<Menu.Item
+													onClick={() => deleteNoti(notification.id)}
+													leftSection={<IconTrash />}
+													color="red"
+												>
+													Delete notification
+												</Menu.Item>
+											</Menu.Dropdown>
+										</Menu>
 									</Box>
-								</Box>
-							))}
+								))}
+							</ScrollArea>
 						</Paper>
 					</Box>
 				</Tabs.Panel>
