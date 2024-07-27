@@ -15,10 +15,10 @@ const ModalDelete: React.FC<DisableModalProps> = ({
 }) => {
 	return (
 		<Modal opened={opened} onClose={onClose} title={`Confirm Pending Status`}>
-			<Text>Are you sure to update status for this post?</Text>
+			<Text>Are you sure to delete this post?</Text>
 			<Center mt={"lg"}>
 				<Button color="yellow" onClick={onConfirm}>
-					UPDATE
+					DELETE
 				</Button>
 				<Button ml="sm" onClick={onClose}>
 					Cancel
