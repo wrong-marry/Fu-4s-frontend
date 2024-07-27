@@ -223,8 +223,8 @@ const LearningMaterialDetail: React.FC<LearningMaterialDetailProps> = ({
                 <Group justify="space-between">
                     <Group>
                         <Avatar src={avatarUrl} alt={`${name}'s avatar`} size="lg"/>
-                        <Anchor fw={700} size="lg">
-                            <a href={`/user/${post.username}`}>{name}</a>
+                        <Anchor fw={700} size="lg" href={`/user/${post.username}`}>
+                            {name}
                         </Anchor>
                     </Group>
                     <Text c="dimmed" p={"md"}>

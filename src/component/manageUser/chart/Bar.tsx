@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BarChart } from "@mantine/charts";
 import { Box, Center, Checkbox, Group, Text } from "@mantine/core";
 import "@mantine/charts/styles.css";
 import { BASE_URL } from "../../../common/constant.tsx";
-import { result } from "lodash";
 
 // Giả sử URL API
 const API_URL = "/api/v1/post/subject/count-";
@@ -135,10 +134,10 @@ export function Bar() {
           series={[{ name: "NumberOfPosts", color: "blue.6" }]}
           tickLine="y"
         />
-		
+
       )}
 	  </Center>
-	  
+
     </Box>
   );
 }
