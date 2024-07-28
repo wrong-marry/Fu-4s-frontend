@@ -1,4 +1,4 @@
-import { Container, Group, ActionIcon, rem, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
+import { Container, Group, ActionIcon, rem, useComputedColorScheme } from '@mantine/core';
 import { IconBrandTwitter, IconBrandYoutube, IconBrandInstagram } from '@tabler/icons-react';
 import classes from './Footer.module.css';
 import { NavLink } from 'react-router-dom';

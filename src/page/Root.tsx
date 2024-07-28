@@ -29,7 +29,7 @@ export default function Root() {
             navbar={{
                 width: 250,
                 breakpoint: "sm",
-                collapsed: {mobile: !opened, desktop: !opened},
+                collapsed: {mobile: !opened, desktop: opened},
             }}
             padding="md"
         >
