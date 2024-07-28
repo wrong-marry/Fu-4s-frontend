@@ -281,6 +281,10 @@ const PostPage = () => {
                                 post.status == "ACTIVE" &&
                                 <form
                                     onSubmit={form.onSubmit(async (values) => {
+                                        if (localStorage.getItem("username") == null) {
+                                            toggle.open();
+                                            return;
+                                        }
                                         try {
                                             const response: AxiosResponse<{ message: string; id: number }> =
                                                 await axios.post(
