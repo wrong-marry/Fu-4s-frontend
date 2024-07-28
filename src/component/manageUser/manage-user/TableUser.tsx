@@ -42,7 +42,7 @@ interface TableUserProps {
     setFlag2: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function TableUser({flag2, setFlag2}: TableUserProps) {
+function TableUser({setFlag2}: TableUserProps) {
     const pageSize = 15;
     const [updateTrigger, setUpdateTrigger] = useState(0);
     const [activePage, setPage] = useState(1);
@@ -141,51 +141,51 @@ function TableUser({flag2, setFlag2}: TableUserProps) {
                 });
 
                 if (response.ok) {
-									// If the user is ACTIVE and their role is STAFF, demote them
-									if (
-										userToBan.status === "ACTIVE" &&
-										userToBan.role === "STAFF"
-									) {
-										const demoteUrl = `${BASE_URL}/api/v1/admin/demoteUser?username=${userToBan.username}`;
-										await fetch(demoteUrl, {
-											method: "PUT",
-											headers: {
-												Authorization: `Bearer ${token}`,
-												"Content-Type": "application/json",
-											},
-										});
-									}
-									SetUsers((prevUsers) =>
-										prevUsers.map((user) =>
-											user.username === userToBan.username
-												? {
-														...user,
-														status:
-															userToBan.status === "ACTIVE"
-																? "BANNED"
-																: "ACTIVE",
-														role:
-															userToBan.status === "ACTIVE" &&
-															userToBan.role === "STAFF"
-																? "USER"
-																: user.role,
-												  }
-												: user
-										)
-									);
-									setFlag2(!flag2);
-									closeBanAccountModal();
-									notifications.show({
-										title: `User ${
-											userToBan.status === "ACTIVE" ? "banned" : "activated"
-										}`,
-										message: `"${userToBan.username}" has been ${
-											userToBan.status === "ACTIVE" ? "BANNED" : "ACTIVATED"
-										}!`,
-										color: userToBan.status === "ACTIVE" ? "yellow" : "green",
-									});
-									setUpdateTrigger((prev) => prev + 1);
-								}
+                    // If the user is ACTIVE and their role is STAFF, demote them
+                    if (
+                        userToBan.status === "ACTIVE" &&
+                        userToBan.role === "STAFF"
+                    ) {
+                        const demoteUrl = `${BASE_URL}/api/v1/admin/demoteUser?username=${userToBan.username}`;
+                        await fetch(demoteUrl, {
+                            method: "PUT",
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                                "Content-Type": "application/json",
+                            },
+                        });
+                    }
+                    SetUsers((prevUsers) =>
+                        prevUsers.map((user) =>
+                            user.username === userToBan.username
+                                ? {
+                                    ...user,
+                                    status:
+                                        userToBan.status === "ACTIVE"
+                                            ? "BANNED"
+                                            : "ACTIVE",
+                                    role:
+                                        userToBan.status === "ACTIVE" &&
+                                        userToBan.role === "STAFF"
+                                            ? "USER"
+                                            : user.role,
+                                }
+                                : user
+                        )
+                    );
+                    setFlag2(flag2 => !flag2);
+                    closeBanAccountModal();
+                    notifications.show({
+                        title: `User ${
+                            userToBan.status === "ACTIVE" ? "banned" : "activated"
+                        }`,
+                        message: `"${userToBan.username}" has been ${
+                            userToBan.status === "ACTIVE" ? "BANNED" : "ACTIVATED"
+                        }!`,
+                        color: userToBan.status === "ACTIVE" ? "yellow" : "green",
+                    });
+                    setUpdateTrigger((prev) => prev + 1);
+                }
             } catch (error) {
                 console.error("Error changing user status:", error);
                 notifications.show({
@@ -226,7 +226,7 @@ function TableUser({flag2, setFlag2}: TableUserProps) {
                                 : user
                         )
                     );
-                    setFlag2(!flag2);
+                    setFlag2(flag2 => !flag2);
                     closePromoteAccountModal();
                     notifications.show({
                         title: `User ${
@@ -399,117 +399,117 @@ function TableUser({flag2, setFlag2}: TableUserProps) {
     };
 
     const All = filteredUsers.map((user) => (
-			<Table.Tr className="text-xs" key={user.username}>
-				<Table.Td
-					className="flex items-center py-5 px-6 font-medium"
-					style={{
-						cursor: "pointer",
-					}}
-				>
-					{user.username}
-				</Table.Td>
-				<Table.Td className="font-medium">{user.email}</Table.Td>
-				<Table.Td className="font-medium">
-					{format(new Date(user.enrolledDate), "dd/MM/yyyy HH:mm")}
-				</Table.Td>
-				<Table.Td>
+        <Table.Tr className="text-xs" key={user.username}>
+            <Table.Td
+                className="flex items-center py-5 px-6 font-medium"
+                style={{
+                    cursor: "pointer",
+                }}
+            >
+                {user.username}
+            </Table.Td>
+            <Table.Td className="font-medium">{user.email}</Table.Td>
+            <Table.Td className="font-medium">
+                {format(new Date(user.enrolledDate), "dd/MM/yyyy HH:mm")}
+            </Table.Td>
+            <Table.Td>
 					<span
-						className={`inline-block py-1 px-2 text-white rounded-full ${
-							user.status === "ACTIVE"
-								? "bg-green-500"
-								: user.status === "BANNED"
-								? "bg-red-500"
-								: ""
-						}`}
-					>
+                        className={`inline-block py-1 px-2 text-white rounded-full ${
+                            user.status === "ACTIVE"
+                                ? "bg-green-500"
+                                : user.status === "BANNED"
+                                    ? "bg-red-500"
+                                    : ""
+                        }`}
+                    >
 						{user.status}
 					</span>
-				</Table.Td>
-				<Table.Td className="font-medium">{user.role}</Table.Td>
-				<Table.Td className="font-medium"> {user.postCount}</Table.Td>
-				<Table.Td style={{ textAlign: "center" }}>
-					<Group gap={0} justify="flex-end">
-						<Menu
-							transitionProps={{ transition: "pop" }}
-							withArrow
-							position="bottom-end"
-							withinPortal
-						>
-							{currentTab !== "ALL" && (
-								<Menu.Target>
-									<ActionIcon variant="subtle" color="gray">
-										<IconDots
-											style={{ width: rem(16), height: rem(16) }}
-											stroke={1.5}
-										/>
-									</ActionIcon>
-								</Menu.Target>
-							)}
-							<Menu.Dropdown>
-								<Menu.Item
-									leftSection={
-										<IconMessages
-											style={{ width: rem(16), height: rem(16) }}
-											stroke={1.5}
-										/>
-									}
-									onClick={() => handleSendNoti(user)}
-								>
-									Send direct Notification
-								</Menu.Item>
+            </Table.Td>
+            <Table.Td className="font-medium">{user.role}</Table.Td>
+            <Table.Td className="font-medium"> {user.postCount}</Table.Td>
+            <Table.Td style={{textAlign: "center"}}>
+                <Group gap={0} justify="flex-end">
+                    <Menu
+                        transitionProps={{transition: "pop"}}
+                        withArrow
+                        position="bottom-end"
+                        withinPortal
+                    >
+                        {currentTab !== "ALL" && (
+                            <Menu.Target>
+                                <ActionIcon variant="subtle" color="gray">
+                                    <IconDots
+                                        style={{width: rem(16), height: rem(16)}}
+                                        stroke={1.5}
+                                    />
+                                </ActionIcon>
+                            </Menu.Target>
+                        )}
+                        <Menu.Dropdown>
+                            <Menu.Item
+                                leftSection={
+                                    <IconMessages
+                                        style={{width: rem(16), height: rem(16)}}
+                                        stroke={1.5}
+                                    />
+                                }
+                                onClick={() => handleSendNoti(user)}
+                            >
+                                Send direct Notification
+                            </Menu.Item>
 
-								{user.status !== "BANNED" && (
-									<Menu.Item
-										leftSection={
-											<IconReportAnalytics
-												style={{ width: rem(16), height: rem(16) }}
-												stroke={1.5}
-											/>
-										}
-										color={
-											user.role === "STAFF"
-												? "red"
-												: user.role === "USER"
-												? "green"
-												: undefined
-										} // Adjust color conditionally
-										onClick={() => handlePromoteUser(user)}
-									>
-										{user.role === "STAFF"
-											? "DEMOTE"
-											: user.role === "USER"
-											? "PROMOTE"
-											: null}
-										{/* Conditionally render text or null for ADMIN */}
-									</Menu.Item>
-								)}
-								<Menu.Item
-									leftSection={
-										user.status === "ACTIVE" ? (
-											<IconTrash
-												style={{ width: rem(16), height: rem(16) }}
-												stroke={1.5}
-											/>
-										) : (
-											<IconCheck
-												style={{ width: rem(16), height: rem(16) }}
-												stroke={1.5}
-											/>
-										)
-									}
-									color={user.status === "ACTIVE" ? "red" : "green"}
-									onClick={() => handleBanUser(user)}
-								>
-									{user.status === "ACTIVE"
-										? "Ban account"
-										: "Activate account"}
-								</Menu.Item>
-							</Menu.Dropdown>
-						</Menu>
-					</Group>
-				</Table.Td>
-			</Table.Tr>
-		));
+                            {user.status !== "BANNED" && (
+                                <Menu.Item
+                                    leftSection={
+                                        <IconReportAnalytics
+                                            style={{width: rem(16), height: rem(16)}}
+                                            stroke={1.5}
+                                        />
+                                    }
+                                    color={
+                                        user.role === "STAFF"
+                                            ? "red"
+                                            : user.role === "USER"
+                                                ? "green"
+                                                : undefined
+                                    } // Adjust color conditionally
+                                    onClick={() => handlePromoteUser(user)}
+                                >
+                                    {user.role === "STAFF"
+                                        ? "DEMOTE"
+                                        : user.role === "USER"
+                                            ? "PROMOTE"
+                                            : null}
+                                    {/* Conditionally render text or null for ADMIN */}
+                                </Menu.Item>
+                            )}
+                            <Menu.Item
+                                leftSection={
+                                    user.status === "ACTIVE" ? (
+                                        <IconTrash
+                                            style={{width: rem(16), height: rem(16)}}
+                                            stroke={1.5}
+                                        />
+                                    ) : (
+                                        <IconCheck
+                                            style={{width: rem(16), height: rem(16)}}
+                                            stroke={1.5}
+                                        />
+                                    )
+                                }
+                                color={user.status === "ACTIVE" ? "red" : "green"}
+                                onClick={() => handleBanUser(user)}
+                            >
+                                {user.status === "ACTIVE"
+                                    ? "Ban account"
+                                    : "Activate account"}
+                            </Menu.Item>
+                        </Menu.Dropdown>
+                    </Menu>
+                </Group>
+            </Table.Td>
+        </Table.Tr>
+    ));
 
     const handleTabClick = (tab: string) => {
         setCurrentTab(tab);

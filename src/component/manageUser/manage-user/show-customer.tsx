@@ -24,7 +24,7 @@ const DashboardSection: React.FC<ComponentProps> = ({flag2, setFlag2}) => {
                         },
                     }
                 );
-                setFlag2(!flag2);
+                setFlag2(flag2 => !flag2);
                 const data = await response.json();
                 setNumOfAccount(data);
             } catch (error) {
@@ -42,7 +42,7 @@ const DashboardSection: React.FC<ComponentProps> = ({flag2, setFlag2}) => {
                         },
                     }
                 );
-                setFlag2(!flag2);
+                setFlag2(flag2 => !flag2);
                 const data = await response.json();
                 setNumOfAdmin(data);
             } catch (error) {
@@ -60,7 +60,7 @@ const DashboardSection: React.FC<ComponentProps> = ({flag2, setFlag2}) => {
                         },
                     }
                 );
-                setFlag2(!flag2);
+                setFlag2(flag2 => !flag2);
                 const data = await response.json();
                 setNumOfStaff(data);
             } catch (error) {
@@ -78,7 +78,7 @@ const DashboardSection: React.FC<ComponentProps> = ({flag2, setFlag2}) => {
                         },
                     }
                 );
-                setFlag2(!flag2);
+                setFlag2(flag2 => !flag2);
                 const data = await response.json();
                 setNumOfUser(data);
             } catch (error) {

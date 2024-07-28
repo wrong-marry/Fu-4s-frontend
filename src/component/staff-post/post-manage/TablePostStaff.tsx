@@ -35,7 +35,7 @@ interface TablePostStaffProps {
 }
 
 
-function TablePostStaff({flag, setFlag}: TablePostStaffProps) {
+function TablePostStaff({setFlag}: TablePostStaffProps) {
     const pageSize = 20;
     const [subjectFilter, setSubjectFilter] = useState<string | null>("All");
     const [subjectCodes, setSubjectCodes] = useState<string[]>([]);
@@ -108,7 +108,7 @@ function TablePostStaff({flag, setFlag}: TablePostStaffProps) {
                                     : post
                             ) || []
                     );
-                    setFlag(!flag);
+                    setFlag(flag => !flag);
                     closeModalConfirm();
                     notifications.show({
                         title: `Change Post Status`,
@@ -158,7 +158,7 @@ function TablePostStaff({flag, setFlag}: TablePostStaffProps) {
                                     : post
                             ) || []
                     );
-                    setFlag(!flag);
+                    setFlag(flag => !flag);
                     closeModalRestore();
                     notifications.show({
                         title: `Change Post Status`,
@@ -207,7 +207,7 @@ function TablePostStaff({flag, setFlag}: TablePostStaffProps) {
                                     : post
                             ) || []
                     );
-                    setFlag(!flag);
+                    setFlag(flag => !flag);
 
                     closeModalDenied();
                     notifications.show({
@@ -258,7 +258,7 @@ function TablePostStaff({flag, setFlag}: TablePostStaffProps) {
                                     : post
                             ) || []
                     );
-                    setFlag(!flag);
+                    setFlag(flag => !flag);
 
                     closeModalHiden();
                     notifications.show({
@@ -309,7 +309,7 @@ function TablePostStaff({flag, setFlag}: TablePostStaffProps) {
                                     : post
                             ) || []
                     );
-                    setFlag(!flag);
+                    setFlag(flag => !flag);
 
                     closeModalDelete();
                     notifications.show({
@@ -521,151 +521,151 @@ function TablePostStaff({flag, setFlag}: TablePostStaffProps) {
     };
 
     const PendingPost = posts?.map((post) => (
-			<Table.Tr className="text-" key={post.id}>
-				<Table.Td
-					className="flex items-center py-5 px-6 font-medium"
-					onClick={() => handleGetPostClick(post.id)}
-					style={{
-						cursor: "pointer",
-					}}
-				>
-					{post.id}
-				</Table.Td>
-				<Table.Td className="font-medium">{post.subjectCode}</Table.Td>
-				<Table.Td
-					onClick={() => handleGetPostClick(post.id)}
-					style={{
-						cursor: "pointer",
-					}}
-				>
-					{post.title}
-				</Table.Td>
-				<Table.Td>
+        <Table.Tr className="text-" key={post.id}>
+            <Table.Td
+                className="flex items-center py-5 px-6 font-medium"
+                onClick={() => handleGetPostClick(post.id)}
+                style={{
+                    cursor: "pointer",
+                }}
+            >
+                {post.id}
+            </Table.Td>
+            <Table.Td className="font-medium">{post.subjectCode}</Table.Td>
+            <Table.Td
+                onClick={() => handleGetPostClick(post.id)}
+                style={{
+                    cursor: "pointer",
+                }}
+            >
+                {post.title}
+            </Table.Td>
+            <Table.Td>
 					<span
-						className={`inline-block py-1 px-2 text-white rounded-full ${
-							post.status === "ACTIVE"
-								? "bg-green-500"
-								: post.status === "HIDDEN"
-								? "bg-red-500"
-								: post.status === "PENDING_APPROVE"
-								? "bg-yellow-500"
-								: ""
-						}`}
-					>
+                        className={`inline-block py-1 px-2 text-white rounded-full ${
+                            post.status === "ACTIVE"
+                                ? "bg-green-500"
+                                : post.status === "HIDDEN"
+                                    ? "bg-red-500"
+                                    : post.status === "PENDING_APPROVE"
+                                        ? "bg-yellow-500"
+                                        : ""
+                        }`}
+                    >
 						{post.status}
 					</span>
-				</Table.Td>
-				<Table.Td className="font-medium">
-					{format(new Date(post.postTime), "dd/MM/yyyy HH:mm")}
-				</Table.Td>
-				<Table.Td c="dark" className="font-medium">
+            </Table.Td>
+            <Table.Td className="font-medium">
+                {format(new Date(post.postTime), "dd/MM/yyyy HH:mm")}
+            </Table.Td>
+            <Table.Td c="dark" className="font-medium">
 					<span
-						className={`inline-block font-semibold py-1 px-2 rounded ${
-							post.test === true
-								? "bg-blue-200" // Lighter pastel green
-								: post.test === false
-								? "bg-purple-200" // Lighter pastel red
-								: ""
-						}`}
-					>
+                        className={`inline-block font-semibold py-1 px-2 rounded ${
+                            post.test === true
+                                ? "bg-blue-200" // Lighter pastel green
+                                : post.test === false
+                                    ? "bg-purple-200" // Lighter pastel red
+                                    : ""
+                        }`}
+                    >
 						{post.test === true
-							? "Mock Test"
-							: post.test === false
-							? "Learning Material"
-							: ""}
+                            ? "Mock Test"
+                            : post.test === false
+                                ? "Learning Material"
+                                : ""}
 					</span>
-				</Table.Td>
-				<Table.Td style={{ textAlign: "center" }}>
-					<Group gap={0} justify="flex-end">
-						<Menu
-							transitionProps={{ transition: "pop" }}
-							withArrow
-							position="bottom-end"
-							withinPortal
-						>
-							{currentTab !== "All posts" && (
-								<Menu.Target>
-									<ActionIcon variant="subtle" color="gray">
-										<IconDots
-											style={{ width: rem(16), height: rem(16) }}
-											stroke={1.5}
-										/>
-									</ActionIcon>
-								</Menu.Target>
-							)}
-							<Menu.Dropdown>
-								{currentTab === "Pending posts" && (
-									<>
-										<Menu.Item
-											leftSection={
-												<IconCheck
-													style={{ width: rem(16), height: rem(16) }}
-													stroke={1.5}
-												/>
-											}
-											onClick={() => handleApprovedPost(post)}
-										>
-											Approved this post
-										</Menu.Item>
-										<Menu.Item
-											leftSection={
-												<IconTrash
-													style={{ width: rem(16), height: rem(16) }}
-													stroke={1.5}
-												/>
-											}
-											onClick={() => handleDeniedPost(post)}
-										>
-											Denied this post
-										</Menu.Item>
-									</>
-								)}
-								{currentTab === "Active posts" && (
-									<Menu.Item
-										leftSection={
-											<IconEyeOff
-												style={{ width: rem(16), height: rem(16) }}
-												stroke={1.5}
-											/>
-										}
-										onClick={() => handleHidePost(post)}
-									>
-										Hide this post
-									</Menu.Item>
-								)}
-								{currentTab === "Hidden posts" && (
-									<>
-										<Menu.Item
-											leftSection={
-												<IconTrash
-													style={{ width: rem(16), height: rem(16) }}
-													stroke={1.5}
-												/>
-											}
-											onClick={() => handleDeletePost(post)}
-										>
-											Delete this post
-										</Menu.Item>
-										<Menu.Item
-											leftSection={
-												<IconRestore
-													style={{ width: rem(16), height: rem(16) }}
-													stroke={1.5}
-												/>
-											}
-											onClick={() => handleRestorePost(post)}
-										>
-											Restore this post
-										</Menu.Item>
-									</>
-								)}
-								{currentTab === "All posts" && <></>}
-							</Menu.Dropdown>
-						</Menu>
-					</Group>
-				</Table.Td>
-			</Table.Tr>
-		)) || <></>;
+            </Table.Td>
+            <Table.Td style={{textAlign: "center"}}>
+                <Group gap={0} justify="flex-end">
+                    <Menu
+                        transitionProps={{transition: "pop"}}
+                        withArrow
+                        position="bottom-end"
+                        withinPortal
+                    >
+                        {currentTab !== "All posts" && (
+                            <Menu.Target>
+                                <ActionIcon variant="subtle" color="gray">
+                                    <IconDots
+                                        style={{width: rem(16), height: rem(16)}}
+                                        stroke={1.5}
+                                    />
+                                </ActionIcon>
+                            </Menu.Target>
+                        )}
+                        <Menu.Dropdown>
+                            {currentTab === "Pending posts" && (
+                                <>
+                                    <Menu.Item
+                                        leftSection={
+                                            <IconCheck
+                                                style={{width: rem(16), height: rem(16)}}
+                                                stroke={1.5}
+                                            />
+                                        }
+                                        onClick={() => handleApprovedPost(post)}
+                                    >
+                                        Approved this post
+                                    </Menu.Item>
+                                    <Menu.Item
+                                        leftSection={
+                                            <IconTrash
+                                                style={{width: rem(16), height: rem(16)}}
+                                                stroke={1.5}
+                                            />
+                                        }
+                                        onClick={() => handleDeniedPost(post)}
+                                    >
+                                        Denied this post
+                                    </Menu.Item>
+                                </>
+                            )}
+                            {currentTab === "Active posts" && (
+                                <Menu.Item
+                                    leftSection={
+                                        <IconEyeOff
+                                            style={{width: rem(16), height: rem(16)}}
+                                            stroke={1.5}
+                                        />
+                                    }
+                                    onClick={() => handleHidePost(post)}
+                                >
+                                    Hide this post
+                                </Menu.Item>
+                            )}
+                            {currentTab === "Hidden posts" && (
+                                <>
+                                    <Menu.Item
+                                        leftSection={
+                                            <IconTrash
+                                                style={{width: rem(16), height: rem(16)}}
+                                                stroke={1.5}
+                                            />
+                                        }
+                                        onClick={() => handleDeletePost(post)}
+                                    >
+                                        Delete this post
+                                    </Menu.Item>
+                                    <Menu.Item
+                                        leftSection={
+                                            <IconRestore
+                                                style={{width: rem(16), height: rem(16)}}
+                                                stroke={1.5}
+                                            />
+                                        }
+                                        onClick={() => handleRestorePost(post)}
+                                    >
+                                        Restore this post
+                                    </Menu.Item>
+                                </>
+                            )}
+                            {currentTab === "All posts" && <></>}
+                        </Menu.Dropdown>
+                    </Menu>
+                </Group>
+            </Table.Td>
+        </Table.Tr>
+    )) || <></>;
 
     const handleTabClick = (tab: string) => {
         setCurrentTab(tab);

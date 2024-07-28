@@ -24,7 +24,7 @@ interface ComponentProps {
     setFlag: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PostPage1: React.FC<ComponentProps> = ({flag, setFlag}) => {
+const PostPage1: React.FC<ComponentProps> = ({setFlag}) => {
     const [post, setPost] = useState<Post | null>(null);
     const [, setPosts] = useState<Post[] | null>(null);
     const [postToApproved, setpostToApproved] = useState<Post | null>(null);
@@ -144,7 +144,7 @@ const PostPage1: React.FC<ComponentProps> = ({flag, setFlag}) => {
             await axios.get(`${BASE_URL}/api/v1/post/get-pending`)
         ).data;
         setPost(response);
-        setFlag(!flag);
+        setFlag(flag => !flag);
 
     };
 
@@ -161,7 +161,7 @@ const PostPage1: React.FC<ComponentProps> = ({flag, setFlag}) => {
     };
     useEffect(() => {
         fetchPost();
-    }, [flag]);
+    }, []);
 
     const handleApprovedPost = (post: Post) => {
         setpostToApproved(post);
