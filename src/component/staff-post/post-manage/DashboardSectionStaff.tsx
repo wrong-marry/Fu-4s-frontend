@@ -27,7 +27,7 @@ const DashboardSectionStaff: React.FC<ComponentProps> = ({flag, setFlag}) => {
 										},
 									}
 								);
-                setFlag(!flag);
+                setFlag(flag=>!flag);
                 const data = await response.json();
                 setNumOfPost(data.total);
             } catch (error) {
