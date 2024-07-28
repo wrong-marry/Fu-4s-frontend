@@ -358,7 +358,7 @@ function TableUser({setFlag2}: TableUserProps) {
 
     useEffect(() => {
         setPage(1);
-    }, [currentTab]);
+    }, []);
 
     useEffect(() => {
 
