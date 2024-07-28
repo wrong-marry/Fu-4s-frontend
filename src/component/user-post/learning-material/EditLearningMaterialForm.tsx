@@ -356,7 +356,7 @@ export function EditLearningMaterialForm() {
                             htmlFor="mantine-sjauq2siu"
                             id="mantine-sjauq2siu-label"
                         >
-                            Content
+                            Description
                             <span
                                 className="m_78a94662 mantine-InputWrapper-required mantine-TextInput-required"
                                 aria-hidden="true"
@@ -369,7 +369,7 @@ export function EditLearningMaterialForm() {
                             className="m_fe47ce59 mantine-InputWrapper-description mantine-TextInput-description"
                             id="mantine-sjauq2siu-description"
                         >
-                            Your material content
+                            Your material description
                         </p>
                         <Space h="xs"/>
                         <ReactQuill

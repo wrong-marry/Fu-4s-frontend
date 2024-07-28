@@ -177,11 +177,11 @@ export function AddLearningMaterialForm() {
                     <Space h="md"/>
 
                     <label className="m_8fdc1311 mantine-InputWrapper-label mantine-TextInput-label"
-                           data-required="true" htmlFor="mantine-sjauq2siu" id="mantine-sjauq2siu-label">Content<span
+                           data-required="true" htmlFor="mantine-sjauq2siu" id="mantine-sjauq2siu-label">Description<span
                         className="m_78a94662 mantine-InputWrapper-required mantine-TextInput-required"
                         aria-hidden="true"> *</span></label>
                     <p className="m_fe47ce59 mantine-InputWrapper-description mantine-TextInput-description"
-                       id="mantine-sjauq2siu-description">Your material content</p>
+                       id="mantine-sjauq2siu-description">Your material description</p>
                     <Space h="xs"/>
                     <ReactQuill modules={module} theme="snow" onChange={setContent} value={content}
                                 style={{height: "60vh"}}/>
