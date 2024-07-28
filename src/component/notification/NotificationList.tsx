@@ -267,7 +267,7 @@ function NotificationList() {
 									>
 										<Box
 											onClick={() => {
-												navigate(`/post/${notification.postId}`);
+												notification.postId && navigate(`/post/${notification.postId}`);
 												markAsRead(notification.id);
 											}}
 										>

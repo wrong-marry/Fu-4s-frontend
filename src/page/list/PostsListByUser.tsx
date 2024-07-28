@@ -190,7 +190,7 @@ export function PostsListByUser() {
 	return (
 		<>
 			<Paper
-				className="mx-3 mt-7 sm:mx-16 lg:mx-96"
+				className="mx-10 mt-7"
 				radius="md"
 				withBorder
 				p="lg"
@@ -296,7 +296,7 @@ export function PostsListByUser() {
 				</Stack>
 			</Paper>
 
-			<Card className="mx-3 sm:mx-16 lg:mx-96" p="lg" withBorder>
+			<Card className="mx-10" p="lg" withBorder>
 				<Grid>
 					<Grid.Col span={3}></Grid.Col>
 					<Grid.Col span={5}>

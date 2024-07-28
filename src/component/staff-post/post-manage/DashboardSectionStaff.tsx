@@ -20,14 +20,14 @@ const DashboardSectionStaff: React.FC<ComponentProps> = ({setFlag}) => {
             const token = localStorage.getItem("token");
             try {
                 const response = await fetch(
-                    `${BASE_URL}/api/v1/post/getAllPost?pageSize=${pageSize}&page=1`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
-                setFlag(flag => !flag);
+									`${BASE_URL}/api/v1/post/getAllPost?pageSize=${pageSize}&page=1`,
+									{
+										headers: {
+											Authorization: `Bearer ${token}`,
+										},
+									}
+								);
+                setFlag(flag=>!flag);
                 const data = await response.json();
                 setNumOfPost(data.total);
             } catch (error) {
@@ -46,7 +46,7 @@ const DashboardSectionStaff: React.FC<ComponentProps> = ({setFlag}) => {
                         },
                     }
                 );
-                setFlag(flag => !flag);
+                setFlag(!flag);
                 const data = await response.json();
                 setNumOfActive(data);
             } catch (error) {
@@ -65,7 +65,7 @@ const DashboardSectionStaff: React.FC<ComponentProps> = ({setFlag}) => {
                         },
                     }
                 );
-                setFlag(flag => !flag);
+                setFlag(!flag);
                 const data = await response.json();
                 setNumOfHidden(data);
             } catch (error) {
@@ -84,7 +84,7 @@ const DashboardSectionStaff: React.FC<ComponentProps> = ({setFlag}) => {
                         },
                     }
                 );
-                setFlag(flag => !flag);
+                setFlag(!flag);
                 const data = await response.json();
                 setNumOfPending(data);
             } catch (error) {
@@ -96,7 +96,7 @@ const DashboardSectionStaff: React.FC<ComponentProps> = ({setFlag}) => {
         fetchNumOfHidden();
         fetchNumOfPending();
         fetchNumOfPost();
-    }, []);
+    }, [flag]);
 
     return (
         <>
